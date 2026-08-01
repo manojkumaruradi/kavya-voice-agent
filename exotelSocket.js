@@ -10,11 +10,16 @@ function setupExotelSocket(wss) {
 
         ws.on("message", (message) => {
 
+            console.log("================================");
+            console.log("📩 RAW MESSAGE FROM EXOTEL");
+            console.log(message.toString());
+            console.log("================================");
+
             try {
 
-                const data = JSON.parse(message);
+                const data = JSON.parse(message.toString());
 
-                console.log("Exotel Event:", data.event);
+                console.log("📌 Event:", data.event);
 
                 switch (data.event) {
 
@@ -24,26 +29,37 @@ function setupExotelSocket(wss) {
 
                     case "start":
                         console.log("▶️ Call Started");
+                        console.log(JSON.stringify(data, null, 2));
                         break;
 
                     case "media":
                         console.log("🎤 Audio Packet Received");
 
-                        // We'll forward this audio to OpenAI
+                        console.log(
+                            "Payload Length:",
+                            data.media?.payload?.length || 0
+                        );
+
+                        // Next step:
+                        // We'll send data.media.payload to OpenAI here.
+
                         break;
 
                     case "stop":
                         console.log("⛔ Call Ended");
+                        console.log(JSON.stringify(data, null, 2));
                         break;
 
                     default:
-                        console.log(data);
+                        console.log("📦 Unknown Event");
+                        console.log(JSON.stringify(data, null, 2));
 
                 }
 
             } catch (err) {
 
-                console.log("Raw:", message.toString());
+                console.log("❌ JSON Parse Error");
+                console.log(err.message);
 
             }
 
@@ -52,6 +68,13 @@ function setupExotelSocket(wss) {
         ws.on("close", () => {
 
             console.log("📴 Exotel Disconnected");
+
+        });
+
+        ws.on("error", (err) => {
+
+            console.log("❌ WebSocket Error");
+            console.log(err);
 
         });
 
