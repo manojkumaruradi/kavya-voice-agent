@@ -20,11 +20,9 @@ function connectOpenAI() {
         const sessionConfig = {
             type: "session.update",
             session: {
-                type: "realtime",
-                modalities: ["audio", "text"],
-                voice: "alloy",
                 instructions:
-                    "You are Kavya, a friendly AI Voice Assistant. Speak naturally and briefly."
+                    "You are Kavya, a friendly AI Voice Assistant. Speak naturally and briefly.",
+                output_modalities: ["audio"]
             }
         };
 
@@ -71,6 +69,7 @@ function connectOpenAI() {
     });
 
     return openAiSocket;
+
 }
 
 module.exports = {
