@@ -17,15 +17,20 @@ function connectOpenAI() {
 
         console.log("✅ Connected to OpenAI Realtime");
 
-        openAiSocket.send(JSON.stringify({
+        const sessionConfig = {
             type: "session.update",
             session: {
                 modalities: ["audio", "text"],
+                voice: "alloy",
                 instructions:
-                    "You are Kavya, a friendly AI Voice Assistant. Speak naturally and briefly.",
-                voice: "alloy"
+                    "You are Kavya, a friendly AI Voice Assistant. Speak naturally and briefly."
             }
-        }));
+        };
+
+        console.log("Sending Session Update...");
+        console.log(JSON.stringify(sessionConfig, null, 2));
+
+        openAiSocket.send(JSON.stringify(sessionConfig));
 
     });
 
@@ -33,12 +38,16 @@ function connectOpenAI() {
 
         try {
 
-            const data = JSON.parse(message);
+            const data = JSON.parse(message.toString());
 
-            console.log("OpenAI:", data.type);
+            console.log("====================================");
+            console.log("OpenAI Response");
+            console.log(JSON.stringify(data, null, 2));
+            console.log("====================================");
 
-        } catch {
+        } catch (err) {
 
+            console.log("Raw Message:");
             console.log(message.toString());
 
         }
@@ -53,12 +62,12 @@ function connectOpenAI() {
 
     openAiSocket.on("error", (err) => {
 
-        console.log("OpenAI Error:", err.message);
+        console.log("❌ OpenAI Error");
+        console.log(err);
 
     });
 
     return openAiSocket;
-
 }
 
 module.exports = {
