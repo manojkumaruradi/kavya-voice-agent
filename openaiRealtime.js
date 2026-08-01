@@ -20,6 +20,7 @@ function connectOpenAI() {
         const sessionConfig = {
             type: "session.update",
             session: {
+                type: "realtime",
                 modalities: ["audio", "text"],
                 voice: "alloy",
                 instructions:
@@ -27,8 +28,10 @@ function connectOpenAI() {
             }
         };
 
-        console.log("Sending Session Update...");
+        console.log("====================================");
+        console.log("Sending Session Update");
         console.log(JSON.stringify(sessionConfig, null, 2));
+        console.log("====================================");
 
         openAiSocket.send(JSON.stringify(sessionConfig));
 
