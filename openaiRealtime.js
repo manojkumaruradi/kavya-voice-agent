@@ -5,7 +5,7 @@ let openAiSocket = null;
 function connectOpenAI() {
 
     openAiSocket = new WebSocket(
-        "wss://api.openai.com/v1/realtime?model=gpt-realtime",
+        "wss://api.openai.com/v1/realtime?model=gpt-realtime-2.1",
         {
             headers: {
                 Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
@@ -20,9 +20,10 @@ function connectOpenAI() {
         const sessionConfig = {
             type: "session.update",
             session: {
+                type: "realtime",
+                model: "gpt-realtime-2.1",
                 instructions:
-                    "You are Kavya, a friendly AI Voice Assistant. Speak naturally and briefly.",
-                output_modalities: ["audio"]
+                    "You are Kavya, a friendly AI Voice Assistant. Speak naturally and briefly."
             }
         };
 
