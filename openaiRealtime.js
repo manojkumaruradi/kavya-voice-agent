@@ -8,8 +8,7 @@ function connectOpenAI() {
         "wss://api.openai.com/v1/realtime?model=gpt-realtime",
         {
             headers: {
-                Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-                "OpenAI-Beta": "realtime=v1"
+                Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
             }
         }
     );
@@ -18,11 +17,31 @@ function connectOpenAI() {
 
         console.log("✅ Connected to OpenAI Realtime");
 
+        openAiSocket.send(JSON.stringify({
+            type: "session.update",
+            session: {
+                modalities: ["audio", "text"],
+                instructions:
+                    "You are Kavya, a friendly AI Voice Assistant. Speak naturally and briefly.",
+                voice: "alloy"
+            }
+        }));
+
     });
 
     openAiSocket.on("message", (message) => {
 
-        console.log("OpenAI:", message.toString());
+        try {
+
+            const data = JSON.parse(message);
+
+            console.log("OpenAI:", data.type);
+
+        } catch {
+
+            console.log(message.toString());
+
+        }
 
     });
 
@@ -34,7 +53,7 @@ function connectOpenAI() {
 
     openAiSocket.on("error", (err) => {
 
-        console.log(err);
+        console.log("OpenAI Error:", err.message);
 
     });
 
@@ -43,7 +62,5 @@ function connectOpenAI() {
 }
 
 module.exports = {
-
     connectOpenAI
-
 };
