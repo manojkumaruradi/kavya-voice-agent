@@ -44,6 +44,239 @@ function addMessage(
 
 
 // ========================================
+// KNOWLEDGE LOOKUP
+// ========================================
+//
+// When OpenAI asks for information from
+// the iLEAD knowledge base, this function
+// searches our server-side KB and sends
+// only the relevant information back.
+//
+// ========================================
+
+async function handleKnowledgeLookup(
+    toolCallId,
+    argumentsJson
+) {
+
+    try {
+
+        console.log(
+            "🔎 Knowledge lookup requested:",
+            argumentsJson
+        );
+
+
+        let args = {};
+
+        try {
+
+            args =
+                JSON.parse(
+                    argumentsJson || "{}"
+                );
+
+        } catch (error) {
+
+            console.error(
+                "❌ Failed to parse tool arguments:",
+                error
+            );
+
+            args = {};
+
+        }
+
+
+        const query =
+            args.query;
+
+
+        if (
+            !query ||
+            typeof query !== "string"
+        ) {
+
+            console.error(
+                "❌ Knowledge lookup query missing"
+            );
+
+            return;
+
+        }
+
+
+        // ========================================
+        // ASK OUR SERVER FOR RELEVANT KB CONTENT
+        // ========================================
+
+        const response =
+            await fetch(
+                "/knowledge-search",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+                            query
+                        })
+
+                }
+            );
+
+
+        if (
+            !response.ok
+        ) {
+
+            const errorText =
+                await response.text();
+
+            throw new Error(
+                `Knowledge search failed: ${errorText}`
+            );
+
+        }
+
+
+        const result =
+            await response.json();
+
+
+        console.log(
+            "📚 Knowledge result:",
+            result
+        );
+
+
+        const context =
+            result.context || "";
+
+
+        // ========================================
+        // SEND TOOL RESULT BACK TO OPENAI
+        // ========================================
+
+        if (
+            !dataChannel ||
+            dataChannel.readyState !==
+            "open"
+        ) {
+
+            console.error(
+                "❌ Data channel is not open"
+            );
+
+            return;
+
+        }
+
+
+        dataChannel.send(
+            JSON.stringify({
+
+                type:
+                    "conversation.item.create",
+
+                item: {
+
+                    type:
+                        "function_call_output",
+
+                    call_id:
+                        toolCallId,
+
+                    output:
+                        context ||
+                        "No relevant information was found in the iLEAD knowledge base."
+
+                }
+
+            })
+        );
+
+
+        console.log(
+            "📤 Knowledge result sent to OpenAI"
+        );
+
+
+        // ========================================
+        // ASK OPENAI TO CONTINUE RESPONSE
+        // ========================================
+
+        dataChannel.send(
+            JSON.stringify({
+
+                type:
+                    "response.create"
+
+            })
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "❌ Knowledge lookup error:",
+            error
+        );
+
+
+        if (
+            dataChannel &&
+            dataChannel.readyState ===
+            "open"
+        ) {
+
+            dataChannel.send(
+                JSON.stringify({
+
+                    type:
+                        "conversation.item.create",
+
+                    item: {
+
+                        type:
+                            "function_call_output",
+
+                        call_id:
+                            toolCallId,
+
+                        output:
+                            "The requested information could not be retrieved right now. Please guide the user toward speaking with the admissions team for confirmation."
+
+                    }
+
+                })
+            );
+
+
+            dataChannel.send(
+                JSON.stringify({
+
+                    type:
+                        "response.create"
+
+                })
+            );
+
+        }
+
+    }
+
+}
+
+
+// ========================================
 // START CONVERSATION
 // ========================================
 
@@ -179,8 +412,12 @@ startBtn.onclick =
                 };
 
 
+            // ========================================
+            // DATA CHANNEL MESSAGE HANDLER
+            // ========================================
+
             dataChannel.onmessage =
-                function (event) {
+                async function (event) {
 
                     try {
 
@@ -263,6 +500,50 @@ startBtn.onclick =
                                 addMessage(
                                     "ai",
                                     data.text
+                                );
+
+                            }
+
+                        }
+
+
+                        // --------------------------------
+                        // KNOWLEDGE TOOL CALL
+                        // --------------------------------
+
+                        if (
+                            data.type ===
+                            "response.function_call_arguments.done"
+                        ) {
+
+                            console.log(
+                                "🔎 Knowledge tool call received"
+                            );
+
+
+                            const functionName =
+                                data.name;
+
+
+                            const argumentsJson =
+                                data.arguments;
+
+
+                            const callId =
+                                data.call_id;
+
+
+                            if (
+                                functionName ===
+                                "knowledge_lookup"
+                            ) {
+
+                                await handleKnowledgeLookup(
+
+                                    callId,
+
+                                    argumentsJson
+
                                 );
 
                             }
