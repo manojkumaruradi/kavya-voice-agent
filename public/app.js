@@ -1,6 +1,7 @@
 const startBtn = document.getElementById("startBtn");
 const status = document.getElementById("status");
 const messages = document.getElementById("messages");
+const disconnectBtn = document.getElementById("disconnectBtn");
 
 let ws = null;
 let mediaRecorder = null;
@@ -101,5 +102,24 @@ startBtn.onclick = async () => {
         status.innerText = "Microphone permission denied.";
 
     }
+
+};
+disconnectBtn.onclick = () => {
+
+    if (mediaRecorder && mediaRecorder.state !== "inactive") {
+
+        mediaRecorder.stop();
+
+    }
+
+    if (ws && ws.readyState === WebSocket.OPEN) {
+
+        ws.close();
+
+    }
+
+    status.innerText = "Disconnected";
+
+    addMessage("ai", "Disconnected from Kavya.");
 
 };

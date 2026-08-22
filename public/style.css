@@ -130,3 +130,16 @@ button:hover{
     background:#d1fae5;
 
 }
+#disconnectBtn {
+
+    margin-top: 15px;
+
+    background: #dc3545;
+
+}
+
+#disconnectBtn:hover {
+
+    background: #bb2d3b;
+
+}
