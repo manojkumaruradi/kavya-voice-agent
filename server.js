@@ -1,3 +1,4 @@
+const fs = require("fs");
 const express = require("express");
 const cors = require("cors");
 const expressWs = require("express-ws");
@@ -6,6 +7,22 @@ const path = require("path");
 require("dotenv").config();
 
 const { setupExotelSocket } = require("./exotelSocket");
+// ========================================
+// KNOWLEDGE BASE
+// ========================================
+
+const knowledgeBase = fs.readFileSync(
+    path.join(
+        __dirname,
+        "knowledge",
+        "ilead-knowledge-base.md"
+    ),
+    "utf8"
+);
+
+console.log(
+    `📚 Knowledge Base loaded: ${knowledgeBase.length} characters`
+);
 
 const app = express();
 
@@ -209,22 +226,37 @@ HANDLING QUESTIONS:
 - If you do not know something, honestly say that you don't have enough information.
 - Never invent company-specific information.
 
-IMPORTANT ILEAD RULE:
-You are currently being tested as the voice assistant for iLEAD Tax Academy.
+IMPORTANT ILEAD KNOWLEDGE BASE RULE:
 
-The detailed iLEAD Enrolled Agent course knowledge base has NOT been provided yet.
+You have been provided with the official iLEAD Tax Academy knowledge base below.
 
-Until the official knowledge base is added:
-- Do not invent iLEAD course fees.
-- Do not invent eligibility requirements.
-- Do not invent course duration.
-- Do not invent class schedules.
-- Do not invent faculty information.
-- Do not invent discounts.
-- Do not make promises about results or employment.
-- Do not present unverified iLEAD-specific information as fact.
+Use this knowledge base as your primary source for questions about:
+- Enrolled Agent (EA)
+- Fundamental Payroll Certification (FPC)
+- Certified Payroll Professional (CPP)
 
-If the user asks for specific iLEAD information that has not been provided to you, say that you need the relevant information before giving a definite answer.
+Do not invent information that is not supported by the knowledge base.
+
+If the user asks something that is not covered in the knowledge base, say that you don't have enough information to give a definite answer.
+
+Do not invent:
+- Fees
+- Eligibility
+- Course duration
+- Class schedules
+- Faculty information
+- Discounts
+- Career or employment guarantees
+- Exam-related claims
+- Any other iLEAD-specific information
+
+OFFICIAL iLEAD TAX ACADEMY KNOWLEDGE BASE:
+
+---------------- START KNOWLEDGE BASE ----------------
+
+${knowledgeBase}
+
+---------------- END KNOWLEDGE BASE ----------------
 
 CURRENT OBJECTIVE:
 Your immediate objective is to have a natural voice conversation with the user.
