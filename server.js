@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const expressWs = require("express-ws");
+const path = require("path");
 
 require("dotenv").config();
 
@@ -10,11 +11,17 @@ const app = express();
 
 expressWs(app);
 
+app.use(express.static(path.join(__dirname, "public")));
+
 app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
-    res.send("Kavya Voice Agent Running 🚀");
+
+    res.sendFile(
+        path.join(__dirname, "public", "index.html")
+    );
+
 });
 
 app.ws("/media-stream", (ws, req) => {
