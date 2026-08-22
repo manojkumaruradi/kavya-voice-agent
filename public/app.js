@@ -1,7 +1,15 @@
-const startBtn = document.getElementById("startBtn");
-const disconnectBtn = document.getElementById("disconnectBtn");
-const status = document.getElementById("status");
-const messages = document.getElementById("messages");
+const startBtn =
+    document.getElementById("startBtn");
+
+const disconnectBtn =
+    document.getElementById("disconnectBtn");
+
+const status =
+    document.getElementById("status");
+
+const messages =
+    document.getElementById("messages");
+
 
 let peerConnection = null;
 let dataChannel = null;
@@ -10,21 +18,28 @@ let audioElement = null;
 
 
 // ========================================
-// MESSAGE DISPLAY
+// ADD MESSAGE TO SCREEN
 // ========================================
 
-function addMessage(sender, text) {
+function addMessage(
+    sender,
+    text
+) {
 
-    const div = document.createElement("div");
+    const div =
+        document.createElement("div");
 
-    div.className = `message ${sender}`;
+    div.className =
+        `message ${sender}`;
 
     div.innerHTML =
         `<strong>${sender.toUpperCase()}:</strong><br>${text}`;
 
     messages.appendChild(div);
 
-    messages.scrollTop = messages.scrollHeight;
+    messages.scrollTop =
+        messages.scrollHeight;
+
 }
 
 
@@ -32,387 +47,441 @@ function addMessage(sender, text) {
 // START CONVERSATION
 // ========================================
 
-startBtn.onclick = async () => {
+startBtn.onclick =
+    async function () {
 
-    try {
+        try {
 
-        startBtn.disabled = true;
+            startBtn.disabled =
+                true;
 
-        status.innerText = "Requesting microphone...";
+            status.innerText =
+                "Requesting microphone...";
 
-        addMessage(
-            "ai",
-            "Requesting microphone access..."
-        );
-
-
-        // ========================================
-        // 1. GET MICROPHONE
-        // ========================================
-
-        localStream =
-            await navigator.mediaDevices.getUserMedia({
-                audio: true
-            });
-
-        console.log("🎤 Microphone access granted");
-
-
-        // ========================================
-        // 2. CREATE PEER CONNECTION
-        // ========================================
-
-        peerConnection =
-            new RTCPeerConnection();
-
-        console.log(
-            "🔗 RTCPeerConnection created"
-        );
-
-
-        // ========================================
-        // 3. ADD MICROPHONE TRACK
-        // ========================================
-
-        localStream
-            .getTracks()
-            .forEach((track) => {
-
-                peerConnection.addTrack(
-                    track,
-                    localStream
-                );
-
-            });
-
-        console.log(
-            "🎤 Microphone track added"
-        );
-
-
-        // ========================================
-        // 4. RECEIVE AI AUDIO
-        // ========================================
-
-        audioElement =
-            document.createElement("audio");
-
-        audioElement.autoplay = true;
-
-        audioElement.style.display = "none";
-
-        document.body.appendChild(
-            audioElement
-        );
-
-
-        peerConnection.ontrack = (event) => {
-
-            console.log(
-                "🔊 AI audio track received"
-            );
-
-            audioElement.srcObject =
-                event.streams[0];
-
-        };
-
-
-        // ========================================
-        // 5. CREATE DATA CHANNEL
-        // ========================================
-
-        dataChannel =
-            peerConnection.createDataChannel(
-                "oai-events"
-            );
-
-        console.log(
-            "📡 Data channel created"
-        );
-
-
-        dataChannel.onopen = () => {
-
-            console.log(
-                "✅ Data channel connected"
-            );
 
             addMessage(
                 "ai",
-                "Connected to Kavya. You can speak now."
+                "Requesting microphone access..."
             );
 
-        };
+
+            // ========================================
+            // 1. MICROPHONE
+            // ========================================
+
+            localStream =
+                await navigator.mediaDevices
+                    .getUserMedia({
+                        audio: true
+                    });
 
 
-        dataChannel.onmessage = (event) => {
+            console.log(
+                "🎤 Microphone access granted"
+            );
 
-            try {
 
-                const data =
-                    JSON.parse(event.data);
+            // ========================================
+            // 2. CREATE WEBRTC CONNECTION
+            // ========================================
 
-                console.log(
-                    "📩 OpenAI Event:",
-                    data
+            peerConnection =
+                new RTCPeerConnection();
+
+
+            console.log(
+                "🔗 RTCPeerConnection created"
+            );
+
+
+            // ========================================
+            // 3. ADD MICROPHONE
+            // ========================================
+
+            const audioTrack =
+                localStream.getAudioTracks()[0];
+
+
+            peerConnection.addTrack(
+                audioTrack,
+                localStream
+            );
+
+
+            console.log(
+                "🎤 Microphone track added"
+            );
+
+
+            // ========================================
+            // 4. RECEIVE KAVYA AUDIO
+            // ========================================
+
+            audioElement =
+                document.createElement(
+                    "audio"
+                );
+
+            audioElement.autoplay =
+                true;
+
+            audioElement.playsInline =
+                true;
+
+            audioElement.style.display =
+                "none";
+
+
+            document.body.appendChild(
+                audioElement
+            );
+
+
+            peerConnection.ontrack =
+                function (event) {
+
+                    console.log(
+                        "🔊 Kavya audio received"
+                    );
+
+                    audioElement.srcObject =
+                        event.streams[0];
+
+                };
+
+
+            // ========================================
+            // 5. DATA CHANNEL
+            // ========================================
+
+            dataChannel =
+                peerConnection.createDataChannel(
+                    "oai-events"
                 );
 
 
-                // AI response completed
-                if (
-                    data.type ===
-                    "response.done"
-                ) {
+            dataChannel.onopen =
+                function () {
 
-                    const output =
-                        data.response?.output;
+                    console.log(
+                        "📡 OpenAI data channel connected"
+                    );
 
-                    if (
-                        output &&
-                        output.length > 0
-                    ) {
+                    status.innerText =
+                        "Connected ✅";
 
-                        for (
-                            const item of output
+
+                    addMessage(
+                        "ai",
+                        "Connected to Kavya. You can speak now."
+                    );
+
+                };
+
+
+            dataChannel.onmessage =
+                function (event) {
+
+                    try {
+
+                        const data =
+                            JSON.parse(
+                                event.data
+                            );
+
+
+                        console.log(
+                            "📩 OpenAI Event:",
+                            data
+                        );
+
+
+                        // --------------------------------
+                        // ERROR
+                        // --------------------------------
+
+                        if (
+                            data.type ===
+                            "error"
+                        ) {
+
+                            console.error(
+                                "❌ OpenAI error:",
+                                data
+                            );
+
+                            addMessage(
+                                "ai",
+                                "OpenAI error: " +
+                                (
+                                    data.error?.message ||
+                                    "Unknown error"
+                                )
+                            );
+
+                            return;
+
+                        }
+
+
+                        // --------------------------------
+                        // USER TRANSCRIPT
+                        // --------------------------------
+
+                        if (
+                            data.type ===
+                            "conversation.item.input_audio_transcription.completed"
                         ) {
 
                             if (
-                                item.type ===
-                                "message"
+                                data.transcript
                             ) {
 
-                                const contents =
-                                    item.content || [];
-
-                                for (
-                                    const content
-                                    of contents
-                                ) {
-
-                                    if (
-                                        content.type ===
-                                        "output_text"
-                                    ) {
-
-                                        addMessage(
-                                            "ai",
-                                            content.text
-                                        );
-
-                                    }
-
-                                }
+                                addMessage(
+                                    "user",
+                                    data.transcript
+                                );
 
                             }
 
                         }
 
+
+                        // --------------------------------
+                        // AI TEXT
+                        // --------------------------------
+
+                        if (
+                            data.type ===
+                            "response.output_text.done"
+                        ) {
+
+                            if (
+                                data.text
+                            ) {
+
+                                addMessage(
+                                    "ai",
+                                    data.text
+                                );
+
+                            }
+
+                        }
+
+                    } catch (error) {
+
+                        console.error(
+                            "Data channel error:",
+                            error
+                        );
+
                     }
 
-                }
+                };
 
 
-                // Error handling
-                if (
-                    data.type ===
-                    "error"
-                ) {
+            // ========================================
+            // 6. CONNECTION STATE
+            // ========================================
 
-                    console.error(
-                        "❌ OpenAI error:",
-                        data
+            peerConnection.onconnectionstatechange =
+                function () {
+
+                    console.log(
+                        "WebRTC state:",
+                        peerConnection.connectionState
                     );
 
-                    addMessage(
-                        "ai",
-                        "Sorry, something went wrong."
-                    );
 
-                }
+                    if (
+                        peerConnection.connectionState ===
+                        "connected"
+                    ) {
 
-            } catch (error) {
+                        status.innerText =
+                            "Connected ✅";
 
-                console.error(
-                    "Data channel error:",
-                    error
+                    }
+
+
+                    if (
+                        peerConnection.connectionState ===
+                        "connecting"
+                    ) {
+
+                        status.innerText =
+                            "Connecting...";
+
+                    }
+
+
+                    if (
+                        peerConnection.connectionState ===
+                        "disconnected"
+                    ) {
+
+                        status.innerText =
+                            "Disconnected";
+
+                    }
+
+
+                    if (
+                        peerConnection.connectionState ===
+                        "failed"
+                    ) {
+
+                        status.innerText =
+                            "Connection failed";
+
+                    }
+
+                };
+
+
+            // ========================================
+            // 7. CREATE SDP OFFER
+            // ========================================
+
+            const offer =
+                await peerConnection.createOffer();
+
+
+            await peerConnection.setLocalDescription(
+                offer
+            );
+
+
+            console.log(
+                "📤 SDP offer created"
+            );
+
+
+            // ========================================
+            // 8. SEND RAW SDP TO OUR SERVER
+            // ========================================
+
+            status.innerText =
+                "Connecting to Kavya...";
+
+
+            const response =
+                await fetch(
+                    "/session",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/sdp"
+
+                        },
+
+                        body:
+                            offer.sdp
+
+                    }
+                );
+
+
+            // ========================================
+            // 9. CHECK SERVER RESPONSE
+            // ========================================
+
+            if (
+                !response.ok
+            ) {
+
+                const errorText =
+                    await response.text();
+
+                throw new Error(
+                    `Session request failed: ${errorText}`
                 );
 
             }
 
-        };
 
+            // ========================================
+            // 10. RECEIVE OPENAI SDP ANSWER
+            // ========================================
 
-        // ========================================
-        // 6. CREATE SDP OFFER
-        // ========================================
-
-        const offer =
-            await peerConnection.createOffer();
-
-        console.log(
-            "📤 SDP offer created"
-        );
-
-
-        await peerConnection.setLocalDescription(
-            offer
-        );
-
-        console.log(
-            "📡 Local description set"
-        );
-
-
-        // ========================================
-        // 7. SEND SDP TO OUR SERVER
-        // ========================================
-
-        status.innerText =
-            "Connecting to Kavya...";
-
-        const response =
-            await fetch("/session", {
-
-                method: "POST",
-
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-
-                body: JSON.stringify({
-                    sdp: offer.sdp
-                })
-
-            });
-
-
-        if (!response.ok) {
-
-            const errorText =
+            const answerSdp =
                 await response.text();
 
-            throw new Error(
-                `Session request failed: ${errorText}`
+
+            console.log(
+                "📥 OpenAI SDP answer received"
             );
+
+
+            // ========================================
+            // 11. SET REMOTE DESCRIPTION
+            // ========================================
+
+            await peerConnection.setRemoteDescription(
+                {
+
+                    type: "answer",
+
+                    sdp:
+                        answerSdp
+
+                }
+            );
+
+
+            console.log(
+                "✅ Remote description set"
+            );
+
+
+            status.innerText =
+                "Connected ✅";
+
+
+        } catch (error) {
+
+            console.error(
+                "❌ Voice connection error:",
+                error
+            );
+
+
+            status.innerText =
+                "Connection failed";
+
+
+            addMessage(
+                "ai",
+                `Error: ${error.message}`
+            );
+
+
+            disconnectConversation();
 
         }
 
-
-        // ========================================
-        // 8. RECEIVE OPENAI SDP ANSWER
-        // ========================================
-
-        const answerSdp =
-            await response.text();
-
-        console.log(
-            "📥 OpenAI SDP answer received"
-        );
+    };
 
 
-        await peerConnection.setRemoteDescription(
-            {
-                type: "answer",
-                sdp: answerSdp
-            }
-        );
+// ========================================
+// DISCONNECT BUTTON
+// ========================================
 
-
-        console.log(
-            "✅ Remote description set"
-        );
-
-
-        // ========================================
-        // 9. CONNECTION STATE
-        // ========================================
-
-        peerConnection.onconnectionstatechange =
-            () => {
-
-                console.log(
-                    "Connection state:",
-                    peerConnection.connectionState
-                );
-
-
-                if (
-                    peerConnection.connectionState ===
-                    "connected"
-                ) {
-
-                    status.innerText =
-                        "Connected ✅";
-
-                }
-
-
-                if (
-                    peerConnection.connectionState ===
-                    "disconnected"
-                ) {
-
-                    status.innerText =
-                        "Disconnected";
-
-                }
-
-
-                if (
-                    peerConnection.connectionState ===
-                    "failed"
-                ) {
-
-                    status.innerText =
-                        "Connection failed";
-
-                }
-
-            };
-
-
-        status.innerText =
-            "Connecting...";
-
-    } catch (error) {
-
-        console.error(
-            "❌ Voice connection error:",
-            error
-        );
-
-        status.innerText =
-            "Connection failed";
-
-        addMessage(
-            "ai",
-            `Error: ${error.message}`
-        );
-
-        startBtn.disabled = false;
+disconnectBtn.onclick =
+    function () {
 
         disconnectConversation();
 
-    }
-
-};
+    };
 
 
 // ========================================
 // DISCONNECT
-// ========================================
-
-disconnectBtn.onclick = () => {
-
-    disconnectConversation();
-
-};
-
-
-// ========================================
-// DISCONNECT FUNCTION
 // ========================================
 
 function disconnectConversation() {
@@ -422,50 +491,93 @@ function disconnectConversation() {
     );
 
 
+    // --------------------------------
     // Close data channel
-    if (dataChannel) {
+    // --------------------------------
 
-        dataChannel.close();
+    if (
+        dataChannel
+    ) {
 
-        dataChannel = null;
+        try {
+
+            dataChannel.close();
+
+        } catch (error) {
+
+            console.log(error);
+
+        }
+
+        dataChannel =
+            null;
 
     }
 
 
-    // Close WebRTC connection
-    if (peerConnection) {
+    // --------------------------------
+    // Close WebRTC
+    // --------------------------------
 
-        peerConnection.close();
+    if (
+        peerConnection
+    ) {
 
-        peerConnection = null;
+        try {
+
+            peerConnection.close();
+
+        } catch (error) {
+
+            console.log(error);
+
+        }
+
+        peerConnection =
+            null;
 
     }
 
 
+    // --------------------------------
     // Stop microphone
-    if (localStream) {
+    // --------------------------------
+
+    if (
+        localStream
+    ) {
 
         localStream
             .getTracks()
-            .forEach((track) => {
+            .forEach(
+                function (track) {
 
-                track.stop();
+                    track.stop();
 
-            });
+                }
+            );
 
-        localStream = null;
+        localStream =
+            null;
 
     }
 
 
+    // --------------------------------
     // Remove audio element
-    if (audioElement) {
+    // --------------------------------
 
-        audioElement.srcObject = null;
+    if (
+        audioElement
+    ) {
+
+        audioElement.srcObject =
+            null;
 
         audioElement.remove();
 
-        audioElement = null;
+        audioElement =
+            null;
 
     }
 
