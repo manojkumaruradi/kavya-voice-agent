@@ -16,6 +16,22 @@ let dataChannel = null;
 let localStream = null;
 let audioElement = null;
 
+let currentAssistantText = "";
+
+let isSpeaking = false;
+
+// Prevent duplicate AI responses
+let responseInProgress = false;
+
+// Identify the latest TTS request
+let ttsGeneration = 0;
+
+// Current ElevenLabs audio
+let currentManojAudio = null;
+
+// Current object URL
+let currentAudioUrl = null;
+
 
 // ========================================
 // ADD MESSAGE TO SCREEN
@@ -26,16 +42,30 @@ function addMessage(
     text
 ) {
 
+    if (
+        !text ||
+        typeof text !== "string"
+    ) {
+        return;
+    }
+
+
     const div =
         document.createElement("div");
+
 
     div.className =
         `message ${sender}`;
 
+
     div.innerHTML =
         `<strong>${sender.toUpperCase()}:</strong><br>${text}`;
 
-    messages.appendChild(div);
+
+    messages.appendChild(
+        div
+    );
+
 
     messages.scrollTop =
         messages.scrollHeight;
@@ -44,14 +74,380 @@ function addMessage(
 
 
 // ========================================
-// KNOWLEDGE LOOKUP
+// STOP CURRENT MANOJ AUDIO
 // ========================================
-//
-// When OpenAI asks for information from
-// the iLEAD knowledge base, this function
-// searches our server-side KB and sends
-// only the relevant information back.
-//
+
+function stopManojAudio() {
+
+    console.log(
+        "🛑 Stopping current Manoj audio"
+    );
+
+
+    // Invalidate any previous TTS request
+    ttsGeneration++;
+
+
+    if (
+        currentManojAudio
+    ) {
+
+        try {
+
+            currentManojAudio.pause();
+
+            currentManojAudio.currentTime =
+                0;
+
+        } catch (error) {
+
+            console.log(
+                "Audio stop warning:",
+                error
+            );
+
+        }
+
+
+        currentManojAudio =
+            null;
+
+    }
+
+
+    if (
+        currentAudioUrl
+    ) {
+
+        try {
+
+            URL.revokeObjectURL(
+                currentAudioUrl
+            );
+
+        } catch (error) {
+
+            console.log(
+                error
+            );
+
+        }
+
+
+        currentAudioUrl =
+            null;
+
+    }
+
+
+    isSpeaking =
+        false;
+
+}
+
+
+// ========================================
+// CANCEL CURRENT OPENAI RESPONSE
+// ========================================
+
+function cancelCurrentOpenAIResponse() {
+
+    if (
+        !dataChannel ||
+        dataChannel.readyState !==
+        "open"
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        dataChannel.send(
+            JSON.stringify({
+
+                type:
+                    "response.cancel"
+
+            })
+        );
+
+
+        console.log(
+            "🛑 OpenAI response cancelled"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "❌ Could not cancel OpenAI response:",
+            error
+        );
+
+    }
+
+}
+
+
+// ========================================
+// PLAY MANOJ VOICE
+// ========================================
+
+async function speakWithManoj(
+    text
+) {
+
+    if (
+        !text ||
+        typeof text !== "string"
+    ) {
+
+        return;
+
+    }
+
+
+    // ========================================
+    // STOP ANY PREVIOUS AUDIO
+    // ========================================
+
+    stopManojAudio();
+
+
+    // Create a unique generation ID
+    const myGeneration =
+        ++ttsGeneration;
+
+
+    try {
+
+        isSpeaking =
+            true;
+
+
+        console.log(
+            "🎙️ Sending text to ElevenLabs:",
+            text
+        );
+
+
+        const response =
+            await fetch(
+                "/tts",
+                {
+
+                    method:
+                        "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            text:
+                                text
+
+                        })
+
+                }
+            );
+
+
+        // ========================================
+        // CHECK WHETHER THIS IS STILL THE
+        // ACTIVE TTS REQUEST
+        // ========================================
+
+        if (
+            myGeneration !==
+            ttsGeneration
+        ) {
+
+            console.log(
+                "🗑️ Ignoring old TTS response"
+            );
+
+            return;
+
+        }
+
+
+        if (
+            !response.ok
+        ) {
+
+            const errorText =
+                await response.text();
+
+
+            console.error(
+                "❌ ElevenLabs TTS error:",
+                errorText
+            );
+
+
+            isSpeaking =
+                false;
+
+            return;
+
+        }
+
+
+        const audioBlob =
+            await response.blob();
+
+
+        // ========================================
+        // CHECK AGAIN AFTER DOWNLOAD
+        // ========================================
+
+        if (
+            myGeneration !==
+            ttsGeneration
+        ) {
+
+            console.log(
+                "🗑️ Ignoring stale ElevenLabs audio"
+            );
+
+            return;
+
+        }
+
+
+        currentAudioUrl =
+            URL.createObjectURL(
+                audioBlob
+            );
+
+
+        const audio =
+            new Audio(
+                currentAudioUrl
+            );
+
+
+        currentManojAudio =
+            audio;
+
+
+        audio.volume =
+            1.0;
+
+
+        audio.onended =
+            function () {
+
+                if (
+                    currentManojAudio ===
+                    audio
+                ) {
+
+                    currentManojAudio =
+                        null;
+
+                }
+
+
+                if (
+                    currentAudioUrl
+                ) {
+
+                    URL.revokeObjectURL(
+                        currentAudioUrl
+                    );
+
+                    currentAudioUrl =
+                        null;
+
+                }
+
+
+                isSpeaking =
+                    false;
+
+
+                console.log(
+                    "✅ Manoj audio finished"
+                );
+
+            };
+
+
+        audio.onerror =
+            function () {
+
+                console.error(
+                    "❌ Manoj audio playback error"
+                );
+
+
+                if (
+                    currentManojAudio ===
+                    audio
+                ) {
+
+                    currentManojAudio =
+                        null;
+
+                }
+
+
+                if (
+                    currentAudioUrl
+                ) {
+
+                    URL.revokeObjectURL(
+                        currentAudioUrl
+                    );
+
+                    currentAudioUrl =
+                        null;
+
+                }
+
+
+                isSpeaking =
+                    false;
+
+            };
+
+
+        console.log(
+            "🔊 Playing Manoj voice"
+        );
+
+
+        await audio.play();
+
+
+    } catch (error) {
+
+        console.error(
+            "❌ Manoj voice playback failed:",
+            error
+        );
+
+
+        isSpeaking =
+            false;
+
+    }
+
+}
+
+
+// ========================================
+// KNOWLEDGE LOOKUP
 // ========================================
 
 async function handleKnowledgeLookup(
@@ -69,6 +465,7 @@ async function handleKnowledgeLookup(
 
         let args = {};
 
+
         try {
 
             args =
@@ -82,6 +479,7 @@ async function handleKnowledgeLookup(
                 "❌ Failed to parse tool arguments:",
                 error
             );
+
 
             args = {};
 
@@ -106,16 +504,13 @@ async function handleKnowledgeLookup(
         }
 
 
-        // ========================================
-        // ASK OUR SERVER FOR RELEVANT KB CONTENT
-        // ========================================
-
         const response =
             await fetch(
                 "/knowledge-search",
                 {
 
-                    method: "POST",
+                    method:
+                        "POST",
 
                     headers: {
 
@@ -126,7 +521,10 @@ async function handleKnowledgeLookup(
 
                     body:
                         JSON.stringify({
-                            query
+
+                            query:
+                                query
+
                         })
 
                 }
@@ -139,6 +537,7 @@ async function handleKnowledgeLookup(
 
             const errorText =
                 await response.text();
+
 
             throw new Error(
                 `Knowledge search failed: ${errorText}`
@@ -160,10 +559,6 @@ async function handleKnowledgeLookup(
         const context =
             result.context || "";
 
-
-        // ========================================
-        // SEND TOOL RESULT BACK TO OPENAI
-        // ========================================
 
         if (
             !dataChannel ||
@@ -209,10 +604,6 @@ async function handleKnowledgeLookup(
         );
 
 
-        // ========================================
-        // ASK OPENAI TO CONTINUE RESPONSE
-        // ========================================
-
         dataChannel.send(
             JSON.stringify({
 
@@ -252,7 +643,7 @@ async function handleKnowledgeLookup(
                             toolCallId,
 
                         output:
-                            "The requested information could not be retrieved right now. Please guide the user toward speaking with the admissions team for confirmation."
+                            "The requested information could not be retrieved right now."
 
                     }
 
@@ -288,6 +679,7 @@ startBtn.onclick =
             startBtn.disabled =
                 true;
 
+
             status.innerText =
                 "Requesting microphone...";
 
@@ -305,7 +697,20 @@ startBtn.onclick =
             localStream =
                 await navigator.mediaDevices
                     .getUserMedia({
-                        audio: true
+
+                        audio: {
+
+                            echoCancellation:
+                                true,
+
+                            noiseSuppression:
+                                true,
+
+                            autoGainControl:
+                                true
+
+                        }
+
                     });
 
 
@@ -332,7 +737,8 @@ startBtn.onclick =
             // ========================================
 
             const audioTrack =
-                localStream.getAudioTracks()[0];
+                localStream
+                    .getAudioTracks()[0];
 
 
             peerConnection.addTrack(
@@ -347,7 +753,7 @@ startBtn.onclick =
 
 
             // ========================================
-            // 4. RECEIVE KAVYA AUDIO
+            // 4. OPENAI AUDIO IS NOT PLAYED
             // ========================================
 
             audioElement =
@@ -355,11 +761,14 @@ startBtn.onclick =
                     "audio"
                 );
 
+
             audioElement.autoplay =
-                true;
+                false;
+
 
             audioElement.playsInline =
                 true;
+
 
             audioElement.style.display =
                 "none";
@@ -374,11 +783,8 @@ startBtn.onclick =
                 function (event) {
 
                     console.log(
-                        "🔊 Kavya audio received"
+                        "🔇 OpenAI audio received — not playing"
                     );
-
-                    audioElement.srcObject =
-                        event.streams[0];
 
                 };
 
@@ -400,13 +806,14 @@ startBtn.onclick =
                         "📡 OpenAI data channel connected"
                     );
 
+
                     status.innerText =
                         "Connected ✅";
 
 
                     addMessage(
                         "ai",
-                        "Connected to Kavya. You can speak now."
+                        "Connected to Manoj. You can speak now."
                     );
 
                 };
@@ -433,9 +840,9 @@ startBtn.onclick =
                         );
 
 
-                        // --------------------------------
-                        // ERROR
-                        // --------------------------------
+                        // ========================================
+                        // OPENAI ERROR
+                        // ========================================
 
                         if (
                             data.type ===
@@ -447,6 +854,7 @@ startBtn.onclick =
                                 data
                             );
 
+
                             addMessage(
                                 "ai",
                                 "OpenAI error: " +
@@ -456,14 +864,57 @@ startBtn.onclick =
                                 )
                             );
 
+
                             return;
 
                         }
 
 
-                        // --------------------------------
+                        // ========================================
+                        // USER SPEECH STARTED
+                        // ========================================
+                        //
+                        // If the user starts talking while
+                        // Manoj is speaking, immediately stop
+                        // the current Manoj audio.
+                        //
+                        // ========================================
+
+                        if (
+                            data.type ===
+                            "input_audio_buffer.speech_started"
+                        ) {
+
+                            console.log(
+                                "🎤 User started speaking"
+                            );
+
+
+                            if (
+                                isSpeaking
+                            ) {
+
+                                console.log(
+                                    "🛑 User interrupted Manoj"
+                                );
+
+
+                                stopManojAudio();
+
+
+                                cancelCurrentOpenAIResponse();
+
+                            }
+
+
+                            return;
+
+                        }
+
+
+                        // ========================================
                         // USER TRANSCRIPT
-                        // --------------------------------
+                        // ========================================
 
                         if (
                             data.type ===
@@ -481,35 +932,160 @@ startBtn.onclick =
 
                             }
 
+
+                            return;
+
                         }
 
 
-                        // --------------------------------
-                        // AI TEXT
-                        // --------------------------------
+                        // ========================================
+                        // RESPONSE CREATED
+                        // ========================================
+
+                        if (
+                            data.type ===
+                            "response.created"
+                        ) {
+
+                            console.log(
+                                "🧠 OpenAI response started"
+                            );
+
+
+                            responseInProgress =
+                                true;
+
+
+                            currentAssistantText =
+                                "";
+
+
+                            return;
+
+                        }
+
+
+                        // ========================================
+                        // AI TEXT DELTA
+                        // ========================================
+
+                        if (
+                            data.type ===
+                            "response.output_text.delta"
+                        ) {
+
+                            if (
+                                !responseInProgress
+                            ) {
+
+                                responseInProgress =
+                                    true;
+
+                            }
+
+
+                            currentAssistantText +=
+                                data.delta || "";
+
+
+                            return;
+
+                        }
+
+
+                        // ========================================
+                        // AI TEXT COMPLETE
+                        // ========================================
 
                         if (
                             data.type ===
                             "response.output_text.done"
                         ) {
 
+                            // --------------------------------
+                            // DUPLICATE PROTECTION
+                            // --------------------------------
+
                             if (
-                                data.text
+                                !responseInProgress
                             ) {
 
-                                addMessage(
-                                    "ai",
-                                    data.text
+                                console.log(
+                                    "🛑 Ignoring duplicate text completion"
                                 );
 
+                                return;
+
                             }
+
+
+                            const finalText =
+                                (
+                                    data.text ||
+                                    currentAssistantText
+                                ).trim();
+
+
+                            responseInProgress =
+                                false;
+
+
+                            currentAssistantText =
+                                "";
+
+
+                            if (
+                                !finalText
+                            ) {
+
+                                return;
+
+                            }
+
+
+                            console.log(
+                                "📝 OpenAI final response:",
+                                finalText
+                            );
+
+
+                            addMessage(
+                                "ai",
+                                finalText
+                            );
+
+
+                            await speakWithManoj(
+                                finalText
+                            );
+
+
+                            return;
 
                         }
 
 
-                        // --------------------------------
+                        // ========================================
+                        // RESPONSE COMPLETE
+                        // ========================================
+
+                        if (
+                            data.type ===
+                            "response.done"
+                        ) {
+
+                            responseInProgress =
+                                false;
+
+
+                            return;
+
+                        }
+
+
+                        // ========================================
                         // KNOWLEDGE TOOL CALL
-                        // --------------------------------
+                        // ========================================
 
                         if (
                             data.type ===
@@ -548,12 +1124,16 @@ startBtn.onclick =
 
                             }
 
+
+                            return;
+
                         }
+
 
                     } catch (error) {
 
                         console.error(
-                            "Data channel error:",
+                            "❌ Data channel error:",
                             error
                         );
 
@@ -640,11 +1220,11 @@ startBtn.onclick =
 
 
             // ========================================
-            // 8. SEND RAW SDP TO OUR SERVER
+            // 8. SEND SDP TO SERVER
             // ========================================
 
             status.innerText =
-                "Connecting to Kavya...";
+                "Connecting to Manoj...";
 
 
             const response =
@@ -652,7 +1232,8 @@ startBtn.onclick =
                     "/session",
                     {
 
-                        method: "POST",
+                        method:
+                            "POST",
 
                         headers: {
 
@@ -668,16 +1249,13 @@ startBtn.onclick =
                 );
 
 
-            // ========================================
-            // 9. CHECK SERVER RESPONSE
-            // ========================================
-
             if (
                 !response.ok
             ) {
 
                 const errorText =
                     await response.text();
+
 
                 throw new Error(
                     `Session request failed: ${errorText}`
@@ -687,7 +1265,7 @@ startBtn.onclick =
 
 
             // ========================================
-            // 10. RECEIVE OPENAI SDP ANSWER
+            // 9. RECEIVE OPENAI SDP ANSWER
             // ========================================
 
             const answerSdp =
@@ -700,13 +1278,14 @@ startBtn.onclick =
 
 
             // ========================================
-            // 11. SET REMOTE DESCRIPTION
+            // 10. SET REMOTE DESCRIPTION
             // ========================================
 
             await peerConnection.setRemoteDescription(
                 {
 
-                    type: "answer",
+                    type:
+                        "answer",
 
                     sdp:
                         answerSdp
@@ -773,6 +1352,20 @@ function disconnectConversation() {
 
 
     // --------------------------------
+    // Stop Manoj audio first
+    // --------------------------------
+
+    stopManojAudio();
+
+
+    // --------------------------------
+    // Cancel any OpenAI response
+    // --------------------------------
+
+    cancelCurrentOpenAIResponse();
+
+
+    // --------------------------------
     // Close data channel
     // --------------------------------
 
@@ -786,9 +1379,12 @@ function disconnectConversation() {
 
         } catch (error) {
 
-            console.log(error);
+            console.log(
+                error
+            );
 
         }
+
 
         dataChannel =
             null;
@@ -810,9 +1406,12 @@ function disconnectConversation() {
 
         } catch (error) {
 
-            console.log(error);
+            console.log(
+                error
+            );
 
         }
+
 
         peerConnection =
             null;
@@ -838,6 +1437,7 @@ function disconnectConversation() {
                 }
             );
 
+
         localStream =
             null;
 
@@ -855,13 +1455,33 @@ function disconnectConversation() {
         audioElement.srcObject =
             null;
 
+
         audioElement.remove();
+
 
         audioElement =
             null;
 
     }
 
+
+    // --------------------------------
+    // Reset state
+    // --------------------------------
+
+    currentAssistantText =
+        "";
+
+    responseInProgress =
+        false;
+
+    isSpeaking =
+        false;
+
+
+    // --------------------------------
+    // Update UI
+    // --------------------------------
 
     status.innerText =
         "Disconnected";
@@ -873,7 +1493,72 @@ function disconnectConversation() {
 
     addMessage(
         "ai",
-        "Disconnected from Kavya."
+        "Disconnected from Manoj."
     );
 
 }
+// ========================================
+// FINAL CLEANUP
+// ========================================
+
+// Make sure any remaining Manoj audio is stopped
+window.addEventListener(
+    "beforeunload",
+    function () {
+
+        try {
+
+            stopManojAudio();
+
+        } catch (error) {
+
+            console.log(
+                "Cleanup warning:",
+                error
+            );
+
+        }
+
+    }
+);
+
+
+// ========================================
+// INITIAL UI STATE
+// ========================================
+
+if (status) {
+
+    status.innerText =
+        "Disconnected";
+
+}
+
+
+if (startBtn) {
+
+    startBtn.disabled =
+        false;
+
+}
+
+
+console.log(
+    "✅ Manoj voice client loaded"
+);
+
+console.log(
+    "🛡️ Duplicate-response protection: ENABLED"
+);
+
+console.log(
+    "🛑 Voice interruption handling: ENABLED"
+);
+
+console.log(
+    "🎤 Echo cancellation: ENABLED"
+);
+
+console.log(
+    "🔊 ElevenLabs Manoj voice: ENABLED"
+);
