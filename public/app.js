@@ -1,4 +1,4 @@
-const startBtn =
+﻿const startBtn =
     document.getElementById("startBtn");
 
 const disconnectBtn =
@@ -26,12 +26,12 @@ let responseInProgress = false;
 // Identify the latest TTS request
 let ttsGeneration = 0;
 
-// Current ElevenLabs audio
-let currentManojAudio = null;
 
-// Current object URL
-let currentAudioUrl = null;
+// ========================================
+// ACTIVE PCM AUDIO SOURCES
+// ========================================
 
+let activePCMSourceNodes = [];
 
 // ========================================
 // ADD MESSAGE TO SCREEN
@@ -84,58 +84,62 @@ function stopManojAudio() {
     );
 
 
-    // Invalidate any previous TTS request
+    // ========================================
+    // INVALIDATE ANY PREVIOUS TTS REQUEST
+    // ========================================
+
     ttsGeneration++;
 
 
-    if (
-        currentManojAudio
-    ) {
-
-        try {
-
-            currentManojAudio.pause();
-
-            currentManojAudio.currentTime =
-                0;
-
-        } catch (error) {
-
-            console.log(
-                "Audio stop warning:",
-                error
-            );
-
-        }
-
-
-        currentManojAudio =
-            null;
-
-    }
-
+    // ========================================
+    // STOP ACTIVE PCM AUDIO SOURCES
+    // ========================================
 
     if (
-        currentAudioUrl
+        activePCMSourceNodes.length > 0
     ) {
 
-        try {
-
-            URL.revokeObjectURL(
-                currentAudioUrl
-            );
-
-        } catch (error) {
-
-            console.log(
-                error
-            );
-
-        }
+        console.log(
+            `🛑 Stopping ${activePCMSourceNodes.length} PCM audio source(s)`
+        );
 
 
-        currentAudioUrl =
-            null;
+        activePCMSourceNodes.forEach(
+            function (source) {
+
+                try {
+
+                    source.stop();
+
+                } catch (error) {
+
+                    // Source may have already finished.
+                    console.log(
+                        "PCM source stop warning:",
+                        error
+                    );
+
+                }
+
+                try {
+
+                    source.disconnect();
+
+                } catch (error) {
+
+                    console.log(
+                        "PCM source disconnect warning:",
+                        error
+                    );
+
+                }
+
+            }
+        );
+
+
+        activePCMSourceNodes =
+            [];
 
     }
 
@@ -144,8 +148,6 @@ function stopManojAudio() {
         false;
 
 }
-
-
 // ========================================
 // CANCEL CURRENT OPENAI RESPONSE
 // ========================================
@@ -176,14 +178,14 @@ function cancelCurrentOpenAIResponse() {
 
 
         console.log(
-            "🛑 OpenAI response cancelled"
+            "ðŸ›‘ OpenAI response cancelled"
         );
 
 
     } catch (error) {
 
         console.error(
-            "❌ Could not cancel OpenAI response:",
+            "âŒ Could not cancel OpenAI response:",
             error
         );
 
@@ -204,35 +206,57 @@ async function speakWithManoj(
         !text ||
         typeof text !== "string"
     ) {
-
         return;
-
     }
-
-
-    // ========================================
-    // STOP ANY PREVIOUS AUDIO
-    // ========================================
 
     stopManojAudio();
 
-
-    // Create a unique generation ID
     const myGeneration =
         ++ttsGeneration;
-
 
     try {
 
         isSpeaking =
             true;
 
-
         console.log(
             "🎙️ Sending text to ElevenLabs:",
             text
         );
 
+        // ========================================
+        // CREATE AUDIO CONTEXT
+        // ========================================
+
+        if (
+            !window.manojAudioContext
+        ) {
+
+            window.manojAudioContext =
+                new (
+                    window.AudioContext ||
+                    window.webkitAudioContext
+                )({
+                    sampleRate: 16000
+                });
+
+        }
+
+        const audioContext =
+            window.manojAudioContext;
+
+        if (
+            audioContext.state ===
+            "suspended"
+        ) {
+
+            await audioContext.resume();
+
+        }
+
+        // ========================================
+        // REQUEST ELEVENLABS PCM
+        // ========================================
 
         const response =
             await fetch(
@@ -260,26 +284,6 @@ async function speakWithManoj(
                 }
             );
 
-
-        // ========================================
-        // CHECK WHETHER THIS IS STILL THE
-        // ACTIVE TTS REQUEST
-        // ========================================
-
-        if (
-            myGeneration !==
-            ttsGeneration
-        ) {
-
-            console.log(
-                "🗑️ Ignoring old TTS response"
-            );
-
-            return;
-
-        }
-
-
         if (
             !response.ok
         ) {
@@ -287,12 +291,10 @@ async function speakWithManoj(
             const errorText =
                 await response.text();
 
-
             console.error(
                 "❌ ElevenLabs TTS error:",
                 errorText
             );
-
 
             isSpeaking =
                 false;
@@ -301,156 +303,313 @@ async function speakWithManoj(
 
         }
 
-
-        const audioBlob =
-            await response.blob();
-
-
-        // ========================================
-        // CHECK AGAIN AFTER DOWNLOAD
-        // ========================================
-
         if (
-            myGeneration !==
-            ttsGeneration
+            !response.body
         ) {
 
-            console.log(
-                "🗑️ Ignoring stale ElevenLabs audio"
+            console.error(
+                "❌ ElevenLabs returned no audio stream"
             );
+
+            isSpeaking =
+                false;
 
             return;
 
         }
 
+        // ========================================
+// STREAM PCM AUDIO DIRECTLY
+// ========================================
 
-        currentAudioUrl =
-            URL.createObjectURL(
-                audioBlob
+const reader =
+    response.body.getReader();
+
+let pcmBuffer =
+    new Uint8Array(0);
+
+let nextStartTime =
+    audioContext.currentTime + 0.08;
+
+let firstAudioStarted =
+    false;
+
+while (true) {
+
+    const {
+        done,
+        value
+    } =
+        await reader.read();
+
+    if (done) {
+        break;
+    }
+
+    // ------------------------------------
+    // IGNORE OLD REQUEST
+    // ------------------------------------
+
+    if (
+        myGeneration !==
+        ttsGeneration
+    ) {
+
+        try {
+            await reader.cancel();
+        } catch (_) {}
+
+        return;
+
+    }
+
+    if (
+        !value ||
+        value.length === 0
+    ) {
+
+        continue;
+
+    }
+
+    // ------------------------------------
+    // COMBINE PCM BYTES
+    // ------------------------------------
+
+    const combined =
+        new Uint8Array(
+            pcmBuffer.length +
+            value.length
+        );
+
+    combined.set(
+        pcmBuffer,
+        0
+    );
+
+    combined.set(
+        value,
+        pcmBuffer.length
+    );
+
+    pcmBuffer =
+        combined;
+
+    // ------------------------------------
+    // PCM16 NEEDS 2-BYTE SAMPLES
+    // ------------------------------------
+
+    const usableLength =
+        pcmBuffer.length -
+        (pcmBuffer.length % 2);
+
+    if (
+        usableLength <= 0
+    ) {
+
+        continue;
+
+    }
+
+    const usable =
+        pcmBuffer.slice(
+            0,
+            usableLength
+        );
+
+    pcmBuffer =
+        pcmBuffer.slice(
+            usableLength
+        );
+
+    // ------------------------------------
+    // PCM16 → FLOAT32
+    // ------------------------------------
+
+    const sampleCount =
+        usable.length / 2;
+
+    const floatSamples =
+        new Float32Array(
+            sampleCount
+        );
+
+    const view =
+        new DataView(
+            usable.buffer,
+            usable.byteOffset,
+            usable.byteLength
+        );
+
+    for (
+        let i = 0;
+        i < sampleCount;
+        i++
+    ) {
+
+        const sample =
+            view.getInt16(
+                i * 2,
+                true
             );
 
+        floatSamples[i] =
+            sample / 32768;
 
-        const audio =
-            new Audio(
-                currentAudioUrl
-            );
+    }
 
+    // ------------------------------------
+    // CREATE AUDIO BUFFER
+    // ------------------------------------
 
-        currentManojAudio =
-            audio;
+    const audioBuffer =
+        audioContext.createBuffer(
+            1,
+            floatSamples.length,
+            16000
+        );
 
+    audioBuffer
+        .getChannelData(0)
+        .set(floatSamples);
 
-        audio.volume =
-            1.0;
+    // ------------------------------------
+    // CREATE SOURCE
+    // ------------------------------------
 
+    const source =
+        audioContext.createBufferSource();
 
-        audio.onended =
-            function () {
+    source.buffer =
+        audioBuffer;
 
-                if (
-                    currentManojAudio ===
-                    audio
-                ) {
+    source.connect(
+        audioContext.destination
+    );
 
-                    currentManojAudio =
-                        null;
+    activePCMSourceNodes.push(
+        source
+    );
 
-                }
+    source.onended =
+        function () {
 
-
-                if (
-                    currentAudioUrl
-                ) {
-
-                    URL.revokeObjectURL(
-                        currentAudioUrl
-                    );
-
-                    currentAudioUrl =
-                        null;
-
-                }
-
-
-                isSpeaking =
-                    false;
-
-
-                console.log(
-                    "✅ Manoj audio finished"
+            const index =
+                activePCMSourceNodes.indexOf(
+                    source
                 );
 
-            };
+            if (
+                index !== -1
+            ) {
 
-
-        audio.onerror =
-            function () {
-
-                console.error(
-                    "❌ Manoj audio playback error"
+                activePCMSourceNodes.splice(
+                    index,
+                    1
                 );
 
+            }
 
-                if (
-                    currentManojAudio ===
-                    audio
-                ) {
+        };
 
-                    currentManojAudio =
-                        null;
+    // ------------------------------------
+    // SCHEDULE WITHOUT GAPS
+    // ------------------------------------
 
-                }
+    const startTime =
+        Math.max(
+            nextStartTime,
+            audioContext.currentTime + 0.01
+        );
 
+    source.start(
+        startTime
+    );
 
-                if (
-                    currentAudioUrl
-                ) {
+    nextStartTime =
+        startTime +
+        audioBuffer.duration;
 
-                    URL.revokeObjectURL(
-                        currentAudioUrl
-                    );
+    // ------------------------------------
+    // FIRST AUDIO
+    // ------------------------------------
 
-                    currentAudioUrl =
-                        null;
+    if (
+        !firstAudioStarted
+    ) {
 
-                }
-
-
-                isSpeaking =
-                    false;
-
-            };
-
+        firstAudioStarted =
+            true;
 
         console.log(
-            "🔊 Playing Manoj voice"
+            "🔊 First PCM chunk started"
         );
-
-
-        await audio.play();
-
-
-    } catch (error) {
-
-        console.error(
-            "❌ Manoj voice playback failed:",
-            error
-        );
-
-
-        isSpeaking =
-            false;
 
     }
 
 }
 
-
 // ========================================
-// KNOWLEDGE LOOKUP
+// STREAM FINISHED
 // ========================================
 
-async function handleKnowledgeLookup(
+console.log(
+    "✅ ElevenLabs PCM streaming finished"
+);
+
+if (
+    myGeneration ===
+    ttsGeneration
+) {
+
+    const remainingTime =
+        Math.max(
+            0,
+            (
+                nextStartTime -
+                audioContext.currentTime
+            ) * 1000
+        );
+
+    setTimeout(
+        function () {
+
+            if (
+                myGeneration ===
+                ttsGeneration
+            ) {
+
+                isSpeaking =
+                    false;
+
+            }
+
+        },
+        remainingTime
+    );
+
+}
+
+    } catch (error) {
+
+        console.error(
+            "❌ PCM TTS playback error:",
+            error
+        );
+
+        if (
+            myGeneration ===
+            ttsGeneration
+        ) {
+
+            isSpeaking =
+                false;
+
+        }
+
+    }
+
+}async function handleKnowledgeLookup(
     toolCallId,
     argumentsJson
 ) {
@@ -458,7 +617,7 @@ async function handleKnowledgeLookup(
     try {
 
         console.log(
-            "🔎 Knowledge lookup requested:",
+            "ðŸ”Ž Knowledge lookup requested:",
             argumentsJson
         );
 
@@ -476,7 +635,7 @@ async function handleKnowledgeLookup(
         } catch (error) {
 
             console.error(
-                "❌ Failed to parse tool arguments:",
+                "âŒ Failed to parse tool arguments:",
                 error
             );
 
@@ -496,7 +655,7 @@ async function handleKnowledgeLookup(
         ) {
 
             console.error(
-                "❌ Knowledge lookup query missing"
+                "âŒ Knowledge lookup query missing"
             );
 
             return;
@@ -551,7 +710,7 @@ async function handleKnowledgeLookup(
 
 
         console.log(
-            "📚 Knowledge result:",
+            "ðŸ“š Knowledge result:",
             result
         );
 
@@ -567,7 +726,7 @@ async function handleKnowledgeLookup(
         ) {
 
             console.error(
-                "❌ Data channel is not open"
+                "âŒ Data channel is not open"
             );
 
             return;
@@ -600,7 +759,7 @@ async function handleKnowledgeLookup(
 
 
         console.log(
-            "📤 Knowledge result sent to OpenAI"
+            "ðŸ“¤ Knowledge result sent to OpenAI"
         );
 
 
@@ -617,7 +776,7 @@ async function handleKnowledgeLookup(
     } catch (error) {
 
         console.error(
-            "❌ Knowledge lookup error:",
+            "âŒ Knowledge lookup error:",
             error
         );
 
@@ -715,7 +874,7 @@ startBtn.onclick =
 
 
             console.log(
-                "🎤 Microphone access granted"
+                "ðŸŽ¤ Microphone access granted"
             );
 
 
@@ -728,7 +887,7 @@ startBtn.onclick =
 
 
             console.log(
-                "🔗 RTCPeerConnection created"
+                "ðŸ”— RTCPeerConnection created"
             );
 
 
@@ -748,7 +907,7 @@ startBtn.onclick =
 
 
             console.log(
-                "🎤 Microphone track added"
+                "ðŸŽ¤ Microphone track added"
             );
 
 
@@ -783,7 +942,7 @@ startBtn.onclick =
                 function (event) {
 
                     console.log(
-                        "🔇 OpenAI audio received — not playing"
+                        "ðŸ”‡ OpenAI audio received â€” not playing"
                     );
 
                 };
@@ -803,17 +962,60 @@ startBtn.onclick =
                 function () {
 
                     console.log(
-                        "📡 OpenAI data channel connected"
+                        "ðŸ“¡ OpenAI data channel connected"
                     );
 
 
                     status.innerText =
-                        "Connected ✅";
+                        "Connected âœ…";
 
 
                     addMessage(
                         "ai",
                         "Connected to Manoj. You can speak now."
+                    );
+
+                                        dataChannel.send(
+                        JSON.stringify({
+
+                            type:
+                                "conversation.item.create",
+
+                            item: {
+
+                                type:
+                                    "message",
+
+                                role:
+                                    "user",
+
+                                content: [
+
+                                    {
+
+                                        type:
+                                            "input_text",
+
+                                        text:
+    "Start the conversation now. Your first greeting MUST be in English, regardless of the user's language. Say: Hi, I'm Manoj. How can I help you today? Keep it warm, natural, and brief."
+
+                                    }
+
+                                ]
+
+                            }
+
+                        })
+                    );
+
+
+                    dataChannel.send(
+                        JSON.stringify({
+
+                            type:
+                                "response.create"
+
+                        })
                     );
 
                 };
@@ -835,7 +1037,7 @@ startBtn.onclick =
 
 
                         console.log(
-                            "📩 OpenAI Event:",
+                            "ðŸ“© OpenAI Event:",
                             data
                         );
 
@@ -850,7 +1052,7 @@ startBtn.onclick =
                         ) {
 
                             console.error(
-                                "❌ OpenAI error:",
+                                "âŒ OpenAI error:",
                                 data
                             );
 
@@ -886,7 +1088,7 @@ startBtn.onclick =
                         ) {
 
                             console.log(
-                                "🎤 User started speaking"
+                                "ðŸŽ¤ User started speaking"
                             );
 
 
@@ -895,7 +1097,7 @@ startBtn.onclick =
                             ) {
 
                                 console.log(
-                                    "🛑 User interrupted Manoj"
+                                    "ðŸ›‘ User interrupted Manoj"
                                 );
 
 
@@ -948,7 +1150,7 @@ startBtn.onclick =
                         ) {
 
                             console.log(
-                                "🧠 OpenAI response started"
+                                "ðŸ§  OpenAI response started"
                             );
 
 
@@ -970,27 +1172,30 @@ startBtn.onclick =
                         // ========================================
 
                         if (
-                            data.type ===
-                            "response.output_text.delta"
-                        ) {
+    data.type ===
+    "response.output_text.delta"
+) {
 
-                            if (
-                                !responseInProgress
-                            ) {
+    if (
+        !responseInProgress
+    ) {
 
-                                responseInProgress =
-                                    true;
+        responseInProgress =
+            true;
 
-                            }
-
-
-                            currentAssistantText +=
-                                data.delta || "";
+    }
 
 
-                            return;
+    const delta =
+        data.delta || "";
 
-                        }
+
+    // Keep complete response for UI
+    currentAssistantText +=
+        delta;
+return;
+
+}
 
 
                         // ========================================
@@ -1011,7 +1216,7 @@ startBtn.onclick =
                             ) {
 
                                 console.log(
-                                    "🛑 Ignoring duplicate text completion"
+                                    "ðŸ›‘ Ignoring duplicate text completion"
                                 );
 
                                 return;
@@ -1024,8 +1229,6 @@ startBtn.onclick =
                                     data.text ||
                                     currentAssistantText
                                 ).trim();
-
-
                             responseInProgress =
                                 false;
 
@@ -1044,21 +1247,18 @@ startBtn.onclick =
 
 
                             console.log(
-                                "📝 OpenAI final response:",
+                                "ðŸ“ OpenAI final response:",
                                 finalText
                             );
+                            await speakWithManoj(
+    finalText
+);
 
 
                             addMessage(
                                 "ai",
                                 finalText
                             );
-
-
-                            await speakWithManoj(
-                                finalText
-                            );
-
 
                             return;
 
@@ -1093,7 +1293,7 @@ startBtn.onclick =
                         ) {
 
                             console.log(
-                                "🔎 Knowledge tool call received"
+                                "ðŸ”Ž Knowledge tool call received"
                             );
 
 
@@ -1133,7 +1333,7 @@ startBtn.onclick =
                     } catch (error) {
 
                         console.error(
-                            "❌ Data channel error:",
+                            "âŒ Data channel error:",
                             error
                         );
 
@@ -1161,7 +1361,7 @@ startBtn.onclick =
                     ) {
 
                         status.innerText =
-                            "Connected ✅";
+                            "Connected âœ…";
 
                     }
 
@@ -1215,7 +1415,7 @@ startBtn.onclick =
 
 
             console.log(
-                "📤 SDP offer created"
+                "ðŸ“¤ SDP offer created"
             );
 
 
@@ -1273,7 +1473,7 @@ startBtn.onclick =
 
 
             console.log(
-                "📥 OpenAI SDP answer received"
+                "ðŸ“¥ OpenAI SDP answer received"
             );
 
 
@@ -1295,18 +1495,18 @@ startBtn.onclick =
 
 
             console.log(
-                "✅ Remote description set"
+                "âœ… Remote description set"
             );
 
 
             status.innerText =
-                "Connected ✅";
+                "Connected âœ…";
 
 
         } catch (error) {
 
             console.error(
-                "❌ Voice connection error:",
+                "âŒ Voice connection error:",
                 error
             );
 
@@ -1347,7 +1547,7 @@ disconnectBtn.onclick =
 function disconnectConversation() {
 
     console.log(
-        "🔴 Disconnecting..."
+        "ðŸ”´ Disconnecting..."
     );
 
 
@@ -1544,21 +1744,31 @@ if (startBtn) {
 
 
 console.log(
-    "✅ Manoj voice client loaded"
+    "âœ… Manoj voice client loaded"
 );
 
 console.log(
-    "🛡️ Duplicate-response protection: ENABLED"
+    "ðŸ›¡ï¸ Duplicate-response protection: ENABLED"
 );
 
 console.log(
-    "🛑 Voice interruption handling: ENABLED"
+    "ðŸ›‘ Voice interruption handling: ENABLED"
 );
 
 console.log(
-    "🎤 Echo cancellation: ENABLED"
+    "ðŸŽ¤ Echo cancellation: ENABLED"
 );
 
 console.log(
-    "🔊 ElevenLabs Manoj voice: ENABLED"
+    "ðŸ”Š ElevenLabs Manoj voice: ENABLED"
 );
+
+
+
+
+
+
+
+
+
+

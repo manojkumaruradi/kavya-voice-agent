@@ -1,4 +1,4 @@
-const fs = require("fs");
+﻿const fs = require("fs");
 const express = require("express");
 const cors = require("cors");
 const expressWs = require("express-ws");
@@ -15,23 +15,23 @@ const { setupExotelSocket } = require("./exotelSocket");
 // ============================================================
 
 if (!process.env.OPENAI_API_KEY) {
-    console.error("❌ OPENAI_API_KEY is missing in .env");
+    console.error("âŒ OPENAI_API_KEY is missing in .env");
 }
 
 if (!process.env.SUPABASE_URL) {
-    console.error("❌ SUPABASE_URL is missing in .env");
+    console.error("âŒ SUPABASE_URL is missing in .env");
 }
 
 if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    console.error("❌ SUPABASE_SERVICE_ROLE_KEY is missing in .env");
+    console.error("âŒ SUPABASE_SERVICE_ROLE_KEY is missing in .env");
 }
 
 if (!process.env.ELEVENLABS_API_KEY) {
-    console.error("❌ ELEVENLABS_API_KEY is missing in .env");
+    console.error("âŒ ELEVENLABS_API_KEY is missing in .env");
 }
 
 if (!process.env.ELEVENLABS_VOICE_ID) {
-    console.error("❌ ELEVENLABS_VOICE_ID is missing in .env");
+    console.error("âŒ ELEVENLABS_VOICE_ID is missing in .env");
 }
 
 
@@ -50,7 +50,7 @@ const supabase = createClient(
     }
 );
 
-console.log("🗄️ Supabase client initialized");
+console.log("ðŸ—„ï¸ Supabase client initialized");
 
 
 // ============================================================
@@ -73,13 +73,13 @@ try {
     );
 
     console.log(
-        `📚 Local Knowledge Base available: ${knowledgeBase.length} characters`
+        `ðŸ“š Local Knowledge Base available: ${knowledgeBase.length} characters`
     );
 
 } catch (error) {
 
     console.log(
-        "⚠️ Local knowledge base file not found. Supabase RAG will be used."
+        "âš ï¸ Local knowledge base file not found. Supabase RAG will be used."
     );
 
 }
@@ -300,7 +300,7 @@ async function createEmbedding(text) {
     if (!response.ok) {
 
         console.error(
-            "❌ OpenAI embedding error:",
+            "âŒ OpenAI embedding error:",
             data
         );
 
@@ -332,14 +332,14 @@ async function createEmbedding(text) {
 async function searchSupabaseKnowledge(query) {
 
     console.log(
-        `🧠 Supabase RAG search: ${query}`
+        `ðŸ§  Supabase RAG search: ${query}`
     );
 
     const queryEmbedding =
         await createEmbedding(query);
 
     console.log(
-        `✅ Query embedding created: ${queryEmbedding.length} dimensions`
+        `âœ… Query embedding created: ${queryEmbedding.length} dimensions`
     );
 
     const { data, error } =
@@ -357,7 +357,7 @@ async function searchSupabaseKnowledge(query) {
     if (error) {
 
         console.error(
-            "❌ Supabase vector search error:",
+            "âŒ Supabase vector search error:",
             error
         );
 
@@ -367,14 +367,14 @@ async function searchSupabaseKnowledge(query) {
     if (!data || data.length === 0) {
 
         console.log(
-            "⚠️ No matching EA chunks found"
+            "âš ï¸ No matching EA chunks found"
         );
 
         return "";
     }
 
     console.log(
-        `🔎 Found ${data.length} relevant chunks`
+        `ðŸ”Ž Found ${data.length} relevant chunks`
     );
 
     const context = data
@@ -414,7 +414,7 @@ async function searchKnowledge(query) {
         }
 
         console.log(
-            "⚠️ Supabase returned no result. Using local fallback."
+            "âš ï¸ Supabase returned no result. Using local fallback."
         );
 
         return searchLocalKnowledgeBase(
@@ -424,12 +424,12 @@ async function searchKnowledge(query) {
     } catch (error) {
 
         console.error(
-            "❌ Supabase knowledge search failed:",
+            "âŒ Supabase knowledge search failed:",
             error.message
         );
 
         console.log(
-            "↩️ Falling back to local knowledge base"
+            "â†©ï¸ Falling back to local knowledge base"
         );
 
         return searchLocalKnowledgeBase(
@@ -538,12 +538,21 @@ app.post(
 
 
             console.log(
-                "🎙️ Starting ElevenLabs streaming TTS..."
+                "ðŸŽ™ï¸ Starting ElevenLabs streaming TTS..."
             );
 
 
-            const startTime =
-                Date.now();
+const modelId = "eleven_v3_conversational";
+
+console.log(
+    "ðŸŽ™ï¸ ElevenLabs TTS model:",
+    modelId
+);
+
+console.log(
+    "ðŸ“ TTS text:",
+    text
+);
 
 
             // ==================================================
@@ -553,9 +562,7 @@ app.post(
             const response =
                 await fetch(
 
-                    `https://api.elevenlabs.io/v1/text-to-speech/${process.env.ELEVENLABS_VOICE_ID}/stream?output_format=mp3_44100_128`,
-
-                    {
+`https://api.elevenlabs.io/v1/text-to-speech/${process.env.ELEVENLABS_VOICE_ID}/stream?output_format=pcm_16000`,                    {
 
                         method:
                             "POST",
@@ -577,8 +584,7 @@ app.post(
                                     text,
 
                                 model_id:
-                                    "eleven_flash_v2_5"
-
+    modelId
                             })
 
                     }
@@ -599,7 +605,7 @@ app.post(
 
 
                 console.error(
-                    "❌ ElevenLabs streaming error:",
+                    "âŒ ElevenLabs streaming error:",
                     errorText
                 );
 
@@ -623,7 +629,7 @@ app.post(
 
             res.setHeader(
                 "Content-Type",
-                "audio/mpeg"
+                "audio/pcm"
             );
 
             res.setHeader(
@@ -661,13 +667,6 @@ app.post(
                 response.body.getReader();
 
 
-            let firstChunk =
-                true;
-
-
-            let totalBytes =
-                0;
-
 
             while (true) {
 
@@ -691,28 +690,6 @@ app.post(
                     value
                 ) {
 
-                    totalBytes +=
-                        value.length;
-
-
-                    // ------------------------------------------
-                    // FIRST AUDIO CHUNK
-                    // ------------------------------------------
-
-                    if (
-                        firstChunk
-                    ) {
-
-                        console.log(
-                            `⚡ First ElevenLabs audio chunk received in ${Date.now() - startTime}ms`
-                        );
-
-
-                        firstChunk =
-                            false;
-
-                    }
-
 
                     // ------------------------------------------
                     // SEND CHUNK TO BROWSER
@@ -729,10 +706,6 @@ app.post(
             }
 
 
-            console.log(
-                `✅ ElevenLabs stream completed: ${totalBytes} bytes`
-            );
-
 
             res.end();
 
@@ -740,7 +713,7 @@ app.post(
         } catch (error) {
 
             console.error(
-                "❌ Manoj streaming TTS error:",
+                "âŒ Manoj streaming TTS error:",
                 error
             );
 
@@ -774,7 +747,7 @@ app.post(
             } catch (endError) {
 
                 console.error(
-                    "❌ Failed to close TTS response:",
+                    "âŒ Failed to close TTS response:",
                     endError
                 );
 
@@ -838,7 +811,7 @@ app.post(
 
 
             console.log(
-                `🔎 Knowledge search request: ${query}`
+                `ðŸ”Ž Knowledge search request: ${query}`
             );
 
 
@@ -864,7 +837,7 @@ app.post(
         } catch (error) {
 
             console.error(
-                "❌ Knowledge search API error:",
+                "âŒ Knowledge search API error:",
                 error
             );
 
@@ -905,7 +878,7 @@ app.post(
             );
 
             console.log(
-                "🌐 WEBRTC SESSION REQUEST"
+                "ðŸŒ WEBRTC SESSION REQUEST"
             );
 
             console.log(
@@ -926,7 +899,7 @@ app.post(
             ) {
 
                 console.log(
-                    "❌ SDP offer missing or invalid"
+                    "âŒ SDP offer missing or invalid"
                 );
 
                 return res
@@ -941,7 +914,7 @@ app.post(
 
 
             console.log(
-                "✅ SDP offer received"
+                "âœ… SDP offer received"
             );
 
             console.log(
@@ -970,104 +943,62 @@ app.post(
 
             const manojInstructions = `
 
-You are Manoj.
-
-You are a friendly, natural conversational AI assistant.
-
-Have a normal conversation with the user.
-
-Respond in the same language the user speaks:
-
-LANGUAGE RULES — VERY IMPORTANT:
-
-First identify the language of the user's latest message.
-
-If the user speaks Telugu:
-- Respond ONLY in natural conversational Telugu.
-- Do NOT respond in Hindi.
-- Do NOT respond in Tamil.
-- English professional terms can be used naturally.
-- If Telugu contains English words, it is still Telugu.
-
-If the user speaks Hindi:
-- Respond ONLY in natural conversational Hindi.
-- Do NOT respond in Telugu.
-- Do NOT respond in Tamil.
-- English professional terms can be used naturally.
-
-If the user speaks English:
-- Respond ONLY in natural conversational English.
-
-NEVER change the response language unless the user changes their
-language.
-
-Examples:
-
-User:
-"EA course gurinchi cheppu"
-
-Response:
-Natural conversational Telugu.
-
-User:
-"Naaku eligibility enti?"
-
-Response:
-Natural conversational Telugu.
-
-User:
-"EA course ke baare mein batao"
-
-Response:
-Natural conversational Hindi.
-
-User:
-"Tell me about the EA course."
-
-Response:
-Natural conversational English.
-
-IMPORTANT:
-Telugu must never be automatically converted into Hindi or Tamil.
-The user's latest spoken language determines the response language.
-
 TELUGU VOICE STYLE:
 
 When speaking Telugu, use natural everyday conversational Telugu,
 especially Telangana-style conversational Telugu.
 
-Do not use formal, literary, textbook, news-reader, or translated Telugu.
+IMPORTANT FOR SPEECH:
 
-Speak like a normal person having a friendly conversation.
+- Write Telugu words only in Telugu Unicode script.
+- NEVER write Telugu words using English/Roman letters.
+- Do NOT transliterate Telugu into English letters.
+- Use Telugu script because the response will be sent to a Telugu TTS voice.
+- Avoid unnecessary symbols, emojis, decorative characters, and special punctuation.
+- Do not use markdown formatting in spoken responses.
+- Do not use bullet points, numbered lists, headings, brackets, or quotation marks unless absolutely necessary.
+- Keep spoken sentences short and natural.
+- Use simple conversational Telugu that is easy for a voice assistant to pronounce.
+- Common English words can remain in English when naturally used in Telugu conversation.
+- Avoid overly formal, literary, textbook, translated, or news-reader Telugu.
+- Do not translate English sentences word-for-word into Telugu.
+- Avoid long sentences with many clauses.
+- Use natural pauses through normal punctuation such as commas and full stops.
 
-Use Telugu naturally mixed with commonly used English words.
+Examples:
 
-Keep sentences short and easy to speak.
+WRONG:
+"Sare, meeku help chestanu."
 
-Use casual conversational words such as:
-"okay", "sare", "avunu", "ledu", "cheppandi", "chuddam",
-"mee background enti?", "meeku em kavali?", "adi okay",
-when they naturally fit the conversation.
+CORRECT:
+"సరే, మీకు హెల్ప్ చేస్తాను."
 
-Do not translate English sentences word-for-word into Telugu.
+WRONG:
+"Naaku ardham ayyindi."
 
-Avoid formal phrases such as:
-"మీకు అవసరమైన సమాచారాన్ని అందించగలను"
-"మీరు ఈ కోర్సును అభ్యసించుటకు"
-"దయచేసి మీ వివరాలను తెలియజేయండి"
+CORRECT:
+"నాకు అర్థం అయింది."
 
-Prefer natural conversational wording such as:
-"Meeku information kavali ante cheptha."
-"Meeru mee background cheppandi."
-"Okay, adi chuddam."
-"Meeku exact ga em telusukovali?"
+WRONG:
+"Meeru cheppandi, nenu solution chepthanu."
 
-The response should sound like a normal human conversation,
-not like a presentation or news reading.
+CORRECT:
+"మీరు చెప్పండి, నేను సొల్యూషన్ చెప్తాను."
 
-Keep Telugu responses concise, usually 1–3 sentences.
+VOICE OUTPUT RULE:
 
+The response must be clean text suitable for direct text-to-speech.
+
+Do not include emojis.
+Do not include decorative symbols.
+Do not include markdown.
+Do not include meta commentary.
+Do not include pronunciation instructions.
+Do not include English/Roman transliteration of Telugu.
+
+Keep Telugu responses concise, usually 1–3 short sentences.
 `;
+
             // ==================================================
             // REALTIME SESSION CONFIGURATION
             // ==================================================
@@ -1078,13 +1009,13 @@ Keep Telugu responses concise, usually 1–3 sentences.
             // We are testing only:
             //
             // User
-            //   ↓
+            //   â†“
             // OpenAI
-            //   ↓
+            //   â†“
             // Text
-            //   ↓
+            //   â†“
             // ElevenLabs
-            //   ↓
+            //   â†“
             // Manoj Voice
             //
             // The existing knowledge-base files, Supabase data,
@@ -1125,7 +1056,7 @@ Keep Telugu responses concise, usually 1–3 sentences.
 
 
             console.log(
-                "📤 Sending SDP to OpenAI..."
+                "ðŸ“¤ Sending SDP to OpenAI..."
             );
 
 
@@ -1176,7 +1107,7 @@ Keep Telugu responses concise, usually 1–3 sentences.
             if (!response.ok) {
 
                 console.log(
-                    "❌ OPENAI WEBRTC ERROR"
+                    "âŒ OPENAI WEBRTC ERROR"
                 );
 
                 console.log(
@@ -1198,7 +1129,7 @@ Keep Telugu responses concise, usually 1–3 sentences.
             // ==================================================
 
             console.log(
-                "✅ OpenAI SDP answer received"
+                "âœ… OpenAI SDP answer received"
             );
 
             console.log(
@@ -1223,7 +1154,7 @@ Keep Telugu responses concise, usually 1–3 sentences.
             );
 
             console.log(
-                "❌ WEBRTC SESSION ERROR"
+                "âŒ WEBRTC SESSION ERROR"
             );
 
             console.log(
@@ -1262,7 +1193,7 @@ app.ws(
     (ws, req) => {
 
         console.log(
-            "📞 Incoming Exotel WebSocket"
+            "ðŸ“ž Incoming Exotel WebSocket"
         );
 
 
@@ -1305,23 +1236,23 @@ app.listen(
     () => {
 
         console.log(
-            `🚀 Server running on port ${PORT}`
+            `ðŸš€ Server running on port ${PORT}`
         );
 
         console.log(
-            `🧠 Supabase RAG: ENABLED`
+            `ðŸ§  Supabase RAG: ENABLED`
         );
 
         console.log(
-            `🔎 Knowledge API: http://localhost:${PORT}/knowledge-search`
+            `ðŸ”Ž Knowledge API: http://localhost:${PORT}/knowledge-search`
         );
 
         console.log(
-            `🎙️ ElevenLabs TTS: ENABLED`
+            `ðŸŽ™ï¸ ElevenLabs TTS: ENABLED`
         );
 
         console.log(
-            `🗣️ Voice ID: ${process.env.ELEVENLABS_VOICE_ID}`
+            `ðŸ—£ï¸ Voice ID: ${process.env.ELEVENLABS_VOICE_ID}`
         );
 
     }
