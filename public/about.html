@@ -89,25 +89,48 @@
 
     .nav {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 78px;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(1160px, calc(100% - 32px));
+      height: 70px;
       z-index: 1000;
-      padding: 0 6%;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      background: rgba(5,5,5,.76);
+      padding: 10px 12px 10px 20px;
+      background: rgba(8, 8, 8, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
       backdrop-filter: blur(18px);
-      border-bottom: 1px solid var(--line);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow:
+        0 15px 50px rgba(0, 0, 0, 0.35),
+        inset 0 1px rgba(255, 255, 255, 0.04);
     }
 
     .logo {
-      font-family: "Space Grotesk", sans-serif;
-      font-size: 25px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      font-family: "Inter", sans-serif;
+      font-size: 20px;
       font-weight: 700;
-      letter-spacing: -1px;
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .logo::before {
+      content: "M";
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: linear-gradient(145deg, #f5c542, #d4af37);
+      color: #050505;
+      font-size: 15px;
+      font-weight: 800;
+      box-shadow: 0 0 22px rgba(245, 197, 66, 0.18);
     }
 
     .logo span {
@@ -115,9 +138,13 @@
     }
 
     .nav-links {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
       display: flex;
       align-items: center;
       gap: 30px;
+      white-space: nowrap;
     }
 
     .nav-links a {
@@ -783,12 +810,17 @@
     @media(max-width:900px) {
 
       .nav {
+        top: 10px;
         height: 70px;
         padding: 0 5%;
+        width: calc(100% - 20px);
       }
 
       .menu-btn {
-        display: block;
+        display: grid;
+        place-items: center;
+        margin-left: auto;
+        flex-shrink: 0;
       }
 
       .nav-links {
@@ -796,26 +828,35 @@
         top: 70px;
         left: 0;
         width: 100%;
+        transform: none;
         display: none;
         flex-direction: column;
         align-items: flex-start;
-        gap: 17px;
+        gap: 0;
         padding: 18px 5%;
         background: rgba(5,5,5,.98);
-        border-bottom: 1px solid var(--line);
+        border: 1px solid var(--line);
+        border-radius: 0 0 16px 16px;
+        box-shadow: 0 20px 45px rgba(0,0,0,.35);
+        z-index: 1001;
       }
 
       .nav-links.open {
         display: flex;
       }
 
-      .nav-cta {
-        width: auto;
-        min-width: 112px;
-        height: 42px;
-        padding: 0 14px;
-        text-align: center;
-        font-size: 11px;
+      .nav-links a {
+        width: 100%;
+        padding: 13px 0;
+        border-bottom: 1px solid rgba(255,255,255,.06);
+      }
+
+      .nav-links a:last-child {
+        border-bottom: 0;
+      }
+
+      .nav-links .nav-cta {
+        display: none !important;
       }
 
       section {
@@ -970,11 +1011,11 @@
 
       <a href="contact.html">Contact</a>
 
-      <a href="contact.html" class="nav-cta">
-        Request Demo
-      </a>
-
     </div>
+
+    <a href="contact.html" class="nav-cta">
+      Request Demo →
+    </a>
 
   </nav>
 

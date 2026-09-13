@@ -16,8 +16,10 @@ body{background:var(--black);color:var(--white);font-family:Inter,sans-serif;lin
 body:before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(circle at 12% 10%,rgba(245,197,66,.10),transparent 25%),radial-gradient(circle at 88% 45%,rgba(212,175,55,.07),transparent 28%),radial-gradient(circle at 50% 100%,rgba(245,197,66,.04),transparent 32%)}
 body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.18;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:70px 70px}
 a{text-decoration:none;color:inherit}.container{width:min(1180px,90%);margin:auto}
-.nav{position:fixed;top:0;left:0;width:100%;height:78px;z-index:1000;padding:0 6%;display:flex;align-items:center;justify-content:space-between;background:rgba(5,5,5,.78);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
-.logo{font:700 25px "Space Grotesk";letter-spacing:-1px}.logo span{color:var(--yellow)}
+.nav{position:fixed;top:16px;left:50%;transform:translateX(-50%);width:min(1160px,calc(100% - 32px));height:70px;z-index:1000;padding:0 22px;display:flex;align-items:center;justify-content:space-between;background:rgba(5,5,5,.86);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:18px;box-shadow:0 18px 45px rgba(0,0,0,.25)}
+.logo{display:flex;align-items:center;gap:10px;font:700 25px "Space Grotesk";letter-spacing:-1px;color:#fff}
+.logo:before{content:"M";display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--yellow),var(--gold));color:#080808;font:800 17px "Space Grotesk";box-shadow:0 8px 20px rgba(245,197,66,.14)}
+.logo span{color:var(--yellow)}
 .nav-links{position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:30px}
 .nav-links a{color:#aaa;font-size:14px;white-space:nowrap;transition:.25s}.nav-links a:hover,.nav-links a.active{color:var(--yellow)}
 .nav-cta{padding:10px 18px;border-radius:999px;border:1px solid rgba(245,197,66,.3);color:var(--yellow)!important;background:rgba(245,197,66,.05)}
@@ -33,7 +35,7 @@ h1,h2,h3{font-family:"Space Grotesk",sans-serif}.hero h1{margin-top:25px;font-si
 .whatsapp{position:fixed;right:22px;bottom:22px;z-index:900;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:#25d366;color:#061b0d;font-size:23px;font-weight:800;box-shadow:0 12px 35px rgba(37,211,102,.2)}
 footer{padding:30px 0;border-top:1px solid var(--line);color:#626262;font-size:12px}.footer-inner{display:flex;justify-content:space-between;gap:20px}.footer-links{display:flex;gap:22px;flex-wrap:wrap}.footer-links a:hover{color:var(--yellow)}
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}.reveal.visible{opacity:1;transform:none}
-@media(max-width:900px){.nav{height:70px;padding:0 5%}.nav-links{position:absolute;left:0;top:70px;transform:none;width:100%;display:none;flex-direction:column;align-items:flex-start;gap:17px;padding:18px 5%;background:rgba(5,5,5,.98);border-bottom:1px solid var(--line)}.nav-links.open{display:flex}.nav-cta{width:auto;min-width:112px;height:42px;padding:0 14px;text-align:center;font-size:11px}.menu-btn{display:block}.hero{padding-top:120px}.hero-grid{grid-template-columns:1fr;gap:45px}.info-grid{grid-template-columns:1fr}.form-shell{padding:22px}}
+@media(max-width:900px){.nav{height:70px;padding:0 14px}.menu-btn{display:grid;place-items:center;margin-left:auto;flex-shrink:0}.nav-links{position:absolute;top:70px;left:0;width:100%;transform:none;display:none;flex-direction:column;align-items:flex-start;gap:0;padding:18px 5%;background:rgba(5,5,5,.98);border:1px solid var(--line);border-radius:0 0 16px 16px;box-shadow:0 20px 45px rgba(0,0,0,.35);z-index:1001}.nav-links.open{display:flex}.nav-links a{width:100%;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.06)}.nav-links a:last-child{border-bottom:0}.nav-cta{display:none!important}.hero{padding-top:120px}.hero-grid{grid-template-columns:1fr;gap:45px}.info-grid{grid-template-columns:1fr}.form-shell{padding:22px}}
 @media(max-width:520px){.container{width:91%}.hero h1{font-size:49px;letter-spacing:-2.5px}.hero-copy{font-size:15px}.row{grid-template-columns:1fr}.form-shell{border-radius:22px;padding:18px}.footer-inner{flex-direction:column}.whatsapp{right:16px;bottom:16px}}
 </style>
 </head>
@@ -41,8 +43,9 @@ footer{padding:30px 0;border-top:1px solid var(--line);color:#626262;font-size:1
 <nav class="nav">
 <a href="landing.html" class="logo">Manoj<span>.</span></a>
 <div class="nav-links" id="navLinks">
-<a href="landing.html">Home</a><a href="product.html">Product</a><a href="solutions.html">Solutions</a><a href="roadmap.html">Roadmap</a><a href="about.html">About</a><a href="contact.html" class="active">Contact</a><a href="index.html" class="nav-cta">Try Manoj</a>
+<a href="landing.html">Home</a><a href="product.html">Product</a><a href="solutions.html">Solutions</a><a href="roadmap.html">Roadmap</a><a href="about.html">About</a><a href="contact.html" class="active">Contact</a>
 </div>
+<a href="contact.html" class="nav-cta">Request Demo →</a>
 <button type="button" class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">☰</button>
 </nav>
 
