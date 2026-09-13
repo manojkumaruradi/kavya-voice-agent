@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Manoj AI Voice Agent | Solutions</title>
+  <meta name="description" content="See how Manoj AI Voice Agent can support lead qualification, admissions, sales enquiries, customer conversations and follow-ups.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --black:#050505;
+      --dark:#0c0c0c;
+      --card:#101010;
+      --gold:#d4af37;
+      --yellow:#f5c542;
+      --cream:#f7e7b4;
+      --white:#fff;
+      --muted:#929292;
+      --line:rgba(255,255,255,.08);
+    }
+
+    * {
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    html {
+      scroll-behavior:smooth;
+    }
+
+    body {
+      background:var(--black);
+      color:var(--white);
+      font-family:"Inter",sans-serif;
+      line-height:1.6;
+      overflow-x:hidden;
+    }
+
+    body::before {
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:-2;
+      background:
+        radial-gradient(circle at 15% 15%,rgba(245,197,66,.09),transparent 27%),
+        radial-gradient(circle at 85% 45%,rgba(212,175,55,.06),transparent 28%),
+        radial-gradient(circle at 50% 100%,rgba(245,197,66,.045),transparent 30%);
+    }
+
+    body::after {
+      content:"";
+      position:fixed;
+      inset:0;
+      z-index:-1;
+      pointer-events:none;
+      opacity:.2;
+      background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+      background-size:70px 70px;
+      mask-image:linear-gradient(to bottom,black,transparent 90%);
+    }
+
+    a {
+      text-decoration:none;
+      color:inherit;
+    }
+
+    .container {
+      width:min(1180px,90%);
+      margin:auto;
+    }
+
+    /* NAV */
+
+.nav {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: min(1160px, calc(100% - 32px));
+  height: 70px;
+
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+
+  padding: 10px 12px 10px 20px;
+
+  background: rgba(8, 8, 8, 0.82);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  box-shadow:
+    0 15px 50px rgba(0, 0, 0, 0.35),
+    inset 0 1px rgba(255, 255, 255, 0.04);
+}
+
+
+/* LOGO */
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+
+  color: #ffffff;
+
+  white-space: nowrap;
+}
+
+.logo-mark {
+  width: 36px;
+  height: 36px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 10px;
+
+  background: linear-gradient(
+    145deg,
+    #f5c542,
+    #d4af37
+  );
+
+  color: #050505;
+
+  font-size: 15px;
+  font-weight: 800;
+}
+
+
+/* NAVIGATION */
+
+.nav-links {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: center;
+  gap: 30px;
+
+  white-space: nowrap;
+}
+
+.nav-links a {
+  color: #a5a5a5;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  text-decoration: none;
+
+  transition:
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.nav-links a:hover {
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.nav-links a.active {
+  color: #f5c542;
+}
+
+
+/* REQUEST DEMO */
+
+.nav-cta {
+  margin-left: auto;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 148px;
+  height: 48px;
+
+  padding: 0 20px;
+
+  border-radius: 14px;
+
+  background: #f5c542;
+
+  color: #050505 !important;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  text-decoration: none;
+}
+
+
+/* MOBILE MENU */
+
+.menu-btn {
+  display: none;
+
+  width: 42px;
+  height: 42px;
+
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 11px;
+
+  background: rgba(255,255,255,0.04);
+
+  color: #ffffff;
+
+  cursor: pointer;
+}
+
+    /* COMMON */
+
+    section {
+      padding:115px 0;
+    }
+
+    .eyebrow {
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 12px;
+      border:1px solid rgba(245,197,66,.2);
+      border-radius:999px;
+      background:rgba(245,197,66,.04);
+      color:var(--cream);
+      font-size:11px;
+      letter-spacing:1px;
+      text-transform:uppercase;
+    }
+
+    .eyebrow::before {
+      content:"";
+      width:6px;
+      height:6px;
+      border-radius:50%;
+      background:var(--yellow);
+      box-shadow:0 0 12px var(--yellow);
+    }
+
+    h1,h2,h3 {
+      font-family:"Space Grotesk",sans-serif;
+    }
+
+    .section-title {
+      margin-top:22px;
+      max-width:850px;
+      font-size:clamp(40px,5.5vw,70px);
+      line-height:1.02;
+      letter-spacing:-2.5px;
+    }
+
+    .gold {
+      color:var(--yellow);
+    }
+
+    .section-text {
+      margin-top:20px;
+      max-width:680px;
+      color:var(--muted);
+      font-size:17px;
+    }
+
+    /* HERO */
+
+    .hero {
+      min-height:100vh;
+      padding-top:150px;
+      display:flex;
+      align-items:center;
+    }
+
+    .hero-grid {
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      align-items:center;
+      gap:70px;
+    }
+
+    .hero h1 {
+      margin-top:25px;
+      max-width:800px;
+      font-size:clamp(52px,6.7vw,88px);
+      line-height:.97;
+      letter-spacing:-4px;
+    }
+
+    .hero-text {
+      margin-top:26px;
+      max-width:650px;
+      color:#999;
+      font-size:18px;
+    }
+
+    .hero-buttons {
+      margin-top:34px;
+      display:flex;
+      gap:13px;
+      flex-wrap:wrap;
+    }
+
+    .btn {
+      min-height:50px;
+      padding:0 22px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:999px;
+      font-size:14px;
+      font-weight:600;
+      transition:.3s;
+    }
+
+    .btn-primary {
+      color:#070707;
+      background:linear-gradient(135deg,var(--yellow),var(--gold));
+      box-shadow:0 12px 40px rgba(245,197,66,.12);
+    }
+
+    .btn-primary:hover {
+      transform:translateY(-2px);
+      box-shadow:0 16px 45px rgba(245,197,66,.2);
+    }
+
+    .btn-secondary {
+      border:1px solid var(--line);
+      color:#ccc;
+      background:rgba(255,255,255,.025);
+    }
+
+    .btn-secondary:hover {
+      border-color:rgba(245,197,66,.3);
+      color:var(--yellow);
+    }
+
+    /* HERO VISUAL */
+
+    .solution-visual {
+      min-height:510px;
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .visual-ring {
+      width:280px;
+      height:280px;
+      border:1px solid rgba(245,197,66,.3);
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:radial-gradient(circle,rgba(245,197,66,.13),transparent 68%);
+      box-shadow:0 0 90px rgba(245,197,66,.08);
+      position:relative;
+    }
+
+    .visual-ring::before,
+    .visual-ring::after {
+      content:"";
+      position:absolute;
+      border-radius:50%;
+      border:1px solid rgba(245,197,66,.1);
+    }
+
+    .visual-ring::before {
+      inset:-35px;
+    }
+
+    .visual-ring::after {
+      inset:-70px;
+    }
+
+    .visual-center {
+      width:135px;
+      height:135px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#090909;
+      border:1px solid rgba(245,197,66,.3);
+      color:var(--yellow);
+      font:700 42px "Space Grotesk";
+    }
+
+    .solution-card {
+      position:absolute;
+      width:180px;
+      padding:17px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.09);
+      background:rgba(14,14,14,.9);
+      backdrop-filter:blur(15px);
+      box-shadow:0 20px 60px rgba(0,0,0,.35);
+      animation:float 4s ease-in-out infinite;
+    }
+
+    .solution-card strong {
+      display:block;
+      font-size:13px;
+    }
+
+    .solution-card small {
+      display:block;
+      color:#777;
+      margin-top:4px;
+      font-size:10px;
+    }
+
+    .sc1 {
+      top:45px;
+      right:0;
+    }
+
+    .sc2 {
+      bottom:75px;
+      left:0;
+      animation-delay:.7s;
+    }
+
+    .sc3 {
+      bottom:15px;
+      right:40px;
+      animation-delay:1.4s;
+    }
+
+    @keyframes float {
+      0%,100% {transform:translateY(0)}
+      50% {transform:translateY(-10px)}
+    }
+
+    /* INDUSTRIES */
+
+    .industry-strip {
+      padding:24px 0;
+      overflow:hidden;
+      border-top:1px solid var(--line);
+      border-bottom:1px solid var(--line);
+    }
+
+    .industry-track {
+      width:max-content;
+      display:flex;
+      gap:55px;
+      color:#696969;
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:1.8px;
+      animation:marquee 25s linear infinite;
+    }
+
+    .industry-track span::before {
+      content:"✦";
+      color:var(--gold);
+      margin-right:55px;
+    }
+
+    @keyframes marquee {
+      to {transform:translateX(-50%)}
+    }
+
+    /* SOLUTIONS GRID */
+
+    .solutions-grid {
+      scroll-margin-top:110px;
+      margin-top:60px;
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:18px;
+    }
+
+    .solution-box {
+      min-height:310px;
+      padding:30px;
+      border:1px solid var(--line);
+      border-radius:23px;
+      background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.015));
+      position:relative;
+      overflow:hidden;
+      transition:.35s;
+    }
+
+    .solution-box:hover {
+      transform:translateY(-5px);
+      border-color:rgba(245,197,66,.3);
+    }
+
+    .solution-box::after {
+      content:"";
+      position:absolute;
+      width:170px;
+      height:170px;
+      right:-90px;
+      bottom:-90px;
+      border-radius:50%;
+      background:rgba(245,197,66,.06);
+    }
+
+    .solution-icon {
+      width:50px;
+      height:50px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:14px;
+      border:1px solid rgba(245,197,66,.2);
+      background:rgba(245,197,66,.06);
+      color:var(--yellow);
+      font-size:20px;
+    }
+
+    .solution-box h3 {
+      margin-top:27px;
+      font-size:25px;
+    }
+
+    .solution-box p {
+      margin-top:10px;
+      color:#858585;
+      font-size:14px;
+      max-width:520px;
+    }
+
+    .solution-list {
+      margin-top:20px;
+      display:grid;
+      gap:8px;
+    }
+
+    .solution-list div {
+      color:#aaa;
+      font-size:12px;
+    }
+
+    .solution-list span {
+      color:var(--yellow);
+      margin-right:8px;
+    }
+
+    /* FEATURE STORY */
+
+    .story {
+      background:linear-gradient(180deg,transparent,rgba(245,197,66,.025),transparent);
+    }
+
+    .story-grid {
+      margin-top:65px;
+      display:grid;
+      grid-template-columns:.9fr 1.1fr;
+      gap:70px;
+      align-items:center;
+    }
+
+    .story-copy h3 {
+      font-size:39px;
+      line-height:1.08;
+    }
+
+    .story-copy p {
+      margin-top:18px;
+      color:#888;
+      font-size:15px;
+    }
+
+    .steps {
+      margin-top:28px;
+      display:grid;
+      gap:12px;
+    }
+
+    .step {
+      display:flex;
+      gap:14px;
+      padding:15px;
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:14px;
+      background:rgba(255,255,255,.02);
+    }
+
+    .step-number {
+      color:var(--yellow);
+      font:600 13px "Space Grotesk";
+      min-width:28px;
+    }
+
+    .step strong {
+      font-size:13px;
+    }
+
+    .step p {
+      margin-top:2px;
+      font-size:11px;
+    }
+
+    /* FLOW VISUAL */
+
+    .flow-board {
+      padding:25px;
+      border-radius:25px;
+      border:1px solid rgba(255,255,255,.09);
+      background:#0a0a0a;
+      box-shadow:0 30px 80px rgba(0,0,0,.3);
+    }
+
+    .flow-title {
+      display:flex;
+      justify-content:space-between;
+      padding-bottom:18px;
+      border-bottom:1px solid var(--line);
+    }
+
+    .flow-title strong {
+      font-family:"Space Grotesk";
+    }
+
+    .flow-title span {
+      color:var(--yellow);
+      font-size:11px;
+    }
+
+    .flow {
+      margin-top:30px;
+      display:grid;
+      gap:10px;
+    }
+
+    .flow-node {
+      min-height:75px;
+      padding:15px;
+      border:1px solid rgba(255,255,255,.07);
+      border-radius:14px;
+      background:#111;
+      display:flex;
+      align-items:center;
+      gap:15px;
+    }
+
+    .node-icon {
+      width:38px;
+      height:38px;
+      border-radius:11px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:var(--yellow);
+      background:rgba(245,197,66,.07);
+      border:1px solid rgba(245,197,66,.15);
+    }
+
+    .flow-node strong {
+      font-size:13px;
+    }
+
+    .flow-node small {
+      display:block;
+      color:#707070;
+      font-size:10px;
+      margin-top:2px;
+    }
+
+    .arrow {
+      text-align:center;
+      color:var(--gold);
+      font-size:15px;
+    }
+
+    /* WHY */
+
+    .why-grid {
+      margin-top:60px;
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:18px;
+    }
+
+    .why-card {
+      padding:28px;
+      min-height:240px;
+      border-radius:20px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.025);
+    }
+
+    .why-card span {
+      color:var(--yellow);
+      font:700 13px "Space Grotesk";
+    }
+
+    .why-card h3 {
+      margin-top:35px;
+      font-size:21px;
+    }
+
+    .why-card p {
+      margin-top:10px;
+      color:#818181;
+      font-size:13px;
+    }
+
+    /* COMPARISON */
+
+    .comparison {
+      margin-top:60px;
+      border:1px solid var(--line);
+      border-radius:24px;
+      overflow:hidden;
+      background:#0a0a0a;
+    }
+
+    .comparison-row {
+      display:grid;
+      grid-template-columns:1.4fr 1fr 1fr;
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+
+    .comparison-row:last-child {
+      border-bottom:0;
+    }
+
+    .comparison-row > div {
+      padding:18px 20px;
+      font-size:12px;
+      color:#858585;
+    }
+
+    .comparison-row.header > div {
+      color:#666;
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:1px;
+    }
+
+    .comparison-row > div:first-child {
+      color:#bbb;
+    }
+
+    .comparison-row > div:nth-child(2) {
+      color:var(--yellow);
+    }
+
+    /* CTA */
+
+    .cta {
+      padding:150px 0;
+      text-align:center;
+    }
+
+    .cta h2 {
+      max-width:850px;
+      margin:20px auto 0;
+      font-size:clamp(43px,6vw,76px);
+      line-height:1;
+      letter-spacing:-3px;
+    }
+
+    .cta p {
+      max-width:570px;
+      margin:20px auto 30px;
+      color:#858585;
+    }
+
+    /* FOOTER */
+
+    footer {
+      border-top:1px solid var(--line);
+      padding:30px 0;
+      color:#626262;
+      font-size:12px;
+    }
+
+    .footer-inner {
+      display:flex;
+      justify-content:space-between;
+      gap:20px;
+    }
+
+    .footer-links {
+      display:flex;
+      gap:22px;
+      flex-wrap:wrap;
+    }
+
+    .footer-links a:hover {
+      color:var(--yellow);
+    }
+
+    /* ANIMATION */
+
+    .reveal {
+      opacity:0;
+      transform:translateY(22px);
+      transition:.8s ease;
+    }
+
+    .reveal.visible {
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    /* MOBILE */
+
+    @media(max-width:900px) {
+
+      .nav {
+        height:70px;
+        padding:0 5%;
+      }
+
+      .menu-btn {
+        display:block;
+      }
+
+      .nav-links {
+        position:absolute;
+        top:70px;
+        left:0;
+        width:100%;
+        display:none;
+        flex-direction:column;
+        align-items:flex-start;
+        gap:17px;
+        padding:18px 5%;
+        background:rgba(5,5,5,.98);
+        border-bottom:1px solid var(--line);
+      }
+
+      .nav-links.open {
+        display:flex;
+      }
+
+      .nav-cta {
+        width:auto;
+        min-width:112px;
+        height:42px;
+        padding:0 14px;
+        text-align:center;
+        font-size:11px;
+      }
+
+      section {
+        padding:75px 0;
+      }
+
+      .hero {
+        min-height:auto;
+        padding-top:120px;
+        padding-bottom:70px;
+      }
+
+      .hero-grid,
+      .story-grid {
+        grid-template-columns:1fr;
+        gap:45px;
+      }
+
+      .hero h1 {
+        letter-spacing:-2.5px;
+      }
+
+      .solution-visual {
+        min-height:400px;
+      }
+
+      .solutions-grid {
+        grid-template-columns:1fr;
+      }
+
+      .why-grid {
+        grid-template-columns:1fr;
+      }
+
+      .comparison {
+        overflow-x:auto;
+      }
+
+      .comparison-row {
+        min-width:620px;
+      }
+
+      .cta {
+        padding:95px 0;
+      }
+    }
+
+    @media(max-width:520px) {
+
+      .container {
+        width:91%;
+      }
+
+      .hero h1 {
+        font-size:49px;
+      }
+
+      .hero-text,
+      .section-text {
+        font-size:15px;
+      }
+
+      .solution-visual {
+        min-height:340px;
+      }
+
+      .visual-ring {
+        width:205px;
+        height:205px;
+      }
+
+      .visual-center {
+        width:100px;
+        height:100px;
+        font-size:30px;
+      }
+
+      .visual-ring::before {
+        inset:-22px;
+      }
+
+      .visual-ring::after {
+        inset:-42px;
+      }
+
+      .solution-card {
+        width:140px;
+        padding:12px;
+      }
+
+      .solution-card strong {
+        font-size:10px;
+      }
+
+      .solution-card small {
+        font-size:9px;
+      }
+
+      .sc1 {
+        top:10px;
+      }
+
+      .sc2 {
+        bottom:25px;
+      }
+
+      .sc3 {
+        bottom:-5px;
+        right:0;
+      }
+
+      .solution-box {
+        min-height:auto;
+        padding:24px;
+      }
+
+      .story-copy h3 {
+        font-size:32px;
+      }
+
+      .flow-board {
+        padding:17px;
+      }
+
+      .cta h2 {
+        letter-spacing:-2px;
+      }
+
+      .footer-inner {
+        flex-direction:column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+
+<nav class="nav">
+
+  <a href="landing.html" class="logo">
+
+    <span class="logo-mark">
+      M
+    </span>
+
+    Manoj AI
+
+  </a>
+
+
+  <div class="nav-links" id="navLinks">
+
+    <a href="landing.html">
+      Home
+    </a>
+
+    <a href="product.html">
+      Product
+    </a>
+
+    <a href="solutions.html" class="active">
+      Solutions
+    </a>
+
+    <a href="roadmap.html">
+      Roadmap
+    </a>
+
+    <a href="about.html">
+      About
+    </a>
+
+    <a href="contact.html">
+      Contact
+    </a>
+
+  </div>
+
+
+  <a
+    href="contact.html"
+    class="nav-cta"
+  >
+    Request Demo →
+  </a>
+
+
+  <button
+    type="button"
+    class="menu-btn"
+    id="menuBtn"
+    aria-label="Open menu"
+    aria-expanded="false"
+    aria-controls="navLinks"
+  >
+    ☰
+  </button>
+
+</nav>
+
+
+  <!-- HERO -->
+  <section class="hero">
+
+    <div class="container hero-grid">
+
+      <div class="reveal">
+
+        <div class="eyebrow">
+          Built for real conversations
+        </div>
+
+        <h1>
+          Put every customer
+          <span class="gold">conversation</span>
+          to work.
+        </h1>
+
+        <p class="hero-text">
+          Whether it is an admission enquiry, a sales opportunity or a
+          follow-up call, Manoj helps businesses handle conversations,
+          capture leads and understand what happens next.
+        </p>
+
+        <div class="hero-buttons">
+
+          <a href="index.html" class="btn btn-primary">
+            Try Manoj
+          </a>
+
+          <a href="#solutions" class="btn btn-secondary">
+            Explore solutions
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <div class="solution-visual reveal">
+
+        <div class="visual-ring">
+          <div class="visual-center">M</div>
+        </div>
+
+        <div class="solution-card sc1">
+          <strong>Customer enquiry</strong>
+          <small>Conversation started</small>
+        </div>
+
+        <div class="solution-card sc2">
+          <strong>Lead qualified</strong>
+          <small>Intent detected</small>
+        </div>
+
+        <div class="solution-card sc3">
+          <strong>Next action</strong>
+          <small>Follow-up identified</small>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- MOVING INDUSTRIES -->
+  <div class="industry-strip">
+
+    <div class="industry-track">
+
+      <span>Education</span>
+      <span>Admissions</span>
+      <span>Sales</span>
+      <span>Lead qualification</span>
+      <span>Customer enquiries</span>
+      <span>Follow-ups</span>
+
+      <span>Education</span>
+      <span>Admissions</span>
+      <span>Sales</span>
+      <span>Lead qualification</span>
+      <span>Customer enquiries</span>
+      <span>Follow-ups</span>
+
+    </div>
+
+  </div>
+
+
+  <!-- SOLUTIONS -->
+  <section id="solutions">
+
+    <div class="container">
+
+      <div class="reveal">
+
+        <div class="eyebrow">
+          Where Manoj fits
+        </div>
+
+        <h2 class="section-title">
+          One voice agent.
+          <span class="gold">Multiple business needs.</span>
+        </h2>
+
+        <p class="section-text">
+          Manoj can sit at the front of your customer journey and help
+          handle repetitive conversations without making the experience
+          feel robotic.
+        </p>
+
+      </div>
+
+
+      <div class="solutions-grid">
+
+        <!-- EDUCATION -->
+        <div class="solution-box reveal">
+
+          <div class="solution-icon">◈</div>
+
+          <h3>Admissions & Education</h3>
+
+          <p>
+            Help prospective students get answers, understand course
+            options and move toward the next step.
+          </p>
+
+          <div class="solution-list">
+            <div><span>✦</span> Course enquiries</div>
+            <div><span>✦</span> Admission conversations</div>
+            <div><span>✦</span> Student lead capture</div>
+            <div><span>✦</span> Callback requests</div>
+          </div>
+
+        </div>
+
+
+        <!-- SALES -->
+        <div class="solution-box reveal">
+
+          <div class="solution-icon">↗</div>
+
+          <h3>Sales & Lead Qualification</h3>
+
+          <p>
+            Turn incoming enquiries into structured sales opportunities
+            by understanding what the prospect actually wants.
+          </p>
+
+          <div class="solution-list">
+            <div><span>✦</span> New lead conversations</div>
+            <div><span>✦</span> Requirement discovery</div>
+            <div><span>✦</span> Interest identification</div>
+            <div><span>✦</span> Follow-up context</div>
+          </div>
+
+        </div>
+
+
+        <!-- CUSTOMER -->
+        <div class="solution-box reveal">
+
+          <div class="solution-icon">◎</div>
+
+          <h3>Customer Enquiries</h3>
+
+          <p>
+            Give customers a conversational way to ask questions and
+            receive useful information without waiting for a team member.
+          </p>
+
+          <div class="solution-list">
+            <div><span>✦</span> Frequently asked questions</div>
+            <div><span>✦</span> Service information</div>
+            <div><span>✦</span> Basic customer support</div>
+            <div><span>✦</span> Conversation history</div>
+          </div>
+
+        </div>
+
+
+        <!-- FOLLOWUP -->
+        <div class="solution-box reveal">
+
+          <div class="solution-icon">↻</div>
+
+          <h3>Follow-ups</h3>
+
+          <p>
+            Keep customer conversations moving by identifying when a
+            follow-up or callback is needed.
+          </p>
+
+          <div class="solution-list">
+            <div><span>✦</span> Callback requests</div>
+            <div><span>✦</span> Lead context</div>
+            <div><span>✦</span> Conversation summaries</div>
+            <div><span>✦</span> Next-step information</div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- STORY -->
+  <section class="story">
+
+    <div class="container">
+
+      <div class="reveal">
+
+        <div class="eyebrow">
+          A different workflow
+        </div>
+
+        <h2 class="section-title">
+          Don't make your team
+          <span class="gold">start from zero.</span>
+        </h2>
+
+      </div>
+
+
+      <div class="story-grid">
+
+        <div class="story-copy reveal">
+
+          <h3>
+            The call should create
+            context for what happens next.
+          </h3>
+
+          <p>
+            A customer conversation contains valuable information.
+            Manoj helps preserve that information so the next person
+            doesn't have to reconstruct the conversation from memory.
+          </p>
+
+          <div class="steps">
+
+            <div class="step">
+              <div class="step-number">01</div>
+              <div>
+                <strong>Customer explains the need</strong>
+                <p>Natural voice conversation begins.</p>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step-number">02</div>
+              <div>
+                <strong>Manoj understands the context</strong>
+                <p>Important signals are identified.</p>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step-number">03</div>
+              <div>
+                <strong>Information is captured</strong>
+                <p>Lead details and conversation data are saved.</p>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step-number">04</div>
+              <div>
+                <strong>Team gets the context</strong>
+                <p>The next action becomes easier to understand.</p>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="flow-board reveal">
+
+          <div class="flow-title">
+            <strong>Conversation Flow</strong>
+            <span>ACTIVE</span>
+          </div>
+
+          <div class="flow">
+
+            <div class="flow-node">
+              <div class="node-icon">☎</div>
+              <div>
+                <strong>Incoming conversation</strong>
+                <small>Customer starts the interaction</small>
+              </div>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="flow-node">
+              <div class="node-icon">✦</div>
+              <div>
+                <strong>Intent understood</strong>
+                <small>What does the customer need?</small>
+              </div>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="flow-node">
+              <div class="node-icon">+</div>
+              <div>
+                <strong>Lead information</strong>
+                <small>Relevant details captured</small>
+              </div>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="flow-node">
+              <div class="node-icon">◌</div>
+              <div>
+                <strong>Conversation recorded</strong>
+                <small>Transcript and recording preserved</small>
+              </div>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="flow-node">
+              <div class="node-icon">↗</div>
+              <div>
+                <strong>Next action</strong>
+                <small>Follow-up context available</small>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- WHY MANOJ -->
+  <section>
+
+    <div class="container">
+
+      <div class="reveal">
+
+        <div class="eyebrow">
+          Why it matters
+        </div>
+
+        <h2 class="section-title">
+          The goal isn't more calls.
+          <span class="gold">It's better conversations.</span>
+        </h2>
+
+      </div>
+
+
+      <div class="why-grid">
+
+        <div class="why-card reveal">
+          <span>01 / SPEED</span>
+          <h3>Respond faster</h3>
+          <p>
+            Customers can start a conversation without waiting for a
+            team member to become available.
+          </p>
+        </div>
+
+        <div class="why-card reveal">
+          <span>02 / CONTEXT</span>
+          <h3>Keep the story</h3>
+          <p>
+            Important information from the conversation can stay connected
+            to the lead instead of getting lost after the call.
+          </p>
+        </div>
+
+        <div class="why-card reveal">
+          <span>03 / VISIBILITY</span>
+          <h3>Know what happened</h3>
+          <p>
+            Recordings, transcripts and conversation information provide
+            a clearer view of customer interactions.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- COMPARISON -->
+  <section>
+
+    <div class="container">
+
+      <div class="reveal">
+
+        <div class="eyebrow">
+          The difference
+        </div>
+
+        <h2 class="section-title">
+          Move from
+          <span class="gold">calls</span>
+          to conversations.
+        </h2>
+
+      </div>
+
+
+      <div class="comparison reveal">
+
+        <div class="comparison-row header">
+          <div>Capability</div>
+          <div>Manoj</div>
+          <div>Traditional process</div>
+        </div>
+
+        <div class="comparison-row">
+          <div>Voice conversation</div>
+          <div>✓</div>
+          <div>Depends on availability</div>
+        </div>
+
+        <div class="comparison-row">
+          <div>Lead information</div>
+          <div>✓ Structured</div>
+          <div>Manual notes</div>
+        </div>
+
+        <div class="comparison-row">
+          <div>Conversation transcript</div>
+          <div>✓</div>
+          <div>Usually unavailable</div>
+        </div>
+
+        <div class="comparison-row">
+          <div>Call recording</div>
+          <div>✓</div>
+          <div>Process dependent</div>
+        </div>
+
+        <div class="comparison-row">
+          <div>Intent / interest signals</div>
+          <div>✓</div>
+          <div>Manual interpretation</div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- CTA -->
+  <section class="cta">
+
+    <div class="container reveal">
+
+      <div class="eyebrow">
+        Experience it yourself
+      </div>
+
+      <h2>
+        See what happens when
+        <span class="gold">AI picks up the conversation.</span>
+      </h2>
+
+      <p>
+        Start a real conversation with Manoj and experience the voice
+        agent for yourself.
+      </p>
+
+      <a href="index.html" class="btn btn-primary">
+        Talk to Manoj →
+      </a>
+
+    </div>
+
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer>
+
+    <div class="container footer-inner">
+
+      <div>
+        © 2026 Manoj AI Voice Agent
+      </div>
+
+      <div class="footer-links">
+        <a href="landing.html">Home</a>
+        <a href="product.html">Product</a>
+        <a href="solutions.html">Solutions</a>
+        <a href="roadmap.html">Roadmap</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <script>
+
+    // Mobile navigation
+    const menuBtn = document.getElementById("menuBtn");
+    const navLinks = document.getElementById("navLinks");
+
+    function closeMobileMenu() {
+      navLinks.classList.remove("open");
+      menuBtn.setAttribute("aria-expanded", "false");
+      menuBtn.setAttribute("aria-label", "Open menu");
+    }
+
+    menuBtn.addEventListener("click", () => {
+      const isOpen = navLinks.classList.toggle("open");
+      menuBtn.setAttribute("aria-expanded", String(isOpen));
+      menuBtn.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
+    });
+
+    document.querySelectorAll(".nav-links a").forEach(link => {
+      link.addEventListener("click", closeMobileMenu);
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        closeMobileMenu();
+      }
+    });
+
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 900) {
+        closeMobileMenu();
+      }
+    });
+
+
+    // Scroll reveal
+    const revealItems = document.querySelectorAll(".reveal");
+
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          threshold: 0.12
+        }
+      );
+
+      revealItems.forEach(item => observer.observe(item));
+    } else {
+      revealItems.forEach(item => item.classList.add("visible"));
+    }
+
+  </script>
+
+</body>
+</html>

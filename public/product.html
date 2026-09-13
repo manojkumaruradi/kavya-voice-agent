@@ -1,0 +1,2110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Manoj AI Voice Agent | Product</title>
+  <meta
+    name="description"
+    content="Discover how Manoj AI Voice Agent handles conversations, captures leads, records calls, generates transcripts, and turns conversations into actionable insights."
+  />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      --black: #050505;
+      --charcoal: #0d0d0d;
+      --gold: #d4af37;
+      --bright-gold: #f5c542;
+      --champagne: #f7e7b4;
+      --white: #ffffff;
+      --muted: #9b9b9b;
+      --border: rgba(245, 197, 66, 0.14);
+      --card: rgba(255, 255, 255, 0.035);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      background: var(--black);
+      color: var(--white);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    /* Ambient background */
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(212, 175, 55, 0.09), transparent 25%),
+        radial-gradient(circle at 85% 40%, rgba(245, 197, 66, 0.06), transparent 28%),
+        radial-gradient(circle at 50% 100%, rgba(212, 175, 55, 0.05), transparent 30%);
+      z-index: -2;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.22;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 70px 70px;
+      mask-image: linear-gradient(to bottom, black, transparent 85%);
+      z-index: -1;
+    }
+
+    /* Navigation */
+
+.nav {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: min(1160px, calc(100% - 32px));
+  height: 70px;
+
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+
+  padding: 10px 12px 10px 20px;
+
+  background: rgba(8, 8, 8, 0.82);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  box-shadow:
+    0 15px 50px rgba(0, 0, 0, 0.35),
+    inset 0 1px rgba(255, 255, 255, 0.04);
+}
+
+
+/* Logo */
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  font-family: "Inter", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+
+  color: #ffffff;
+
+  white-space: nowrap;
+}
+
+.logo-mark {
+  width: 36px;
+  height: 36px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 10px;
+
+  background: linear-gradient(
+    145deg,
+    #f5c542,
+    #d4af37
+  );
+
+  color: #050505;
+
+  font-size: 15px;
+  font-weight: 800;
+
+  box-shadow:
+    0 0 22px rgba(245, 197, 66, 0.18);
+}
+
+
+/* Navigation Links */
+
+.nav-links {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: center;
+  gap: 30px;
+
+  white-space: nowrap;
+}
+
+.nav-links a {
+  color: #a5a5a5;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  text-decoration: none;
+
+  transition:
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.nav-links a:hover {
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.nav-links a.active {
+  color: #f5c542;
+}
+
+
+/* Request Demo */
+
+.nav-cta {
+  margin-left: auto;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 148px;
+  height: 48px;
+
+  padding: 0 20px;
+
+  border-radius: 14px;
+
+  background: #f5c542;
+
+  color: #050505 !important;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  text-decoration: none;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.nav-cta:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 10px 30px rgba(245, 197, 66, 0.18);
+}
+
+
+/* Mobile Menu Button */
+
+.menu-btn {
+  display: none;
+
+  width: 42px;
+  height: 42px;
+
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 11px;
+
+  background: rgba(255,255,255,0.04);
+
+  color: #ffffff;
+
+  cursor: pointer;
+
+  font-size: 20px;
+}
+
+    /* General */
+
+    .container {
+      width: min(1180px, 90%);
+      margin: auto;
+    }
+
+    section {
+      padding: 115px 0;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 12px;
+      border: 1px solid rgba(245,197,66,0.2);
+      border-radius: 999px;
+      color: var(--champagne);
+      background: rgba(245,197,66,0.045);
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--bright-gold);
+      box-shadow: 0 0 12px var(--bright-gold);
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: "Space Grotesk", sans-serif;
+    }
+
+    .section-title {
+      max-width: 800px;
+      margin-top: 22px;
+      font-size: clamp(38px, 5vw, 68px);
+      line-height: 1.03;
+      letter-spacing: -2.5px;
+    }
+
+    .gold {
+      color: var(--bright-gold);
+    }
+
+    .section-description {
+      margin-top: 20px;
+      max-width: 650px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    /* Hero */
+
+    .hero {
+      min-height: 100vh;
+      padding-top: 150px;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      align-items: center;
+      gap: 70px;
+    }
+
+    .hero h1 {
+      font-size: clamp(50px, 6.5vw, 86px);
+      line-height: 0.98;
+      letter-spacing: -4px;
+      max-width: 760px;
+      margin-top: 25px;
+    }
+
+    .hero-copy {
+      margin-top: 26px;
+      max-width: 650px;
+      color: #a8a8a8;
+      font-size: 18px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      margin-top: 34px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      padding: 0 22px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 14px;
+      transition: 0.3s ease;
+    }
+
+    .btn-primary {
+      color: #080808;
+      background: linear-gradient(135deg, #f5c542, #d4af37);
+      box-shadow: 0 10px 35px rgba(245,197,66,0.13);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 40px rgba(245,197,66,0.22);
+    }
+
+    .btn-secondary {
+      border: 1px solid rgba(255,255,255,0.13);
+      color: #d6d6d6;
+      background: rgba(255,255,255,0.025);
+    }
+
+    .btn-secondary:hover {
+      border-color: rgba(245,197,66,0.3);
+      color: var(--bright-gold);
+    }
+
+    /* Product visual */
+
+    .product-visual {
+      min-height: 520px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .visual-core {
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      border: 1px solid rgba(245,197,66,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background:
+        radial-gradient(circle, rgba(245,197,66,0.12), rgba(245,197,66,0.025) 48%, transparent 70%);
+      box-shadow:
+        0 0 90px rgba(245,197,66,0.08),
+        inset 0 0 50px rgba(245,197,66,0.05);
+    }
+
+    .visual-core::before,
+    .visual-core::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(245,197,66,0.12);
+    }
+
+    .visual-core::before {
+      inset: -35px;
+    }
+
+    .visual-core::after {
+      inset: -70px;
+    }
+
+    .core-inner {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 42px;
+      font-weight: 700;
+      color: var(--bright-gold);
+      background: #090909;
+      border: 1px solid rgba(245,197,66,0.3);
+      box-shadow: 0 0 45px rgba(245,197,66,0.12);
+    }
+
+    .floating-card {
+      position: absolute;
+      padding: 15px 17px;
+      min-width: 170px;
+      border-radius: 15px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(14,14,14,0.86);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .floating-card strong {
+      display: block;
+      font-size: 13px;
+    }
+
+    .floating-card small {
+      display: block;
+      color: #858585;
+      margin-top: 4px;
+      font-size: 11px;
+    }
+
+    .card-1 {
+      top: 45px;
+      right: 5px;
+    }
+
+    .card-2 {
+      bottom: 70px;
+      left: 0;
+      animation-delay: 0.8s;
+    }
+
+    .card-3 {
+      bottom: 15px;
+      right: 35px;
+      animation-delay: 1.5s;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    /* Trust strip */
+
+    .trust-strip {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 25px 0;
+      overflow: hidden;
+    }
+
+    .trust-track {
+      display: flex;
+      width: max-content;
+      gap: 55px;
+      animation: marquee 24s linear infinite;
+      color: #777;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 1.8px;
+    }
+
+    .trust-track span::before {
+      content: "✦";
+      color: var(--gold);
+      margin-right: 55px;
+    }
+
+    @keyframes marquee {
+      to {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* Feature sections */
+
+    .feature-grid {
+      margin-top: 60px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .feature-card {
+      min-height: 285px;
+      padding: 28px;
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      background: linear-gradient(
+        145deg,
+        rgba(255,255,255,0.045),
+        rgba(255,255,255,0.018)
+      );
+      position: relative;
+      overflow: hidden;
+      transition: 0.35s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(245,197,66,0.32);
+    }
+
+    .feature-number {
+      color: rgba(245,197,66,0.5);
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 13px;
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      margin: 30px 0 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(245,197,66,0.22);
+      color: var(--bright-gold);
+      background: rgba(245,197,66,0.06);
+      font-size: 20px;
+    }
+
+    .feature-card h3 {
+      font-size: 21px;
+    }
+
+    .feature-card p {
+      margin-top: 10px;
+      color: #888;
+      font-size: 14px;
+    }
+
+    /* Conversation */
+
+    .conversation {
+      scroll-margin-top: 110px;
+      background:
+        linear-gradient(180deg, transparent, rgba(245,197,66,0.025), transparent);
+    }
+
+    .conversation-grid {
+      margin-top: 60px;
+      display: grid;
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .conversation-copy h3 {
+      font-size: 35px;
+      line-height: 1.1;
+    }
+
+    .conversation-copy p {
+      margin-top: 18px;
+      color: #8e8e8e;
+    }
+
+    .conversation-points {
+      margin-top: 28px;
+      display: grid;
+      gap: 13px;
+    }
+
+    .conversation-point {
+      display: flex;
+      gap: 12px;
+      color: #b7b7b7;
+      font-size: 14px;
+    }
+
+    .conversation-point span {
+      color: var(--bright-gold);
+    }
+
+    .phone {
+      width: min(390px, 100%);
+      min-height: 560px;
+      margin: auto;
+      padding: 18px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 36px;
+      background: #0b0b0b;
+      box-shadow: 0 30px 90px rgba(0,0,0,0.45);
+    }
+
+    .phone-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #7c7c7c;
+      font-size: 11px;
+      padding: 8px 10px 18px;
+    }
+
+    .phone-status {
+      color: var(--bright-gold);
+    }
+
+    .voice-orb {
+      width: 105px;
+      height: 105px;
+      border-radius: 50%;
+      margin: 18px auto 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--bright-gold);
+      border: 1px solid rgba(245,197,66,0.3);
+      background: radial-gradient(circle, rgba(245,197,66,0.16), transparent 65%);
+      box-shadow: 0 0 55px rgba(245,197,66,0.1);
+      font-size: 28px;
+    }
+
+    .call-title {
+      text-align: center;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 20px;
+    }
+
+    .call-subtitle {
+      text-align: center;
+      color: #777;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .messages {
+      margin-top: 30px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .message {
+      max-width: 78%;
+      padding: 12px 14px;
+      border-radius: 15px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .message.ai {
+      background: #151515;
+      color: #bdbdbd;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .message.user {
+      justify-self: end;
+      background: rgba(245,197,66,0.1);
+      border: 1px solid rgba(245,197,66,0.15);
+      color: var(--champagne);
+    }
+
+    /* Intelligence */
+
+    .analysis-grid {
+      margin-top: 60px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .analysis-card {
+      min-height: 270px;
+      padding: 28px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.025);
+    }
+
+    .analysis-card h3 {
+      font-size: 22px;
+    }
+
+    .analysis-card p {
+      color: #858585;
+      font-size: 14px;
+      margin-top: 9px;
+    }
+
+    .analysis-meter {
+      margin-top: 35px;
+    }
+
+    .meter-row {
+      margin-top: 17px;
+    }
+
+    .meter-head {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #888;
+    }
+
+    .meter-head span:last-child {
+      color: var(--bright-gold);
+    }
+
+    .meter {
+      height: 5px;
+      margin-top: 8px;
+      background: #1a1a1a;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .meter-fill {
+      height: 100%;
+      width: 82%;
+      background: linear-gradient(90deg, var(--gold), var(--bright-gold));
+      border-radius: inherit;
+    }
+
+    .meter-fill.second {
+      width: 67%;
+    }
+
+    .meter-fill.third {
+      width: 91%;
+    }
+
+    .intent-box {
+      margin-top: 30px;
+      padding: 17px;
+      border-radius: 15px;
+      border: 1px solid rgba(245,197,66,0.15);
+      background: rgba(245,197,66,0.045);
+    }
+
+    .intent-box small {
+      color: #777;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .intent-box strong {
+      display: block;
+      margin-top: 7px;
+      color: var(--champagne);
+      font-size: 18px;
+    }
+
+    /* Workflow */
+
+    .workflow {
+      margin-top: 65px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      position: relative;
+    }
+
+    .workflow-step {
+      padding: 25px 18px;
+      min-height: 180px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.025);
+    }
+
+    .workflow-step .num {
+      color: var(--bright-gold);
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 13px;
+    }
+
+    .workflow-step h3 {
+      margin-top: 38px;
+      font-size: 17px;
+    }
+
+    .workflow-step p {
+      margin-top: 8px;
+      color: #777;
+      font-size: 12px;
+    }
+
+    /* Records */
+
+    .records-section {
+      background: linear-gradient(
+        180deg,
+        transparent,
+        rgba(245,197,66,0.025),
+        transparent
+      );
+    }
+
+    .records-grid {
+      margin-top: 60px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 20px;
+    }
+
+    .record-panel {
+      padding: 26px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.025);
+    }
+
+    .record-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .record-header strong {
+      font-family: "Space Grotesk", sans-serif;
+    }
+
+    .record-header span {
+      color: var(--bright-gold);
+      font-size: 11px;
+    }
+
+    .wave {
+      height: 105px;
+      margin: 25px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .wave i {
+      display: block;
+      width: 3px;
+      border-radius: 10px;
+      background: var(--gold);
+      animation: wave 1s ease-in-out infinite alternate;
+    }
+
+    .wave i:nth-child(1) { height: 25px; }
+    .wave i:nth-child(2) { height: 42px; animation-delay: .1s; }
+    .wave i:nth-child(3) { height: 65px; animation-delay: .2s; }
+    .wave i:nth-child(4) { height: 35px; animation-delay: .3s; }
+    .wave i:nth-child(5) { height: 75px; animation-delay: .4s; }
+    .wave i:nth-child(6) { height: 45px; animation-delay: .5s; }
+    .wave i:nth-child(7) { height: 28px; animation-delay: .6s; }
+    .wave i:nth-child(8) { height: 60px; animation-delay: .7s; }
+    .wave i:nth-child(9) { height: 38px; animation-delay: .8s; }
+    .wave i:nth-child(10) { height: 70px; animation-delay: .9s; }
+
+    @keyframes wave {
+      from { transform: scaleY(.55); }
+      to { transform: scaleY(1); }
+    }
+
+    .transcript-line {
+      display: flex;
+      gap: 15px;
+      padding: 13px 0;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      font-size: 12px;
+    }
+
+    .transcript-line strong {
+      color: var(--bright-gold);
+      min-width: 42px;
+    }
+
+    .transcript-line span {
+      color: #858585;
+    }
+
+    .record-side {
+      display: grid;
+      gap: 18px;
+    }
+
+    .mini-stat {
+      padding: 24px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.025);
+    }
+
+    .mini-stat small {
+      color: #6e6e6e;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .mini-stat strong {
+      display: block;
+      margin-top: 10px;
+      color: var(--champagne);
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 27px;
+    }
+
+    /* Dashboard */
+
+    .dashboard-preview {
+      margin-top: 60px;
+      border-radius: 25px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: #0a0a0a;
+      overflow: hidden;
+      box-shadow: 0 30px 100px rgba(0,0,0,0.35);
+    }
+
+    .dashboard-top {
+      height: 55px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #343434;
+    }
+
+    .dashboard-body {
+      padding: 25px;
+    }
+
+    .dashboard-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .dashboard-heading strong {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 20px;
+    }
+
+    .dashboard-heading span {
+      color: #777;
+      font-size: 11px;
+    }
+
+    .dashboard-cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .dash-card {
+      padding: 17px;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 15px;
+      background: rgba(255,255,255,0.025);
+    }
+
+    .dash-card small {
+      color: #666;
+      font-size: 10px;
+    }
+
+    .dash-card strong {
+      display: block;
+      margin-top: 8px;
+      color: var(--champagne);
+      font-size: 20px;
+    }
+
+    .dashboard-table {
+      margin-top: 15px;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 15px;
+      overflow: hidden;
+    }
+
+    .table-row {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr 1fr 0.7fr;
+      padding: 16px;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 11px;
+      color: #858585;
+    }
+
+    .table-row:last-child {
+      border-bottom: 0;
+    }
+
+    .table-row.head {
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: .7px;
+    }
+
+    .lead-tag {
+      color: var(--bright-gold);
+      background: rgba(245,197,66,0.08);
+      padding: 4px 8px;
+      border-radius: 999px;
+      width: max-content;
+    }
+
+    /* CTA */
+
+    .final-cta {
+      text-align: center;
+      padding: 150px 0;
+    }
+
+    .final-cta h2 {
+      font-size: clamp(42px, 6vw, 75px);
+      line-height: 1;
+      letter-spacing: -3px;
+      max-width: 800px;
+      margin: 20px auto 0;
+    }
+
+    .final-cta p {
+      max-width: 570px;
+      margin: 20px auto 30px;
+      color: #858585;
+    }
+
+    /* Footer */
+
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding: 30px 0;
+      color: #656565;
+      font-size: 12px;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 22px;
+    }
+
+    .footer-links a:hover {
+      color: var(--bright-gold);
+    }
+
+    /* Reveal */
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity .8s ease, transform .8s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Mobile */
+
+    @media (max-width: 900px) {
+      .nav {
+        height: 70px;
+        padding: 0 5%;
+      }
+
+      .menu-btn {
+        display: block;
+      }
+
+      .nav-links {
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        padding: 18px 5%;
+        display: none;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+        background: rgba(5,5,5,.97);
+        border-bottom: 1px solid rgba(255,255,255,.07);
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .nav-cta {
+        width: auto;
+        min-width: 112px;
+        height: 42px;
+        padding: 0 14px;
+        text-align: center;
+        font-size: 11px;
+      }
+
+      .hero {
+        min-height: auto;
+        padding-top: 125px;
+        padding-bottom: 70px;
+      }
+
+      .hero-grid,
+      .conversation-grid,
+      .records-grid {
+        grid-template-columns: 1fr;
+        gap: 45px;
+      }
+
+      .hero h1 {
+        letter-spacing: -2.5px;
+      }
+
+      .product-visual {
+        min-height: 420px;
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .analysis-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .workflow {
+        grid-template-columns: 1fr;
+      }
+
+      .workflow-step {
+        min-height: 145px;
+      }
+
+      .dashboard-cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .table-row {
+        grid-template-columns: 1.3fr 1fr 1fr;
+      }
+
+      .table-row span:nth-child(4),
+      .table-row span:nth-child(5) {
+        display: none;
+      }
+
+      section {
+        padding: 75px 0;
+      }
+
+      .section-title {
+        letter-spacing: -1.5px;
+      }
+
+      .final-cta {
+        padding: 90px 0;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .container {
+        width: 91%;
+      }
+
+      .hero h1 {
+        font-size: 49px;
+      }
+
+      .hero-copy {
+        font-size: 15px;
+      }
+
+      .product-visual {
+        min-height: 350px;
+      }
+
+      .visual-core {
+        width: 205px;
+        height: 205px;
+      }
+
+      .core-inner {
+        width: 105px;
+        height: 105px;
+        font-size: 30px;
+      }
+
+      .visual-core::before {
+        inset: -22px;
+      }
+
+      .visual-core::after {
+        inset: -42px;
+      }
+
+      .floating-card {
+        min-width: 135px;
+        padding: 11px;
+      }
+
+      .floating-card strong {
+        font-size: 11px;
+      }
+
+      .floating-card small {
+        font-size: 9px;
+      }
+
+      .card-1 {
+        top: 15px;
+        right: 0;
+      }
+
+      .card-2 {
+        bottom: 30px;
+        left: 0;
+      }
+
+      .card-3 {
+        bottom: -5px;
+        right: 0;
+      }
+
+      .dashboard-cards {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .dashboard-body {
+        padding: 16px;
+      }
+
+      .dashboard-table {
+        overflow-x: auto;
+      }
+
+      .table-row {
+        min-width: 470px;
+      }
+
+      .phone {
+        min-height: 500px;
+      }
+
+      .final-cta h2 {
+        letter-spacing: -2px;
+      }
+
+      .footer-links {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVIGATION -->
+
+<nav class="nav">
+
+  <a href="landing.html" class="logo">
+
+    <span class="logo-mark">
+      M
+    </span>
+
+    Manoj AI
+
+  </a>
+
+
+  <div class="nav-links" id="navLinks">
+
+    <a href="landing.html">
+      Home
+    </a>
+
+    <a href="product.html" class="active">
+      Product
+    </a>
+
+    <a href="solutions.html">
+      Solutions
+    </a>
+
+    <a href="roadmap.html">
+      Roadmap
+    </a>
+
+    <a href="about.html">
+      About
+    </a>
+
+    <a href="contact.html">
+      Contact
+    </a>
+
+  </div>
+
+
+  <a
+    href="contact.html"
+    class="nav-cta"
+  >
+    Request Demo →
+  </a>
+
+
+  <button
+    type="button"
+    class="menu-btn"
+    id="menuBtn"
+    aria-label="Open menu"
+    aria-expanded="false"
+    aria-controls="navLinks"
+  >
+    ☰
+  </button>
+
+</nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container hero-grid">
+
+      <div class="reveal">
+        <div class="eyebrow">The AI voice agent</div>
+
+        <h1>
+          A voice agent that
+          <span class="gold">understands</span>
+          the conversation.
+        </h1>
+
+        <p class="hero-copy">
+          Manoj doesn't simply answer calls. He listens, understands intent,
+          captures important details, records the conversation, and turns every
+          interaction into useful business information.
+        </p>
+
+        <div class="hero-actions">
+          <a href="index.html" class="btn btn-primary">
+            Talk to Manoj
+          </a>
+
+          <a href="#how-it-works" class="btn btn-secondary">
+            See how it works
+          </a>
+        </div>
+      </div>
+
+
+      <div class="product-visual reveal">
+
+        <div class="visual-core">
+          <div class="core-inner">M</div>
+        </div>
+
+        <div class="floating-card card-1">
+          <strong>Conversation detected</strong>
+          <small>Intent understood</small>
+        </div>
+
+        <div class="floating-card card-2">
+          <strong>Lead captured</strong>
+          <small>Contact information saved</small>
+        </div>
+
+        <div class="floating-card card-3">
+          <strong>AI analysis</strong>
+          <small>Interest: High</small>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- MOVING STRIP -->
+  <div class="trust-strip">
+    <div class="trust-track">
+      <span>Voice conversations</span>
+      <span>Lead capture</span>
+      <span>Call recording</span>
+      <span>Transcripts</span>
+      <span>AI analysis</span>
+      <span>Lead intelligence</span>
+
+      <span>Voice conversations</span>
+      <span>Lead capture</span>
+      <span>Call recording</span>
+      <span>Transcripts</span>
+      <span>AI analysis</span>
+      <span>Lead intelligence</span>
+    </div>
+  </div>
+
+
+  <!-- CORE CAPABILITIES -->
+  <section>
+    <div class="container">
+
+      <div class="reveal">
+        <div class="eyebrow">Inside Manoj</div>
+
+        <h2 class="section-title">
+          Every call becomes
+          <span class="gold">structured information.</span>
+        </h2>
+
+        <p class="section-description">
+          Instead of leaving conversations buried inside phone calls,
+          Manoj turns them into information your team can actually use.
+        </p>
+      </div>
+
+
+      <div class="feature-grid">
+
+        <div class="feature-card reveal">
+          <div class="feature-number">01</div>
+
+          <div class="feature-icon">◉</div>
+
+          <h3>Natural conversations</h3>
+
+          <p>
+            Manoj speaks with customers through a real-time voice interaction
+            designed to feel like a normal conversation.
+          </p>
+        </div>
+
+
+        <div class="feature-card reveal">
+          <div class="feature-number">02</div>
+
+          <div class="feature-icon">↯</div>
+
+          <h3>Understands intent</h3>
+
+          <p>
+            The conversation is interpreted in context so important signals
+            such as interest, questions and next steps aren't lost.
+          </p>
+        </div>
+
+
+        <div class="feature-card reveal">
+          <div class="feature-number">03</div>
+
+          <div class="feature-icon">+</div>
+
+          <h3>Captures leads</h3>
+
+          <p>
+            Relevant customer information can be collected during the
+            conversation and connected to the lead record.
+          </p>
+        </div>
+
+
+        <div class="feature-card reveal">
+          <div class="feature-number">04</div>
+
+          <div class="feature-icon">◌</div>
+
+          <h3>Records calls</h3>
+
+          <p>
+            Calls can be recorded so teams can review what actually happened
+            instead of relying only on notes.
+          </p>
+        </div>
+
+
+        <div class="feature-card reveal">
+          <div class="feature-number">05</div>
+
+          <div class="feature-icon">≡</div>
+
+          <h3>Creates transcripts</h3>
+
+          <p>
+            Conversation content is stored as a transcript, making previous
+            discussions easier to review.
+          </p>
+        </div>
+
+
+        <div class="feature-card reveal">
+          <div class="feature-number">06</div>
+
+          <div class="feature-icon">↗</div>
+
+          <h3>Produces insights</h3>
+
+          <p>
+            Conversation information can be transformed into summaries,
+            interest signals and useful follow-up context.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- CONVERSATION -->
+  <section class="conversation" id="how-it-works">
+    <div class="container">
+
+      <div class="reveal">
+        <div class="eyebrow">01 / Conversation</div>
+
+        <h2 class="section-title">
+          The conversation is the
+          <span class="gold">starting point.</span>
+        </h2>
+      </div>
+
+
+      <div class="conversation-grid">
+
+        <div class="conversation-copy reveal">
+
+          <h3>
+            Listen first.<br>
+            Understand second.
+          </h3>
+
+          <p>
+            Manoj is designed around the conversation itself. Customers can
+            explain what they need naturally instead of navigating rigid
+            menus or forms.
+          </p>
+
+          <div class="conversation-points">
+
+            <div class="conversation-point">
+              <span>✦</span>
+              Customer speaks naturally
+            </div>
+
+            <div class="conversation-point">
+              <span>✦</span>
+              Manoj responds in real time
+            </div>
+
+            <div class="conversation-point">
+              <span>✦</span>
+              Important details are captured
+            </div>
+
+            <div class="conversation-point">
+              <span>✦</span>
+              Conversation continues with context
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="phone reveal">
+
+          <div class="phone-top">
+            <span>MANOJ AI</span>
+            <span class="phone-status">● LIVE</span>
+          </div>
+
+          <div class="voice-orb">✦</div>
+
+          <div class="call-title">Conversation</div>
+          <div class="call-subtitle">Understanding customer intent</div>
+
+          <div class="messages">
+
+            <div class="message user">
+              Hi, I wanted to know more about the course.
+            </div>
+
+            <div class="message ai">
+              Absolutely. I can help you with the course details.
+              What would you like to know?
+            </div>
+
+            <div class="message user">
+              I am interested in enrolling.
+            </div>
+
+            <div class="message ai">
+              Great. I can collect your details and arrange the next step.
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- INTELLIGENCE -->
+  <section>
+    <div class="container">
+
+      <div class="reveal">
+        <div class="eyebrow">02 / Intelligence</div>
+
+        <h2 class="section-title">
+          From spoken words to
+          <span class="gold">business signals.</span>
+        </h2>
+
+        <p class="section-description">
+          The value isn't only in answering the call. It's in understanding
+          what the conversation means.
+        </p>
+      </div>
+
+
+      <div class="analysis-grid">
+
+        <div class="analysis-card reveal">
+
+          <h3>Conversation analysis</h3>
+
+          <p>
+            Important signals can be extracted from what the customer says
+            during the interaction.
+          </p>
+
+          <div class="analysis-meter">
+
+            <div class="meter-row">
+              <div class="meter-head">
+                <span>Interest signal</span>
+                <span>High</span>
+              </div>
+
+              <div class="meter">
+                <div class="meter-fill"></div>
+              </div>
+            </div>
+
+
+            <div class="meter-row">
+              <div class="meter-head">
+                <span>Intent confidence</span>
+                <span>Good</span>
+              </div>
+
+              <div class="meter">
+                <div class="meter-fill second"></div>
+              </div>
+            </div>
+
+
+            <div class="meter-row">
+              <div class="meter-head">
+                <span>Lead quality</span>
+                <span>Strong</span>
+              </div>
+
+              <div class="meter">
+                <div class="meter-fill third"></div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="analysis-card reveal">
+
+          <h3>Intent becomes actionable</h3>
+
+          <p>
+            Instead of simply storing a conversation, the system can surface
+            the most important next-step information.
+          </p>
+
+          <div class="intent-box">
+            <small>Detected intent</small>
+            <strong>Interested in enrolling</strong>
+          </div>
+
+          <div class="intent-box">
+            <small>Suggested next action</small>
+            <strong>Callback / follow-up</strong>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- WORKFLOW -->
+  <section>
+    <div class="container">
+
+      <div class="reveal">
+        <div class="eyebrow">03 / Workflow</div>
+
+        <h2 class="section-title">
+          One conversation.
+          <span class="gold">Five useful outputs.</span>
+        </h2>
+      </div>
+
+
+      <div class="workflow">
+
+        <div class="workflow-step reveal">
+          <div class="num">01</div>
+          <h3>Customer calls</h3>
+          <p>The conversation starts naturally.</p>
+        </div>
+
+        <div class="workflow-step reveal">
+          <div class="num">02</div>
+          <h3>Manoj listens</h3>
+          <p>Voice input is understood in context.</p>
+        </div>
+
+        <div class="workflow-step reveal">
+          <div class="num">03</div>
+          <h3>Lead captured</h3>
+          <p>Relevant details are saved.</p>
+        </div>
+
+        <div class="workflow-step reveal">
+          <div class="num">04</div>
+          <h3>AI analysis</h3>
+          <p>Conversation signals are organized.</p>
+        </div>
+
+        <div class="workflow-step reveal">
+          <div class="num">05</div>
+          <h3>Next action</h3>
+          <p>Teams get useful follow-up context.</p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- RECORDING + TRANSCRIPT -->
+  <section class="records-section">
+    <div class="container">
+
+      <div class="reveal">
+        <div class="eyebrow">04 / Call memory</div>
+
+        <h2 class="section-title">
+          Nothing important gets
+          <span class="gold">lost in the call.</span>
+        </h2>
+
+        <p class="section-description">
+          Calls, recordings and conversation content can be preserved so the
+          team can review what was discussed and understand the customer later.
+        </p>
+      </div>
+
+
+      <div class="records-grid">
+
+        <div class="record-panel reveal">
+
+          <div class="record-header">
+            <strong>Call recording</strong>
+            <span>RECORDED</span>
+          </div>
+
+          <div class="wave">
+            <i></i><i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i><i></i>
+          </div>
+
+          <div class="transcript-line">
+            <strong>AI</strong>
+            <span>Tell me a little more about what you're looking for.</span>
+          </div>
+
+          <div class="transcript-line">
+            <strong>USER</strong>
+            <span>I am interested in joining the course.</span>
+          </div>
+
+          <div class="transcript-line">
+            <strong>AI</strong>
+            <span>Great. I can help with the next step.</span>
+          </div>
+
+        </div>
+
+
+        <div class="record-side">
+
+          <div class="mini-stat reveal">
+            <small>Conversation</small>
+            <strong>Transcript</strong>
+          </div>
+
+          <div class="mini-stat reveal">
+            <small>Call</small>
+            <strong>Recording</strong>
+          </div>
+
+          <div class="mini-stat reveal">
+            <small>Lead</small>
+            <strong>Context saved</strong>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- DASHBOARD -->
+  <section>
+    <div class="container">
+
+      <div class="reveal">
+        <div class="eyebrow">05 / Visibility</div>
+
+        <h2 class="section-title">
+          Your calls shouldn't
+          <span class="gold">disappear.</span>
+        </h2>
+
+        <p class="section-description">
+          A dashboard brings conversations, leads, recordings and useful
+          signals together so every interaction can be reviewed.
+        </p>
+      </div>
+
+
+      <div class="dashboard-preview reveal">
+
+        <div class="dashboard-top">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+
+        <div class="dashboard-body">
+
+          <div class="dashboard-heading">
+            <strong>Call Intelligence</strong>
+            <span>Live dashboard preview</span>
+          </div>
+
+
+          <div class="dashboard-cards">
+
+            <div class="dash-card">
+              <small>TOTAL CALLS</small>
+              <strong>128</strong>
+            </div>
+
+            <div class="dash-card">
+              <small>LEADS</small>
+              <strong>46</strong>
+            </div>
+
+            <div class="dash-card">
+              <small>INTERESTED</small>
+              <strong>31</strong>
+            </div>
+
+            <div class="dash-card">
+              <small>CALLBACKS</small>
+              <strong>18</strong>
+            </div>
+
+          </div>
+
+
+          <div class="dashboard-table">
+
+            <div class="table-row head">
+              <span>Lead</span>
+              <span>Intent</span>
+              <span>Status</span>
+              <span>Call</span>
+              <span>Action</span>
+            </div>
+
+            <div class="table-row">
+              <span>Customer 01</span>
+              <span>Enrollment</span>
+              <span class="lead-tag">Warm</span>
+              <span>02:14</span>
+              <span>View</span>
+            </div>
+
+            <div class="table-row">
+              <span>Customer 02</span>
+              <span>Pricing</span>
+              <span class="lead-tag">Hot</span>
+              <span>04:32</span>
+              <span>View</span>
+            </div>
+
+            <div class="table-row">
+              <span>Customer 03</span>
+              <span>Information</span>
+              <span>New</span>
+              <span>01:48</span>
+              <span>View</span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- FINAL CTA -->
+  <section class="final-cta">
+    <div class="container reveal">
+
+      <div class="eyebrow">Experience the product</div>
+
+      <h2>
+        Don't just read about
+        <span class="gold">Manoj.</span>
+      </h2>
+
+      <p>
+        Have a real conversation with the AI voice agent and experience
+        how the interaction works.
+      </p>
+
+      <a href="index.html" class="btn btn-primary">
+        Talk to Manoj →
+      </a>
+
+    </div>
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-inner">
+
+      <div>
+        © 2026 Manoj AI Voice Agent
+      </div>
+
+      <div class="footer-links">
+        <a href="landing.html">Home</a>
+        <a href="product.html">Product</a>
+        <a href="solutions.html">Solutions</a>
+        <a href="roadmap.html">Roadmap</a>
+        <a href="contact.html">Contact</a>
+      </div>
+
+    </div>
+  </footer>
+
+
+  <script>
+    // Mobile navigation
+    const menuBtn = document.getElementById("menuBtn");
+    const navLinks = document.getElementById("navLinks");
+
+    function closeMobileMenu() {
+      navLinks.classList.remove("open");
+      menuBtn.setAttribute("aria-expanded", "false");
+      menuBtn.setAttribute("aria-label", "Open menu");
+    }
+
+    menuBtn.addEventListener("click", () => {
+      const isOpen = navLinks.classList.toggle("open");
+      menuBtn.setAttribute("aria-expanded", String(isOpen));
+      menuBtn.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
+    });
+
+    document.querySelectorAll(".nav-links a").forEach(link => {
+      link.addEventListener("click", closeMobileMenu);
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        closeMobileMenu();
+      }
+    });
+
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 900) {
+        closeMobileMenu();
+      }
+    });
+
+
+    // Reveal animations
+    const revealItems = document.querySelectorAll(".reveal");
+
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          threshold: 0.12
+        }
+      );
+
+      revealItems.forEach(item => observer.observe(item));
+    } else {
+      revealItems.forEach(item => item.classList.add("visible"));
+    }
+  </script>
+
+</body>
+</html>

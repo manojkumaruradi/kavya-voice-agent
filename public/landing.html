@@ -1,0 +1,7015 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  >
+
+  <title>
+    Manoj AI — Your AI Employee for Every Conversation
+  </title>
+
+  <meta
+    name="description"
+    content="Manoj is an AI voice agent that talks to customers, captures leads, records conversations, generates transcripts and turns every call into actionable business intelligence."
+  >
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+
+    /* =========================================================
+       RESET
+    ========================================================= */
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+
+    body {
+      background: #050505;
+      color: #f5f5f5;
+      font-family: "DM Sans", sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    img,
+    svg {
+      max-width: 100%;
+    }
+
+
+    /* =========================================================
+       VARIABLES
+    ========================================================= */
+
+    :root {
+
+      --black: #050505;
+      --black-soft: #0b0b0b;
+
+      --card: #101010;
+      --card-2: #151515;
+
+      --gold: #d4af37;
+      --gold-bright: #f5c542;
+      --gold-light: #f7e7b4;
+
+      --white: #f8f8f8;
+
+      --muted: #9b9b9b;
+      --muted-2: #686868;
+
+      --border: rgba(212, 175, 55, 0.16);
+
+      --border-light: rgba(255, 255, 255, 0.08);
+
+      --container: 1180px;
+
+    }
+
+
+    /* =========================================================
+       PREMIUM AMBIENT BACKGROUND
+    ========================================================= */
+
+    .ambient-background {
+
+      position: fixed;
+
+      inset: 0;
+
+      pointer-events: none;
+
+      z-index: -1;
+
+      overflow: hidden;
+
+      background: #050505;
+
+    }
+
+    .ambient-grid {
+
+      position: absolute;
+
+      inset: 0;
+
+      opacity: 0.25;
+
+      background-image:
+        linear-gradient(
+          rgba(212,175,55,0.018) 1px,
+          transparent 1px
+        ),
+        linear-gradient(
+          90deg,
+          rgba(212,175,55,0.018) 1px,
+          transparent 1px
+        );
+
+      background-size: 90px 90px;
+
+      mask-image:
+        linear-gradient(
+          to bottom,
+          transparent,
+          black 20%,
+          black 80%,
+          transparent
+        );
+
+    }
+
+    .ambient-orb {
+
+      position: absolute;
+
+      width: 320px;
+      height: 320px;
+
+      border-radius: 50%;
+
+      background:
+        rgba(212,175,55,0.035);
+
+      filter: blur(90px);
+
+      animation:
+        ambientFloat 12s ease-in-out infinite;
+
+    }
+
+    .orb-one {
+
+      top: 15%;
+      left: -120px;
+
+    }
+
+    .orb-two {
+
+      top: 48%;
+      right: -150px;
+
+      animation-delay: -4s;
+
+    }
+
+    .orb-three {
+
+      bottom: 5%;
+      left: 35%;
+
+      animation-delay: -8s;
+
+    }
+
+
+    /* =========================================================
+       CURSOR
+    ========================================================= */
+
+    .cursor-dot {
+
+      position: fixed;
+
+      width: 8px;
+      height: 8px;
+
+      background: var(--gold-bright);
+
+      border-radius: 50%;
+
+      pointer-events: none;
+
+      z-index: 99999;
+
+      transform:
+        translate(-50%, -50%);
+
+      box-shadow:
+        0 0 18px rgba(245,197,66,0.8);
+
+    }
+
+    .cursor-ring {
+
+      position: fixed;
+
+      width: 34px;
+      height: 34px;
+
+      border:
+        1px solid
+        rgba(245,197,66,0.55);
+
+      border-radius: 50%;
+
+      pointer-events: none;
+
+      z-index: 99998;
+
+      transform:
+        translate(-50%, -50%);
+
+      transition:
+        width 0.2s ease,
+        height 0.2s ease,
+        background 0.2s ease;
+
+    }
+
+    .cursor-ring.active {
+
+      width: 54px;
+      height: 54px;
+
+      background:
+        rgba(245,197,66,0.05);
+
+    }
+
+
+    /* =========================================================
+       GLOBAL
+    ========================================================= */
+
+    .container {
+
+      width:
+        min(
+          var(--container),
+          calc(100% - 40px)
+        );
+
+      margin: 0 auto;
+
+      position: relative;
+
+    }
+
+    section {
+      position: relative;
+    }
+
+    .gold-text {
+      color: var(--gold-bright);
+    }
+
+
+    .eyebrow {
+
+      display: inline-flex;
+
+      align-items: center;
+
+      gap: 9px;
+
+      padding:
+        8px 13px;
+
+      border:
+        1px solid var(--border);
+
+      border-radius: 999px;
+
+      color: var(--gold-light);
+
+      background:
+        rgba(212,175,55,0.055);
+
+      font-size: 12px;
+
+      font-weight: 700;
+
+      letter-spacing: 1.5px;
+
+      text-transform: uppercase;
+
+    }
+
+    .eyebrow-dot {
+
+      width: 6px;
+      height: 6px;
+
+      background:
+        var(--gold-bright);
+
+      border-radius: 50%;
+
+      box-shadow:
+        0 0 12px var(--gold-bright);
+
+    }
+
+
+    .section-heading {
+
+      max-width: 760px;
+
+      margin-bottom: 55px;
+
+    }
+
+    .section-heading h2 {
+
+      margin-top: 20px;
+
+      font-family:
+        "Space Grotesk",
+        sans-serif;
+
+      font-size:
+        clamp(36px, 5vw, 68px);
+
+      line-height: 1.02;
+
+      letter-spacing: -2.8px;
+
+    }
+
+    .section-heading p {
+
+      margin-top: 20px;
+
+      color: var(--muted);
+
+      font-size: 18px;
+
+      max-width: 650px;
+
+    }
+
+
+    /* =========================================================
+       NAVBAR
+    ========================================================= */
+
+    .navbar {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: min(1160px, calc(100% - 32px));
+
+  z-index: 1000;
+
+  padding: 10px 12px 10px 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+
+  background: rgba(8,8,8,0.78);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  box-shadow:
+    0 15px 50px rgba(0,0,0,0.35),
+    inset 0 1px rgba(255,255,255,0.04);
+}
+
+    .logo {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 10px;
+
+      font-family:
+        "Space Grotesk",
+        sans-serif;
+
+      font-size: 21px;
+
+      font-weight: 700;
+
+      letter-spacing: -0.6px;
+
+    }
+
+    .logo-mark {
+
+      width: 34px;
+      height: 34px;
+
+      display: grid;
+
+      place-items: center;
+
+      border-radius: 10px;
+
+      background:
+        linear-gradient(
+          145deg,
+          var(--gold-bright),
+          var(--gold)
+        );
+
+      color: #050505;
+
+      font-size: 15px;
+
+      font-weight: 900;
+
+      box-shadow:
+        0 0 25px
+        rgba(245,197,66,0.16);
+
+    }
+
+    .nav-links {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 28px;
+
+      color: #a8a8a8;
+
+      font-size: 14px;
+
+      font-weight: 500;
+
+    }
+
+    .nav-links a {
+
+      transition:
+        color 0.2s ease;
+
+    }
+
+    .nav-links a:hover {
+      color: white;
+    }
+
+    .nav-cta {
+
+      display: inline-flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      padding:
+        13px 18px;
+
+      border-radius: 11px;
+
+      background:
+        var(--gold-bright);
+
+      color: #050505;
+
+      font-size: 13px;
+
+      font-weight: 800;
+
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+
+    }
+
+    .nav-cta:hover {
+
+      transform:
+        translateY(-2px);
+
+      box-shadow:
+        0 12px 30px
+        rgba(245,197,66,0.2);
+
+    }
+
+    .menu-btn {
+
+      display: none;
+
+      width: 42px;
+      height: 42px;
+
+      border:
+        1px solid
+        rgba(255,255,255,0.1);
+
+      border-radius: 11px;
+
+      background: #111;
+
+      color: white;
+
+      cursor: pointer;
+
+    }
+
+
+    /* =========================================================
+       HERO
+    ========================================================= */
+
+    .hero {
+
+      min-height: 920px;
+
+      padding-top: 180px;
+
+      padding-bottom: 110px;
+
+      overflow: hidden;
+
+    }
+
+    .hero-glow {
+
+      position: absolute;
+
+      width: 720px;
+      height: 720px;
+
+      right: -230px;
+      top: 70px;
+
+      border-radius: 50%;
+
+      background:
+        rgba(212,175,55,0.075);
+
+      filter: blur(100px);
+
+      pointer-events: none;
+
+    }
+
+    .hero-grid {
+
+      display: grid;
+
+      grid-template-columns:
+        minmax(0, 1.03fr)
+        minmax(0, 0.97fr);
+
+      align-items: center;
+
+      gap: 55px;
+
+    }
+
+    .hero-copy {
+
+      position: relative;
+
+      z-index: 3;
+
+    }
+
+    .hero-copy h1 {
+
+      margin-top: 25px;
+
+      font-family:
+        "Space Grotesk",
+        sans-serif;
+
+      font-size:
+        clamp(50px, 7vw, 92px);
+
+      line-height: 0.95;
+
+      letter-spacing: -5px;
+
+      max-width: 760px;
+
+    }
+
+    .hero-copy h1 span {
+      color: var(--gold-bright);
+    }
+
+    .hero-copy > p {
+
+      margin-top: 28px;
+
+      max-width: 610px;
+
+      color: #a2a2a2;
+
+      font-size: 18px;
+
+      line-height: 1.7;
+
+    }
+
+    .hero-actions {
+
+      display: flex;
+
+      gap: 14px;
+
+      margin-top: 34px;
+
+    }
+
+    .primary-btn,
+    .secondary-btn {
+
+      min-height: 54px;
+
+      display: inline-flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      padding:
+        0 22px;
+
+      border-radius: 12px;
+
+      font-size: 14px;
+
+      font-weight: 800;
+
+      transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+
+    }
+
+    .primary-btn {
+
+      background:
+        var(--gold-bright);
+
+      color: #050505;
+
+      box-shadow:
+        0 10px 40px
+        rgba(245,197,66,0.12);
+
+    }
+
+    .primary-btn:hover {
+
+      transform:
+        translateY(-3px);
+
+      box-shadow:
+        0 16px 45px
+        rgba(245,197,66,0.2);
+
+    }
+
+    .secondary-btn {
+
+      border:
+        1px solid
+        rgba(255,255,255,0.11);
+
+      color: #ddd;
+
+      background:
+        rgba(255,255,255,0.025);
+
+    }
+
+    .secondary-btn:hover {
+
+      transform:
+        translateY(-3px);
+
+      border-color:
+        rgba(245,197,66,0.35);
+
+    }
+
+    .hero-note {
+
+      margin-top: 22px;
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 9px;
+
+      color: #686868;
+
+      font-size: 12px;
+
+    }
+
+    .live-dot {
+
+      width: 7px;
+      height: 7px;
+
+      background:
+        #72d572;
+
+      border-radius: 50%;
+
+      box-shadow:
+        0 0 12px
+        rgba(114,213,114,0.8);
+
+      animation:
+        pulse 1.8s infinite;
+
+    }
+
+
+    /* =========================================================
+       HERO VISUAL
+    ========================================================= */
+
+    .hero-visual {
+
+      position: relative;
+
+      width: 100%;
+
+      min-width: 0;
+
+      min-height: 590px;
+
+      display: grid;
+
+      place-items: center;
+
+    }
+
+    .ai-orbit {
+
+      position: absolute;
+
+      width: 440px;
+      height: 440px;
+
+      border:
+        1px solid
+        rgba(212,175,55,0.13);
+
+      border-radius: 50%;
+
+      animation:
+        rotateSlow 22s linear infinite;
+
+    }
+
+    .ai-orbit::before,
+    .ai-orbit::after {
+
+      content: "";
+
+      position: absolute;
+
+      width: 9px;
+      height: 9px;
+
+      background:
+        var(--gold-bright);
+
+      border-radius: 50%;
+
+      box-shadow:
+        0 0 20px
+        rgba(245,197,66,0.9);
+
+    }
+
+    .ai-orbit::before {
+
+      top: 20px;
+      left: 50%;
+
+    }
+
+    .ai-orbit::after {
+
+      bottom: 70px;
+      right: 12px;
+
+    }
+
+
+    .ai-core {
+
+      position: relative;
+
+      width:
+        min(360px, 82vw);
+
+      height: 480px;
+
+      border:
+        1px solid
+        rgba(212,175,55,0.24);
+
+      border-radius:
+        180px 180px 45px 45px;
+
+      background:
+
+        radial-gradient(
+          circle at 50% 25%,
+          rgba(245,197,66,0.17),
+          transparent 28%
+        ),
+
+        linear-gradient(
+          160deg,
+          #202020,
+          #0c0c0c 55%,
+          #17120a
+        );
+
+      box-shadow:
+
+        0 50px 100px
+        rgba(0,0,0,0.65),
+
+        inset 0 0 70px
+        rgba(245,197,66,0.035);
+
+      overflow: hidden;
+
+      animation:
+        float 5s ease-in-out infinite;
+
+    }
+
+    .ai-core::before {
+
+      content: "";
+
+      position: absolute;
+
+      top: 55px;
+      left: 50%;
+
+      transform:
+        translateX(-50%);
+
+      width: 130px;
+      height: 130px;
+
+      border-radius: 50%;
+
+      background:
+
+        radial-gradient(
+          circle at 35% 30%,
+          #fff6ce,
+          #e0b935 22%,
+          #705b1e 58%,
+          #17130a 75%
+        );
+
+      box-shadow:
+        0 0 50px
+        rgba(245,197,66,0.16);
+
+    }
+
+    .ai-eyes {
+
+      position: absolute;
+
+      top: 110px;
+      left: 50%;
+
+      transform:
+        translateX(-50%);
+
+      display: flex;
+
+      gap: 35px;
+
+    }
+
+    .ai-eye {
+
+      width: 19px;
+      height: 8px;
+
+      border-radius: 50%;
+
+      background:
+        #f9d968;
+
+      box-shadow:
+        0 0 16px
+        rgba(245,197,66,0.8);
+
+    }
+
+    .ai-mouth {
+
+      position: absolute;
+
+      top: 145px;
+      left: 50%;
+
+      transform:
+        translateX(-50%);
+
+      width: 45px;
+      height: 5px;
+
+      border-radius: 99px;
+
+      background:
+        rgba(247,231,180,0.7);
+
+    }
+
+    .ai-body {
+
+      position: absolute;
+
+      left: 50%;
+      bottom: -30px;
+
+      transform:
+        translateX(-50%);
+
+      width: 245px;
+      height: 270px;
+
+      border-radius:
+        120px 120px 30px 30px;
+
+      background:
+
+        linear-gradient(
+          145deg,
+          #252525,
+          #0b0b0b
+        );
+
+      border:
+        1px solid
+        rgba(255,255,255,0.06);
+
+    }
+
+    .ai-chest {
+
+      position: absolute;
+
+      left: 50%;
+      top: 55px;
+
+      transform:
+        translateX(-50%);
+
+      width: 95px;
+      height: 95px;
+
+      display: grid;
+
+      place-items: center;
+
+      border-radius: 50%;
+
+      border:
+        1px solid
+        rgba(245,197,66,0.35);
+
+      background:
+
+        radial-gradient(
+          circle,
+          rgba(245,197,66,0.22),
+          transparent 65%
+        );
+
+    }
+
+    .ai-chest::before {
+
+      content: "M";
+
+      display: grid;
+
+      place-items: center;
+
+      width: 48px;
+      height: 48px;
+
+      border-radius: 15px;
+
+      background:
+        var(--gold-bright);
+
+      color: #050505;
+
+      font-family:
+        "Space Grotesk",
+        sans-serif;
+
+      font-weight: 900;
+
+      box-shadow:
+        0 0 35px
+        rgba(245,197,66,0.35);
+
+    }
+
+
+    /* =========================================================
+       FLOATING HERO CARDS
+    ========================================================= */
+
+    .floating-card {
+
+      position: absolute;
+
+      padding:
+        14px 16px;
+
+      min-width: 175px;
+
+      border:
+        1px solid
+        rgba(255,255,255,0.08);
+
+      border-radius: 14px;
+
+      background:
+        rgba(15,15,15,0.85);
+
+      backdrop-filter:
+        blur(15px);
+
+      -webkit-backdrop-filter:
+        blur(15px);
+
+      box-shadow:
+        0 25px 60px
+        rgba(0,0,0,0.45);
+
+      animation:
+        floatCard 4s ease-in-out infinite;
+
+    }
+
+    .floating-card.one {
+
+      left: 0;
+      top: 130px;
+
+    }
+
+    .floating-card.two {
+
+      right: 0;
+      top: 235px;
+
+      animation-delay: -1.2s;
+
+    }
+
+    .floating-card.three {
+
+      left: 30px;
+      bottom: 55px;
+
+      animation-delay: -2s;
+
+    }
+
+    .floating-label {
+
+      color: #777;
+
+      font-size: 10px;
+
+      text-transform: uppercase;
+
+      letter-spacing: 1px;
+
+    }
+
+    .floating-value {
+
+      margin-top: 5px;
+
+      color: #f1f1f1;
+
+      font-size: 14px;
+
+      font-weight: 700;
+
+    }
+
+    .floating-value.gold {
+      color: var(--gold-bright);
+    }
+
+
+    /* =========================================================
+       MOVING INDUSTRIES
+    ========================================================= */
+
+    .industry-strip {
+
+      position: relative;
+
+      width: 100%;
+
+      border-top:
+        1px solid
+        rgba(255,255,255,0.06);
+
+      border-bottom:
+        1px solid
+        rgba(255,255,255,0.06);
+
+      background:
+        #080808;
+
+      overflow: hidden;
+
+    }
+
+    .industry-track {
+
+      display: flex;
+
+      width: max-content;
+
+      animation:
+        marquee 26s linear infinite;
+
+    }
+
+    .industry-set {
+
+      display: flex;
+
+      align-items: center;
+
+      white-space: nowrap;
+
+    }
+
+    .industry-item {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 22px;
+
+      padding:
+        23px 35px;
+
+      color: #888;
+
+      font-family:
+        "Space Grotesk",
+        sans-serif;
+
+      font-size: 14px;
+
+      font-weight: 600;
+
+      letter-spacing: 1px;
+
+      text-transform: uppercase;
+
+    }
+
+    .industry-item::after {
+
+      content: "✦";
+
+      color: var(--gold);
+
+      font-size: 12px;
+
+    }
+
+
+    /* =========================================================
+       STATS
+    ========================================================= */
+
+    .stats {
+
+      padding: 75px 0;
+
+    }
+
+    .stats-grid {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(4, 1fr);
+
+      border-top:
+        1px solid
+        rgba(255,255,255,0.07);
+
+      border-bottom:
+        1px solid
+        rgba(255,255,255,0.07);
+
+    }
+
+    .stat {
+
+      padding:
+        34px 25px;
+
+      border-right:
+        1px solid
+        rgba(255,255,255,0.07);
+
+    }
+
+    .stat:last-child {
+      border-right: 0;
+    }
+
+    .stat-number {
+
+      font-family:
+        "Space Grotesk",
+        sans-serif;
+
+      font-size: 38px;
+
+      font-weight: 700;
+
+      color:
+        var(--gold-bright);
+
+    }
+
+    .stat-title {
+
+      margin-top: 5px;
+
+      font-weight: 700;
+
+      color: #ddd;
+
+    }
+
+    .stat-text {
+
+      margin-top: 5px;
+
+      color: #686868;
+
+      font-size: 13px;
+
+    }
+
+
+    /* =========================================================
+       SYSTEM
+    ========================================================= */
+
+    .system-section {
+
+      padding: 110px 0;
+
+    }
+
+    .system-grid {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, 1fr);
+
+      gap: 16px;
+
+    }
+
+    .system-card {
+
+      min-height: 340px;
+
+      padding: 30px;
+
+      border:
+        1px solid
+        rgba(255,255,255,0.075);
+
+      border-radius: 22px;
+
+      background:
+
+        radial-gradient(
+          circle at 90% 10%,
+          rgba(212,175,55,0.08),
+          transparent 35%
+        ),
+
+        #0c0c0c;
+
+      transition:
+        transform 0.3s ease,
+        border-color 0.3s ease;
+
+    }
+
+    .system-card:hover {
+
+      transform:
+        translateY(-7px);
+
+      border-color:
+        rgba(212,175,55,0.28);
+
+    }
+
+    .card-icon {
+
+      width: 48px;
+      height: 48px;
+
+      display: grid;
+
+      place-items: center;
+
+      border-radius: 14px;
+
+      background:
+        rgba(212,175,55,0.1);
+
+      border:
+        1px solid
+        rgba(212,175,55,0.17);
+
+      color:
+        var(--gold-bright);
+
+      font-size: 20px;
+
+    }
+
+    .system-card h3 {
+
+      margin-top: 28px;
+
+      font-family:
+        "Space Grotesk",
+        sans-serif;
+
+      font-size: 24px;
+
+    }
+
+    .system-card p {
+
+      margin-top: 12px;
+
+      color: #777;
+
+      font-size: 14px;
+
+      line-height: 1.7;
+
+    }
+
+    .mini-ui {
+
+      margin-top: 28px;
+
+      padding: 13px;
+
+      border:
+        1px solid
+        rgba(255,255,255,0.06);
+
+      border-radius: 12px;
+
+      background:
+        #080808;
+
+    }
+
+    .mini-line {
+
+      height: 7px;
+
+      margin-bottom: 8px;
+
+      border-radius: 99px;
+
+      background:
+        #1b1b1b;
+
+    }
+
+    .mini-line.short {
+      width: 58%;
+    }
+
+    .mini-line.gold {
+
+      width: 76%;
+
+      background:
+        rgba(245,197,66,0.55);
+
+    }
+
+
+    /* =========================================================
+       INFOGRAPHIC
+    ========================================================= */
+
+    .infographic {
+
+      margin-top: 55px;
+
+      padding: 32px;
+
+      border:
+        1px solid
+        rgba(212,175,55,0.14);
+
+      border-radius: 24px;
+
+      background:
+
+        radial-gradient(
+          circle at 15% 0%,
+          rgba(245,197,66,0.07),
+          transparent 30%
+        ),
+
+        linear-gradient(
+          145deg,
+          #101010,
+          #080808
+        );
+
+      box-shadow:
+
+        inset 0 1px
+        rgba(255,255,255,0.03),
+
+        0 35px 80px
+        rgba(0,0,0,0.35);
+
+    }
+
+    .infographic-header {
+
+      display: flex;
+
+      align-items: flex-end;
+
+      justify-content: space-between;
+
+      gap: 20px;
+
+      padding-bottom: 28px;
+
+      border-bottom:
+        1px solid
+        rgba(255,255,255,0.06);
+
+    }
+
+    .infographic-header h3 {
+
+      margin-top: 17px;
+
+      font-family:
+        "Space Grotesk",
+        sans-serif;
+
+      font-size:
+        clamp(28px, 4vw, 43px);
+
+      line-height: 1.05;
+
+      letter-spacing: -1.8px;
+
+    }
+
+    .infographic-live {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 7px;
+
+      color: #666;
+
+      font-size: 9px;
+
+      font-weight: 800;
+
+      letter-spacing: 1px;
+
+    }
+
+    .infographic-live span {
+
+      width: 6px;
+      height: 6px;
+
+      border-radius: 50%;
+
+      background:
+        #6fd36f;
+
+      box-shadow:
+        0 0 13px
+        rgba(111,211,111,0.8);
+
+      animation:
+        pulse 1.8s infinite;
+
+    }
+
+    .info-flow {
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 10px;
+
+      padding-top: 30px;
+
+    }
+
+    .info-node {
+
+      flex: 1;
+
+      min-width: 120px;
+
+      padding: 18px;
+
+      border:
+        1px solid
+        rgba(255,255,255,0.06);
+
+      border-radius: 15px;
+
+      background:
+        #0b0b0b;
+
+      transition:
+        transform 0.25s ease,
+        border-color 0.25s ease;
+
+    }
+
+    .info-node:hover {
+
+      transform:
+        translateY(-5px);
+
+      border-color:
+        rgba(212,175,55,0.28);
+
+    }
+
+    .info-icon {
+
+      width: 36px;
+      height: 36px;
+
+      display: grid;
+
+      place-items: center;
+
+      border-radius: 10px;
+
+      background:
+        rgba(212,175,55,0.1);
+
+      border:
+        1px solid
+        rgba(212,175,55,0.18);
+
+      color:
+        var(--gold-bright);
+
+      font-family:
+        "Space Grotesk",
+        sans-serif;
+
+      font-size: 10px;
+
+      font-weight: 800;
+
+    }
+
+    .info-node strong {
+
+      display: block;
+
+      margin-top: 17px;
+
+      color: #ddd;
+
+      font-size: 13px;
+
+    }
+
+    .info-node span {
+
+      display: block;
+
+      margin-top: 6px;
+
+      color: #626262;
+
+      font-size: 10px;
+
+      line-height: 1.5;
+
+    }
+
+    .info-connector {
+
+      flex:
+        0 0 30px;
+
+      color:
+        var(--gold);
+
+      font-size: 18px;
+
+      text-align: center;
+
+      opacity: 0.7;
+
+    }
+
+
+    /* =========================================================
+       CONVERSATION
+    ========================================================= */
+
+    .conversation-section {
+
+      padding: 110px 0;
+
+    }
+
+    .conversation-layout {
+
+      display: grid;
+
+      grid-template-columns:
+        0.82fr 1.18fr;
+
+      gap: 70px;
+
+      align-items: center;
+
+    }
+
+    .phone {
+
+      width:
+        min(360px, 100%);
+
+      margin: 0 auto;
+
+      padding: 11px;
+
+      border-radius: 40px;
+
+      border:
+        1px solid
+        rgba(255,255,255,0.11);
+
+      background:
+        #111;
+
+      box-shadow:
+
+        0 40px 90px
+        rgba(0,0,0,0.6),
+
+        0 0 80px
+        rgba(212,175,55,0.05);
+
+    }
+
+    .phone-screen {
+
+      min-height: 620px;
+
+      padding:
+        25px 18px;
+
+      border-radius: 31px;
+
+      background:
+
+        radial-gradient(
+          circle at 50% 20%,
+          rgba(245,197,66,0.08),
+          transparent 25%
+        ),
+
+        #080808;
+
+      overflow: hidden;
+
+    }
+
+    .phone-top {
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      color: #777;
+
+      font-size: 11px;
+
+    }
+
+    .phone-agent {
+
+      text-align: center;
+
+      margin-top: 42px;
+
+    }
+
+    .agent-avatar {
+
+      width: 80px;
+      height: 80px;
+
+      margin: 0 auto;
+
+      display: grid;
+
+      place-items: center;
+
+      border-radius: 50%;
+
+      background:
+
+        radial-gradient(
+          circle,
+          #f5c542,
+          #6b5416
+        );
+
+      color: #080808;
+
+      font-family:
+        "Space Grotesk",
+        sans-serif;
+
+      font-size: 28px;
+
+      font-weight: 900;
+
+      box-shadow:
+        0 0 50px
+        rgba(245,197,66,0.15);
+
+    }
+
+    .agent-name {
+
+      margin-top: 14px;
+
+      font-weight: 700;
+
+    }
+
+    .agent-status {
+
+      margin-top: 3px;
+
+      color: #68d568;
+
+      font-size: 11px;
+
+    }
+
+    .voice-bars {
+
+      height: 70px;
+
+      margin-top: 30px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      gap: 5px;
+
+    }
+
+    .voice-bar {
+
+      width: 4px;
+
+      border-radius: 99px;
+
+      background:
+        var(--gold-bright);
+
+      animation:
+        voice 1s ease-in-out infinite alternate;
+
+    }
+
+    .voice-bar:nth-child(1) {
+      height: 20px;
+      animation-delay: -.1s;
+    }
+
+    .voice-bar:nth-child(2) {
+      height: 35px;
+      animation-delay: -.2s;
+    }
+
+    .voice-bar:nth-child(3) {
+      height: 55px;
+      animation-delay: -.4s;
+    }
+
+    .voice-bar:nth-child(4) {
+      height: 42px;
+      animation-delay: -.6s;
+    }
+
+    .voice-bar:nth-child(5) {
+      height: 62px;
+      animation-delay: -.3s;
+    }
+
+    .voice-bar:nth-child(6) {
+      height: 38px;
+      animation-delay: -.7s;
+    }
+
+    .voice-bar:nth-child(7) {
+      height: 52px;
+      animation-delay: -.5s;
+    }
+
+    .voice-bar:nth-child(8) {
+      height: 28px;
+      animation-delay: -.8s;
+    }
+
+    .chat-list {
+
+      margin-top: 35px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 12px;
+
+    }
+
+    .chat {
+
+      max-width: 82%;
+
+      padding:
+        11px 13px;
+
+      border-radius: 13px;
+
+      font-size: 11px;
+
+      line-height: 1.5;
+
+    }
+
+    .chat.ai {
+
+      align-self: flex-start;
+
+      background:
+        #161616;
+
+      color: #bbb;
+
+    }
+
+    .chat.user {
+
+      align-self: flex-end;
+
+      background:
+        rgba(245,197,66,0.13);
+
+      color: #e9e9e9;
+
+      border:
+        1px solid
+        rgba(245,197,66,0.1);
+
+    }
+
+    .conversation-copy h3 {
+
+      font-family:
+        "Space Grotesk",
+        sans-serif;
+
+      font-size: 40px;
+
+      line-height: 1.08;
+
+      letter-spacing: -1.5px;
+
+    }
+
+    .conversation-copy > p {
+
+      margin-top: 18px;
+
+      color: #858585;
+
+      font-size: 16px;
+
+      line-height: 1.8;
+
+    }
+
+    .feature-list {
+
+      margin-top: 30px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 17px;
+
+    }
+
+    .feature-item {
+
+      display: flex;
+
+      gap: 14px;
+
+      align-items: flex-start;
+
+    }
+
+    .check {
+
+      flex:
+        0 0 auto;
+
+      width: 23px;
+      height: 23px;
+
+      display: grid;
+
+      place-items: center;
+
+      border-radius: 50%;
+
+      background:
+        rgba(245,197,66,0.12);
+
+      color:
+        var(--gold-bright);
+
+      font-size: 11px;
+
+    }
+
+    .feature-item div:last-child {
+
+      color: #aaa;
+
+      font-size: 14px;
+
+    }
+
+
+    /* =========================================================
+       INTELLIGENCE
+    ========================================================= */
+
+    .intelligence-section {
+
+      padding: 110px 0;
+
+    }
+
+    .intel-layout {
+
+      display: grid;
+
+      grid-template-columns: 1fr 1fr;
+
+      gap: 20px;
+
+    }
+
+    .analysis-card {
+
+      padding: 30px;
+
+      border:
+        1px solid
+        rgba(255,255,255,0.07);
+
+      border-radius: 22px;
+
+      background:
+        #0c0c0c;
+
+    }
+
+    .analysis-top {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+      padding-bottom: 18px;
+
+      border-bottom:
+        1px solid
+        rgba(255,255,255,0.07);
+
+    }
+
+    .analysis-title {
+
+      font-family:
+        "Space Grotesk",
+        sans-serif;
+
+      font-weight: 700;
+
+    }
+
+    .status-pill {
+
+      padding:
+        6px 10px;
+
+      border-radius: 999px;
+
+      background:
+        rgba(95,204,95,0.09);
+
+      color:
+        #76d876;
+
+      font-size: 10px;
+
+      font-weight: 700;
+
+      text-transform: uppercase;
+
+    }
+
+    .analysis-row {
+
+      display: grid;
+
+      grid-template-columns:
+        125px 1fr;
+
+      padding: 18px 0;
+
+      border-bottom:
+        1px solid
+        rgba(255,255,255,0.05);
+
+    }
+
+    .analysis-row:last-child {
+      border-bottom: 0;
+    }
+
+    .analysis-label {
+
+      color: #666;
+
+      font-size: 12px;
+
+    }
+
+    .analysis-value {
+
+      color: #ddd;
+
+      font-size: 13px;
+
+      font-weight: 600;
+
+    }
+
+    .analysis-value.gold {
+      color: var(--gold-bright);
+    }
+
+
+    /* =========================================================
+       RECORDS
+    ========================================================= */
+
+    .records-section {
+
+      padding: 110px 0;
+
+    }
+
+    .records-layout {
+
+      display: grid;
+
+      grid-template-columns: 1fr 1fr;
+
+      gap: 18px;
+
+    }
+
+    .record-card {
+
+      min-height: 440px;
+
+      padding: 30px;
+
+      border:
+        1px solid
+        rgba(255,255,255,0.07);
+
+      border-radius: 22px;
+
+      background:
+        #0c0c0c;
+
+    }
+
+    .record-card h3 {
+
+      font-family:
+        "Space Grotesk",
+        sans-serif;
+
+      font-size: 24px;
+
+    }
+
+    .record-card > p {
+
+      margin-top: 8px;
+
+      color: #6f6f6f;
+
+      font-size: 13px;
+
+    }
+
+    .recording-player {
+
+      margin-top: 35px;
+
+      padding: 20px;
+
+      border:
+        1px solid
+        rgba(255,255,255,0.06);
+
+      border-radius: 15px;
+
+      background:
+        #080808;
+
+    }
+
+    .recording-head {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 14px;
+
+    }
+
+    .play-button {
+
+      width: 44px;
+      height: 44px;
+
+      display: grid;
+
+      place-items: center;
+
+      border-radius: 50%;
+
+      background:
+        var(--gold-bright);
+
+      color: #050505;
+
+      font-size: 13px;
+
+    }
+
+    .recording-name {
+
+      font-size: 13px;
+
+      font-weight: 700;
+
+    }
+
+    .recording-time {
+
+      margin-top: 2px;
+
+      color: #666;
+
+      font-size: 11px;
+
+    }
+
+    .progress {
+
+      height: 4px;
+
+      margin-top: 25px;
+
+      border-radius: 99px;
+
+      background:
+        #242424;
+
+      overflow: hidden;
+
+    }
+
+    .progress span {
+
+      display: block;
+
+      width: 64%;
+
+      height: 100%;
+
+      background:
+        var(--gold-bright);
+
+    }
+
+    .transcript {
+
+      margin-top: 30px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 13px;
+
+      max-height: 280px;
+
+      overflow: hidden;
+
+    }
+
+    .transcript-line {
+
+      display: grid;
+
+      grid-template-columns:
+        65px 1fr;
+
+      gap: 12px;
+
+      font-size: 12px;
+
+    }
+
+    .speaker {
+
+      color:
+        var(--gold-bright);
+
+      font-weight: 700;
+
+    }
+
+    .transcript-text {
+
+      color: #898989;
+
+    }
+
+
+    /* =========================================================
+       WORKFLOW
+    ========================================================= */
+
+    .workflow-section {
+
+      padding: 110px 0;
+
+    }
+
+    .workflow-grid {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(4, 1fr);
+
+      gap: 0;
+
+    }
+
+    .workflow-step {
+
+      position: relative;
+
+      padding:
+        30px 24px;
+
+      border-top:
+        1px solid
+        rgba(255,255,255,0.08);
+
+    }
+
+    .workflow-step:not(:last-child)::after {
+
+      content: "→";
+
+      position: absolute;
+
+      right: -8px;
+
+      top: 25px;
+
+      color:
+        var(--gold);
+
+      z-index: 2;
+
+    }
+
+    .step-number {
+
+      font-family:
+        "Space Grotesk",
+        sans-serif;
+
+      color:
+        var(--gold-bright);
+
+      font-size: 13px;
+
+      font-weight: 700;
+
+    }
+
+    .workflow-step h3 {
+
+      margin-top: 20px;
+
+      font-family:
+        "Space Grotesk",
+        sans-serif;
+
+      font-size: 21px;
+
+    }
+
+    .workflow-step p {
+
+      margin-top: 8px;
+
+      color: #686868;
+
+      font-size: 13px;
+
+      line-height: 1.7;
+
+    }
+
+
+    /* =========================================================
+       DASHBOARD
+    ========================================================= */
+
+    .dashboard-section {
+
+      padding: 110px 0;
+
+    }
+
+    .dashboard-shell {
+
+      position: relative;
+
+      border:
+        1px solid
+        rgba(255,255,255,0.08);
+
+      border-radius: 24px;
+
+      padding: 12px;
+
+      background:
+        #111;
+
+      box-shadow:
+        0 45px 100px
+        rgba(0,0,0,0.55);
+
+    }
+
+    .dashboard-ui {
+
+      min-height: 500px;
+
+      border-radius: 17px;
+
+      background:
+        #080808;
+
+      overflow: hidden;
+
+    }
+
+    .dashboard-bar {
+
+      height: 62px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      padding: 0 22px;
+
+      border-bottom:
+        1px solid
+        rgba(255,255,255,0.06);
+
+    }
+
+    .dashboard-brand {
+
+      font-family:
+        "Space Grotesk",
+        sans-serif;
+
+      font-size: 14px;
+
+      font-weight: 700;
+
+    }
+
+    .dashboard-status {
+
+      color: #777;
+
+      font-size: 11px;
+
+    }
+
+    .dashboard-content {
+
+      padding: 25px;
+
+    }
+
+    .dashboard-metrics {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(4, 1fr);
+
+      gap: 12px;
+
+    }
+
+    .metric {
+
+      padding: 18px;
+
+      border:
+        1px solid
+        rgba(255,255,255,0.06);
+
+      border-radius: 14px;
+
+      background:
+        #0d0d0d;
+
+    }
+
+    .metric small {
+
+      color: #666;
+
+      font-size: 10px;
+
+    }
+
+    .metric strong {
+
+      display: block;
+
+      margin-top: 8px;
+
+      font-family:
+        "Space Grotesk",
+        sans-serif;
+
+      font-size: 25px;
+
+      color:
+        var(--gold-bright);
+
+    }
+
+    .dashboard-table {
+
+      margin-top: 15px;
+
+      border:
+        1px solid
+        rgba(255,255,255,0.06);
+
+      border-radius: 14px;
+
+      overflow: hidden;
+
+    }
+
+    .table-row {
+
+      display: grid;
+
+      grid-template-columns:
+        1.1fr 1fr 0.7fr 0.8fr 0.7fr;
+
+      padding:
+        17px 18px;
+
+      border-bottom:
+        1px solid
+        rgba(255,255,255,0.05);
+
+      font-size: 11px;
+
+    }
+
+    .table-row:last-child {
+      border-bottom: 0;
+    }
+
+    .table-row.header {
+
+      color: #5f5f5f;
+
+      text-transform: uppercase;
+
+      letter-spacing: 0.8px;
+
+    }
+
+    .table-row span {
+      color: #999;
+    }
+
+    .table-row .lead {
+
+      color: #ddd;
+
+      font-weight: 700;
+
+    }
+
+    .warm {
+      color: #eac04c !important;
+    }
+
+    .hot {
+      color: #76d876 !important;
+    }
+
+
+    /* =========================================================
+       ROADMAP
+    ========================================================= */
+
+    .roadmap-section {
+
+      padding: 110px 0;
+
+    }
+
+    .roadmap {
+
+      position: relative;
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(5, 1fr);
+
+      gap: 12px;
+
+    }
+
+    .roadmap-line {
+
+      position: absolute;
+
+      left: 5%;
+      right: 5%;
+
+      top: 26px;
+
+      height: 1px;
+
+      background:
+        linear-gradient(
+          90deg,
+          var(--gold),
+          rgba(212,175,55,0.1)
+        );
+
+    }
+
+    .roadmap-card {
+
+      position: relative;
+
+      padding:
+        0 10px;
+
+    }
+
+    .roadmap-dot {
+
+      position: relative;
+
+      z-index: 2;
+
+      width: 52px;
+      height: 52px;
+
+      display: grid;
+
+      place-items: center;
+
+      border:
+        1px solid
+        rgba(212,175,55,0.3);
+
+      border-radius: 50%;
+
+      background:
+        #090909;
+
+      color:
+        var(--gold-bright);
+
+      font-size: 13px;
+
+      font-weight: 800;
+
+    }
+
+    .roadmap-card h3 {
+
+      margin-top: 25px;
+
+      font-family:
+        "Space Grotesk",
+        sans-serif;
+
+      font-size: 17px;
+
+    }
+
+    .roadmap-card p {
+
+      margin-top: 7px;
+
+      color: #686868;
+
+      font-size: 12px;
+
+      line-height: 1.6;
+
+    }
+
+    .roadmap-status {
+
+      display: inline-block;
+
+      margin-top: 12px;
+
+      color:
+        var(--gold-bright);
+
+      font-size: 9px;
+
+      font-weight: 800;
+
+      letter-spacing: 1px;
+
+      text-transform: uppercase;
+
+    }
+
+
+    /* =========================================================
+       DEMO
+    ========================================================= */
+
+    .demo-section {
+
+      padding:
+        110px 0 130px;
+
+    }
+
+    .demo-box {
+
+      position: relative;
+
+      max-width: 850px;
+
+      margin: 0 auto;
+
+      padding: 65px;
+
+      border:
+        1px solid
+        rgba(212,175,55,0.18);
+
+      border-radius: 28px;
+
+      background:
+
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(245,197,66,0.1),
+          transparent 45%
+        ),
+
+        #0b0b0b;
+
+      overflow: hidden;
+
+    }
+
+    .demo-box h2 {
+
+      font-family:
+        "Space Grotesk",
+        sans-serif;
+
+      font-size:
+        clamp(36px, 5vw, 62px);
+
+      line-height: 1;
+
+      letter-spacing: -2px;
+
+      margin-top: 22px;
+
+    }
+
+    .demo-box > p {
+
+      margin-top: 15px;
+
+      color: #777;
+
+      font-size: 15px;
+
+    }
+
+    .demo-form {
+
+      margin-top: 38px;
+
+      display: grid;
+
+      grid-template-columns: 1fr 1fr;
+
+      gap: 13px;
+
+    }
+
+    .field {
+
+      width: 100%;
+
+      padding:
+        15px 16px;
+
+      border:
+        1px solid
+        rgba(255,255,255,0.09);
+
+      border-radius: 11px;
+
+      background:
+        #080808;
+
+      color: white;
+
+      outline: none;
+
+      font-size: 13px;
+
+      transition:
+        border-color 0.2s ease;
+
+    }
+
+    .field:focus {
+
+      border-color:
+        rgba(245,197,66,0.5);
+
+    }
+
+    .field::placeholder {
+      color: #505050;
+    }
+
+    .demo-form .full {
+      grid-column: 1 / -1;
+    }
+
+    .demo-submit {
+
+      grid-column: 1 / -1;
+
+      min-height: 55px;
+
+      border: 0;
+
+      border-radius: 12px;
+
+      background:
+        var(--gold-bright);
+
+      color: #050505;
+
+      font-size: 14px;
+
+      font-weight: 900;
+
+      cursor: pointer;
+
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+
+    }
+
+    .demo-submit:hover {
+
+      transform:
+        translateY(-2px);
+
+      box-shadow:
+        0 15px 35px
+        rgba(245,197,66,0.16);
+
+    }
+
+    .form-message {
+
+      grid-column: 1 / -1;
+
+      color:
+        var(--gold-light);
+
+      font-size: 12px;
+
+      text-align: center;
+
+      display: none;
+
+    }
+
+
+    /* =========================================================
+       FINAL CTA
+    ========================================================= */
+
+    .final-cta {
+
+      padding:
+        90px 0 100px;
+
+      text-align: center;
+
+      border-top:
+        1px solid
+        rgba(255,255,255,0.06);
+
+    }
+
+    .final-cta h2 {
+
+      max-width: 900px;
+
+      margin: 22px auto 0;
+
+      font-family:
+        "Space Grotesk",
+        sans-serif;
+
+      font-size:
+        clamp(42px, 7vw, 88px);
+
+      line-height: 0.98;
+
+      letter-spacing: -4px;
+
+    }
+
+    .final-cta p {
+
+      max-width: 560px;
+
+      margin: 22px auto 0;
+
+      color: #727272;
+
+      font-size: 15px;
+
+    }
+
+    .final-button {
+
+      margin-top: 32px;
+
+      display: inline-flex;
+
+      min-height: 58px;
+
+      padding:
+        0 28px;
+
+      align-items: center;
+
+      justify-content: center;
+
+      border-radius: 13px;
+
+      background:
+        var(--gold-bright);
+
+      color: #050505;
+
+      font-weight: 900;
+
+      font-size: 14px;
+
+      box-shadow:
+        0 15px 50px
+        rgba(245,197,66,0.12);
+
+      transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+
+    }
+
+    .final-button:hover {
+
+      transform:
+        translateY(-4px);
+
+      box-shadow:
+        0 20px 60px
+        rgba(245,197,66,0.22);
+
+    }
+
+
+    /* =========================================================
+       WHATSAPP FLOATING BUTTON
+    ========================================================= */
+
+    .whatsapp-float {
+
+      position: fixed;
+
+      right: 24px;
+      bottom: 24px;
+
+      width: 58px;
+      height: 58px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      border-radius: 50%;
+
+      background:
+        var(--gold);
+
+      color:
+        #050505;
+
+      border:
+        1px solid
+        rgba(247,231,180,0.5);
+
+      box-shadow:
+
+        0 10px 35px
+        rgba(0,0,0,0.5),
+
+        0 0 35px
+        rgba(212,175,55,0.18);
+
+      z-index: 9990;
+
+      transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+
+    }
+
+    .whatsapp-icon {
+
+      font-size: 27px;
+
+      font-weight: 900;
+
+      transform:
+        rotate(-18deg);
+
+    }
+
+    .whatsapp-float:hover {
+
+      transform:
+        translateY(-5px)
+        scale(1.04);
+
+      box-shadow:
+
+        0 15px 45px
+        rgba(0,0,0,0.6),
+
+        0 0 45px
+        rgba(212,175,55,0.3);
+
+    }
+
+    .whatsapp-tooltip {
+
+      position: absolute;
+
+      right: 70px;
+
+      width: max-content;
+
+      padding:
+        9px 13px;
+
+      border-radius: 9px;
+
+      background:
+        #111;
+
+      border:
+        1px solid
+        rgba(255,255,255,0.08);
+
+      color: #ddd;
+
+      font-size: 11px;
+
+      opacity: 0;
+
+      pointer-events: none;
+
+      transform:
+        translateX(8px);
+
+      transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+
+    }
+
+    .whatsapp-float:hover
+    .whatsapp-tooltip {
+
+      opacity: 1;
+
+      transform:
+        translateX(0);
+
+    }
+
+
+    /* =========================================================
+       FOOTER
+    ========================================================= */
+
+    footer {
+
+      padding: 35px 0;
+
+      border-top:
+        1px solid
+        rgba(255,255,255,0.06);
+
+    }
+
+    .footer-inner {
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 20px;
+
+    }
+
+    .footer-brand {
+
+      color: #aaa;
+
+      font-family:
+        "Space Grotesk",
+        sans-serif;
+
+      font-weight: 700;
+
+    }
+
+    .footer-links {
+
+      display: flex;
+
+      gap: 22px;
+
+      color: #606060;
+
+      font-size: 12px;
+
+    }
+
+    .footer-links a:hover {
+
+      color:
+        var(--gold-bright);
+
+    }
+
+    .footer-copy {
+
+      color: #4e4e4e;
+
+      font-size: 11px;
+
+    }
+
+
+    /* =========================================================
+       REVEAL
+    ========================================================= */
+
+    .reveal {
+
+      opacity: 0;
+
+      transform:
+        translate3d(0,18px,0);
+
+      transition:
+        opacity 0.55s ease,
+        transform 0.55s ease;
+
+      will-change:
+        opacity,
+        transform;
+
+    }
+
+    .reveal.show {
+
+      opacity: 1;
+
+      transform:
+        translate3d(0,0,0);
+
+    }
+
+
+    /* =========================================================
+       KEYFRAMES
+    ========================================================= */
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-12px);
+      }
+
+    }
+
+    @keyframes floatCard {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-9px);
+      }
+
+    }
+
+    @keyframes rotateSlow {
+
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      50% {
+        transform: scale(1.35);
+        opacity: 0.65;
+      }
+
+    }
+
+    @keyframes marquee {
+
+      from {
+        transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(-50%);
+      }
+
+    }
+
+    @keyframes voice {
+
+      from {
+        transform: scaleY(0.45);
+      }
+
+      to {
+        transform: scaleY(1);
+      }
+
+    }
+
+    @keyframes ambientFloat {
+
+      0%,
+      100% {
+        transform:
+          translate3d(0,0,0);
+      }
+
+      50% {
+        transform:
+          translate3d(35px,-25px,0);
+      }
+
+    }
+
+
+    /* =========================================================
+       TABLET
+    ========================================================= */
+
+    @media (max-width: 1000px) {
+
+      .hero {
+        min-height: auto;
+      }
+
+      .hero-grid {
+
+        grid-template-columns: 1fr;
+
+      }
+
+      .hero-copy {
+
+        text-align: center;
+
+      }
+
+      .hero-copy > p {
+
+        margin-left: auto;
+
+        margin-right: auto;
+
+      }
+
+      .hero-actions,
+      .hero-note {
+
+        justify-content: center;
+
+      }
+
+      .hero-visual {
+
+        min-height: 580px;
+
+      }
+
+      .system-grid {
+
+        grid-template-columns:
+          repeat(2, 1fr);
+
+      }
+
+      .roadmap {
+
+        grid-template-columns:
+          repeat(3, 1fr);
+
+        row-gap: 45px;
+
+      }
+
+      .roadmap-line {
+        display: none;
+      }
+
+      .roadmap-card {
+        padding: 0;
+      }
+
+    }
+
+
+    /* =========================================================
+       MOBILE
+    ========================================================= */
+
+    @media (max-width: 700px) {
+
+      html,
+      body {
+
+        width: 100%;
+
+        max-width: 100%;
+
+        overflow-x: hidden;
+
+      }
+
+
+      .container {
+
+        width:
+          calc(100% - 28px);
+
+        max-width: none;
+
+      }
+
+
+      .cursor-dot,
+      .cursor-ring {
+
+        display: none;
+
+      }
+
+
+      /* NAV */
+
+      .navbar {
+
+        top: 10px;
+
+        width:
+          calc(100% - 20px);
+
+        padding:
+          8px 9px 8px 13px;
+
+        border-radius: 15px;
+
+      }
+
+      .logo {
+
+        font-size: 18px;
+
+      }
+
+      .logo-mark {
+
+        width: 31px;
+        height: 31px;
+
+      }
+
+      .nav-links,
+      .nav-cta {
+
+        display: none;
+
+      }
+
+      .menu-btn {
+
+        display: grid;
+
+        place-items: center;
+
+      }
+
+
+      /* HERO */
+
+      .hero {
+
+        padding-top: 135px;
+
+        padding-bottom: 55px;
+
+        min-height: auto;
+
+      }
+
+      .hero-grid {
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 10px;
+
+        width: 100%;
+
+      }
+
+      .hero-copy {
+
+        width: 100%;
+
+      }
+
+      .hero-copy h1 {
+
+        margin-top: 20px;
+
+        font-size:
+          clamp(42px, 12.5vw, 60px);
+
+        line-height: 0.98;
+
+        letter-spacing: -2.7px;
+
+      }
+
+      .hero-copy > p {
+
+        margin-top: 20px;
+
+        font-size: 15px;
+
+        line-height: 1.65;
+
+      }
+
+      .hero-actions {
+
+        flex-direction: column;
+
+        width: 100%;
+
+        margin-top: 25px;
+
+      }
+
+      .primary-btn,
+      .secondary-btn {
+
+        width: 100%;
+
+      }
+
+      .hero-note {
+
+        margin-top: 17px;
+
+        text-align: center;
+
+        font-size: 11px;
+
+      }
+
+
+      /* HERO VISUAL */
+
+      .hero-visual {
+
+        width: 100%;
+
+        min-height: 475px;
+
+        overflow: hidden;
+
+      }
+
+      .ai-orbit {
+
+        width: 305px;
+        height: 305px;
+
+      }
+
+      .ai-core {
+
+        width: 250px;
+        height: 365px;
+
+        border-radius:
+          130px 130px 35px 35px;
+
+      }
+
+      .ai-core::before {
+
+        top: 42px;
+
+        width: 95px;
+        height: 95px;
+
+      }
+
+      .ai-eyes {
+
+        top: 84px;
+
+        gap: 25px;
+
+      }
+
+      .ai-eye {
+
+        width: 14px;
+
+        height: 6px;
+
+      }
+
+      .ai-mouth {
+
+        top: 115px;
+
+        width: 35px;
+
+      }
+
+      .ai-body {
+
+        width: 175px;
+
+        height: 205px;
+
+      }
+
+      .ai-chest {
+
+        top: 42px;
+
+        width: 75px;
+        height: 75px;
+
+      }
+
+      .ai-chest::before {
+
+        width: 38px;
+        height: 38px;
+
+        border-radius: 11px;
+
+      }
+
+
+      /* FLOATING CARDS */
+
+      .floating-card {
+
+        min-width: 122px;
+
+        padding:
+          10px 11px;
+
+      }
+
+      .floating-card.one {
+
+        left: 0;
+
+        top: 80px;
+
+      }
+
+      .floating-card.two {
+
+        right: 0;
+
+        top: 165px;
+
+      }
+
+      .floating-card.three {
+
+        left: 3px;
+
+        bottom: 25px;
+
+      }
+
+      .floating-label {
+
+        font-size: 8px;
+
+      }
+
+      .floating-value {
+
+        font-size: 10px;
+
+      }
+
+
+      /* INDUSTRIES */
+
+      .industry-item {
+
+        padding:
+          18px 22px;
+
+        font-size: 10px;
+
+      }
+
+
+      /* STATS */
+
+      .stats {
+
+        padding:
+          42px 0;
+
+      }
+
+      .stats-grid {
+
+        grid-template-columns:
+          1fr 1fr;
+
+      }
+
+      .stat {
+
+        padding:
+          22px 13px;
+
+        border-right:
+          1px solid
+          rgba(255,255,255,0.07);
+
+        border-bottom:
+          1px solid
+          rgba(255,255,255,0.07);
+
+      }
+
+      .stat:nth-child(2n) {
+
+        border-right: 0;
+
+      }
+
+      .stat:nth-last-child(-n+2) {
+
+        border-bottom: 0;
+
+      }
+
+      .stat-number {
+
+        font-size: 28px;
+
+      }
+
+      .stat-title {
+
+        font-size: 13px;
+
+      }
+
+      .stat-text {
+
+        font-size: 11px;
+
+      }
+
+
+      /* SECTION SPACING */
+
+      .system-section,
+      .conversation-section,
+      .intelligence-section,
+      .records-section,
+      .workflow-section,
+      .dashboard-section,
+      .roadmap-section {
+
+        padding:
+          65px 0;
+
+      }
+
+
+      .section-heading {
+
+        margin-bottom: 32px;
+
+      }
+
+      .section-heading h2 {
+
+        font-size: 37px;
+
+        letter-spacing: -1.7px;
+
+      }
+
+      .section-heading p {
+
+        margin-top: 15px;
+
+        font-size: 14px;
+
+      }
+
+
+      /* SYSTEM */
+
+      .system-grid {
+
+        grid-template-columns: 1fr;
+
+      }
+
+      .system-card {
+
+        min-height: 255px;
+
+        padding: 23px;
+
+      }
+
+      .system-card h3 {
+
+        margin-top: 20px;
+
+        font-size: 21px;
+
+      }
+
+
+      /* INFOGRAPHIC */
+
+      .infographic {
+
+        margin-top: 35px;
+
+        padding: 21px;
+
+        border-radius: 18px;
+
+      }
+
+      .infographic-header {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 15px;
+
+        padding-bottom: 20px;
+
+      }
+
+      .infographic-header h3 {
+
+        font-size: 29px;
+
+        letter-spacing: -1.2px;
+
+      }
+
+      .info-flow {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 0;
+
+        padding-top: 20px;
+
+      }
+
+      .info-node {
+
+        width: 100%;
+
+        min-width: 0;
+
+        display: grid;
+
+        grid-template-columns:
+          40px 1fr;
+
+        column-gap: 13px;
+
+        padding: 14px;
+
+      }
+
+      .info-icon {
+
+        grid-row:
+          1 / 3;
+
+      }
+
+      .info-node strong {
+
+        margin-top: 0;
+
+      }
+
+      .info-node span {
+
+        margin-top: 4px;
+
+      }
+
+      .info-connector {
+
+        height: 28px;
+
+        flex: none;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        transform:
+          rotate(90deg);
+
+      }
+
+
+      /* CONVERSATION */
+
+      .conversation-layout {
+
+        grid-template-columns: 1fr;
+
+        gap: 40px;
+
+      }
+
+      .phone {
+
+        width:
+          min(320px, 94vw);
+
+      }
+
+      .phone-screen {
+
+        min-height: 550px;
+
+      }
+
+      .conversation-copy h3 {
+
+        font-size: 33px;
+
+      }
+
+      .conversation-copy > p {
+
+        font-size: 14px;
+
+      }
+
+
+      /* INTELLIGENCE */
+
+      .intel-layout {
+
+        grid-template-columns: 1fr;
+
+      }
+
+      .analysis-card {
+
+        padding: 22px;
+
+      }
+
+      .analysis-row {
+
+        grid-template-columns:
+          95px 1fr;
+
+      }
+
+
+      /* RECORDS */
+
+      .records-layout {
+
+        grid-template-columns: 1fr;
+
+      }
+
+      .record-card {
+
+        min-height: 360px;
+
+        padding: 22px;
+
+      }
+
+
+      /* WORKFLOW */
+
+      .workflow-grid {
+
+        grid-template-columns: 1fr;
+
+      }
+
+      .workflow-step {
+
+        padding:
+          22px 0;
+
+      }
+
+      .workflow-step:not(:last-child)::after {
+
+        content: "↓";
+
+        right: auto;
+
+        left: 0;
+
+        top: auto;
+
+        bottom: -15px;
+
+      }
+
+
+      /* DASHBOARD */
+
+      .dashboard-content {
+
+        padding: 12px;
+
+      }
+
+      .dashboard-metrics {
+
+        grid-template-columns:
+          1fr 1fr;
+
+      }
+
+      .dashboard-table {
+
+        overflow-x: auto;
+
+      }
+
+      .table-row {
+
+        min-width: 560px;
+
+      }
+
+
+      /* ROADMAP */
+
+      .roadmap {
+
+        grid-template-columns: 1fr;
+
+        gap: 24px;
+
+      }
+
+      .roadmap-card {
+
+        display: grid;
+
+        grid-template-columns:
+          52px 1fr;
+
+        column-gap: 17px;
+
+      }
+
+      .roadmap-card h3 {
+
+        margin-top: 4px;
+
+      }
+
+      .roadmap-card p,
+      .roadmap-status {
+
+        grid-column: 2;
+
+      }
+
+
+      /* DEMO */
+
+      .demo-section {
+
+        padding:
+          65px 0 75px;
+
+      }
+
+      .demo-box {
+
+        padding:
+          32px 20px;
+
+        border-radius: 20px;
+
+      }
+
+      .demo-box h2 {
+
+        font-size: 38px;
+
+        letter-spacing: -1.7px;
+
+      }
+
+      .demo-form {
+
+        grid-template-columns: 1fr;
+
+      }
+
+      .demo-form .full,
+      .demo-submit,
+      .form-message {
+
+        grid-column: 1;
+
+      }
+
+
+      /* FINAL CTA */
+
+      .final-cta {
+
+        padding:
+          65px 0 75px;
+
+      }
+
+      .final-cta h2 {
+
+        font-size: 44px;
+
+        letter-spacing: -2.3px;
+
+      }
+
+      .final-cta p {
+
+        font-size: 14px;
+
+      }
+
+
+      /* WHATSAPP */
+
+      .whatsapp-float {
+
+        width: 52px;
+        height: 52px;
+
+        right: 16px;
+        bottom: 16px;
+
+      }
+
+      .whatsapp-icon {
+
+        font-size: 24px;
+
+      }
+
+      .whatsapp-tooltip {
+
+        display: none;
+
+      }
+
+
+      /* FOOTER */
+
+      footer {
+
+        padding:
+          28px 0;
+
+      }
+
+      .footer-inner {
+
+        flex-direction: column;
+
+        text-align: center;
+
+      }
+
+      .footer-links {
+
+        flex-wrap: wrap;
+
+        justify-content: center;
+
+      }
+
+    }
+
+
+    /* =========================================================
+       VERY SMALL PHONES
+    ========================================================= */
+
+    @media (max-width: 380px) {
+
+      .hero-copy h1 {
+
+        font-size: 40px;
+
+      }
+
+      .hero-visual {
+
+        min-height: 450px;
+
+      }
+
+      .ai-orbit {
+
+        width: 275px;
+        height: 275px;
+
+      }
+
+      .ai-core {
+
+        width: 225px;
+
+        height: 340px;
+
+      }
+
+      .floating-card {
+
+        min-width: 108px;
+
+      }
+
+      .section-heading h2 {
+
+        font-size: 34px;
+
+      }
+
+      .final-cta h2 {
+
+        font-size: 40px;
+
+      }
+
+    }
+
+
+    /* =========================================================
+       REDUCE MOTION
+    ========================================================= */
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+
+        animation-duration:
+          0.01ms !important;
+
+        animation-iteration-count:
+          1 !important;
+
+        scroll-behavior:
+          auto !important;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <!-- =======================================================
+       PREMIUM BACKGROUND
+  ======================================================== -->
+
+  <div class="ambient-background">
+
+    <div class="ambient-grid"></div>
+
+    <div class="ambient-orb orb-one"></div>
+
+    <div class="ambient-orb orb-two"></div>
+
+    <div class="ambient-orb orb-three"></div>
+
+  </div>
+
+
+  <!-- =======================================================
+       CURSOR
+  ======================================================== -->
+
+  <div class="cursor-dot"></div>
+
+  <div class="cursor-ring"></div>
+
+
+  <!-- =======================================================
+       NAVBAR
+  ======================================================== -->
+
+  <header class="navbar">
+
+    <a
+      href="landing.html"
+      class="logo"
+    >
+
+      <span class="logo-mark">
+        M
+      </span>
+
+      Manoj AI
+
+    </a>
+
+
+    <nav class="nav-links">
+
+        <a href="landing.html">Home</a>
+
+      <a href="product.html">
+        Product
+      </a>
+
+      <a href="solutions.html">
+        Solutions
+      </a>
+
+      <a href="roadmap.html">
+        Roadmap
+      </a>
+
+      <a href="about.html">
+        About
+      </a>
+
+      <a href="contact.html">
+        Contact
+      </a>
+
+    </nav>
+
+
+    <a
+      href="#demo"
+      class="nav-cta"
+    >
+      Request Demo →
+    </a>
+
+
+    <button
+      class="menu-btn"
+      id="menuBtn"
+      aria-label="Open menu"
+    >
+      ☰
+    </button>
+
+  </header>
+
+
+  <!-- =======================================================
+       MAIN
+  ======================================================== -->
+
+  <main>
+
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <section class="hero">
+
+      <div class="hero-glow"></div>
+
+      <div class="container">
+
+        <div class="hero-grid">
+
+
+          <div class="hero-copy reveal">
+
+            <div class="eyebrow">
+
+              <span class="eyebrow-dot"></span>
+
+              AI Voice Employee
+
+            </div>
+
+
+            <h1>
+
+              Your AI employee for
+
+              <span>
+                every conversation.
+              </span>
+
+            </h1>
+
+
+            <p>
+
+              Manoj talks to customers naturally, understands what they
+              need, captures important details, records every conversation
+              and turns calls into clear next actions.
+
+            </p>
+
+
+            <div class="hero-actions">
+
+              <a
+                href="#demo"
+                class="primary-btn"
+              >
+                Get a Demo →
+              </a>
+
+
+              <a
+                href="#system"
+                class="secondary-btn"
+              >
+                Explore Manoj
+              </a>
+
+            </div>
+
+
+            <div class="hero-note">
+
+              <span class="live-dot"></span>
+
+              Built for real business conversations
+
+            </div>
+
+          </div>
+
+
+          <!-- HERO VISUAL -->
+
+          <div class="hero-visual reveal">
+
+            <div class="ai-orbit"></div>
+
+
+            <div class="ai-core">
+
+              <div class="ai-eyes">
+
+                <span class="ai-eye"></span>
+
+                <span class="ai-eye"></span>
+
+              </div>
+
+
+              <div class="ai-mouth"></div>
+
+
+              <div class="ai-body">
+
+                <div class="ai-chest"></div>
+
+              </div>
+
+            </div>
+
+
+            <div class="floating-card one">
+
+              <div class="floating-label">
+                Call status
+              </div>
+
+              <div class="floating-value gold">
+                ● Live conversation
+              </div>
+
+            </div>
+
+
+            <div class="floating-card two">
+
+              <div class="floating-label">
+                Lead intent
+              </div>
+
+              <div class="floating-value">
+                High interest
+              </div>
+
+            </div>
+
+
+            <div class="floating-card three">
+
+              <div class="floating-label">
+                Next action
+              </div>
+
+              <div class="floating-value">
+                Callback requested
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         INDUSTRY MARQUEE
+    ====================================================== -->
+
+    <div class="industry-strip">
+
+      <div class="industry-track">
+
+
+        <div class="industry-set">
+
+          <div class="industry-item">
+            Education
+          </div>
+
+          <div class="industry-item">
+            Healthcare
+          </div>
+
+          <div class="industry-item">
+            Real Estate
+          </div>
+
+          <div class="industry-item">
+            Financial Services
+          </div>
+
+          <div class="industry-item">
+            Automotive
+          </div>
+
+          <div class="industry-item">
+            Travel
+          </div>
+
+          <div class="industry-item">
+            Retail
+          </div>
+
+          <div class="industry-item">
+            Professional Services
+          </div>
+
+        </div>
+
+
+        <div class="industry-set">
+
+          <div class="industry-item">
+            Education
+          </div>
+
+          <div class="industry-item">
+            Healthcare
+          </div>
+
+          <div class="industry-item">
+            Real Estate
+          </div>
+
+          <div class="industry-item">
+            Financial Services
+          </div>
+
+          <div class="industry-item">
+            Automotive
+          </div>
+
+          <div class="industry-item">
+            Travel
+          </div>
+
+          <div class="industry-item">
+            Retail
+          </div>
+
+          <div class="industry-item">
+            Professional Services
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         STATS
+    ====================================================== -->
+
+    <section class="stats">
+
+      <div class="container">
+
+        <div class="stats-grid reveal">
+
+
+          <div class="stat">
+
+            <div class="stat-number">
+              24/7
+            </div>
+
+            <div class="stat-title">
+              Always available
+            </div>
+
+            <div class="stat-text">
+              Conversations don't need office hours.
+            </div>
+
+          </div>
+
+
+          <div class="stat">
+
+            <div class="stat-number">
+              100%
+            </div>
+
+            <div class="stat-title">
+              Calls captured
+            </div>
+
+            <div class="stat-text">
+              Recordings and transcripts stay organised.
+            </div>
+
+          </div>
+
+
+          <div class="stat">
+
+            <div class="stat-number">
+              AI
+            </div>
+
+            <div class="stat-title">
+              Conversation analysis
+            </div>
+
+            <div class="stat-text">
+              Understand intent and interest.
+            </div>
+
+          </div>
+
+
+          <div class="stat">
+
+            <div class="stat-number">
+              1
+            </div>
+
+            <div class="stat-title">
+              Connected system
+            </div>
+
+            <div class="stat-text">
+              From conversation to actionable lead.
+            </div>
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SYSTEM
+    ====================================================== -->
+
+    <section
+      class="system-section"
+      id="system"
+    >
+
+      <div class="container">
+
+
+        <div class="section-heading reveal">
+
+          <span class="eyebrow">
+
+            <span class="eyebrow-dot"></span>
+
+            Beyond voice
+
+          </span>
+
+
+          <h2>
+
+            A conversation is only the
+
+            <span class="gold-text">
+              beginning.
+            </span>
+
+          </h2>
+
+
+          <p>
+
+            Manoj doesn't simply answer a call. The conversation becomes
+            structured business information your team can actually use.
+
+          </p>
+
+        </div>
+
+
+        <div class="system-grid">
+
+
+          <article class="system-card reveal">
+
+            <div class="card-icon">
+              ◉
+            </div>
+
+            <h3>
+              Natural Voice
+            </h3>
+
+            <p>
+
+              Speak with customers naturally instead of forcing them
+              through rigid menus and scripted interactions.
+
+            </p>
+
+            <div class="mini-ui">
+
+              <div class="mini-line gold"></div>
+
+              <div class="mini-line"></div>
+
+              <div class="mini-line short"></div>
+
+            </div>
+
+          </article>
+
+
+          <article class="system-card reveal">
+
+            <div class="card-icon">
+              ↗
+            </div>
+
+            <h3>
+              Lead Capture
+            </h3>
+
+            <p>
+
+              Important information such as name, phone, course,
+              requirements and follow-up intent can be captured during
+              the conversation.
+
+            </p>
+
+            <div class="mini-ui">
+
+              <div class="mini-line gold"></div>
+
+              <div class="mini-line short"></div>
+
+              <div class="mini-line"></div>
+
+            </div>
+
+          </article>
+
+
+          <article class="system-card reveal">
+
+            <div class="card-icon">
+              ◌
+            </div>
+
+            <h3>
+              Call Records
+            </h3>
+
+            <p>
+
+              Keep the recording, transcript and lead information connected
+              so your team can understand what actually happened.
+
+            </p>
+
+            <div class="mini-ui">
+
+              <div class="mini-line gold"></div>
+
+              <div class="mini-line"></div>
+
+              <div class="mini-line short"></div>
+
+            </div>
+
+          </article>
+
+
+          <article class="system-card reveal">
+
+            <div class="card-icon">
+              ✦
+            </div>
+
+            <h3>
+              AI Intelligence
+            </h3>
+
+            <p>
+
+              Turn conversations into signals such as intent, interest,
+              sentiment and recommended next action.
+
+            </p>
+
+            <div class="mini-ui">
+
+              <div class="mini-line gold"></div>
+
+              <div class="mini-line short"></div>
+
+              <div class="mini-line"></div>
+
+            </div>
+
+          </article>
+
+
+          <article class="system-card reveal">
+
+            <div class="card-icon">
+              ▣
+            </div>
+
+            <h3>
+              Central Dashboard
+            </h3>
+
+            <p>
+
+              Give your team one place to review leads, conversations,
+              recordings, transcripts and outcomes.
+
+            </p>
+
+            <div class="mini-ui">
+
+              <div class="mini-line"></div>
+
+              <div class="mini-line gold"></div>
+
+              <div class="mini-line short"></div>
+
+            </div>
+
+          </article>
+
+
+          <article class="system-card reveal">
+
+            <div class="card-icon">
+              +
+            </div>
+
+            <h3>
+              Built to Expand
+            </h3>
+
+            <p>
+
+              The foundation is designed to connect with future channels,
+              CRM systems and telephony workflows.
+
+            </p>
+
+            <div class="mini-ui">
+
+              <div class="mini-line short"></div>
+
+              <div class="mini-line gold"></div>
+
+              <div class="mini-line"></div>
+
+            </div>
+
+          </article>
+
+
+        </div>
+
+
+        <!-- INFOGRAPHIC -->
+
+        <div class="infographic reveal">
+
+          <div class="infographic-header">
+
+            <div>
+
+              <span class="eyebrow">
+
+                <span class="eyebrow-dot"></span>
+
+                How Manoj works
+
+              </span>
+
+
+              <h3>
+
+                From conversation to
+
+                <span class="gold-text">
+                  business action.
+                </span>
+
+              </h3>
+
+            </div>
+
+
+            <div class="infographic-live">
+
+              <span></span>
+
+              LIVE SYSTEM
+
+            </div>
+
+          </div>
+
+
+          <div class="info-flow">
+
+
+            <div class="info-node">
+
+              <div class="info-icon">
+                01
+              </div>
+
+              <strong>
+                Customer calls
+              </strong>
+
+              <span>
+                Natural voice conversation
+              </span>
+
+            </div>
+
+
+            <div class="info-connector">
+              →
+            </div>
+
+
+            <div class="info-node">
+
+              <div class="info-icon">
+                02
+              </div>
+
+              <strong>
+                Manoj understands
+              </strong>
+
+              <span>
+                Intent & requirements
+              </span>
+
+            </div>
+
+
+            <div class="info-connector">
+              →
+            </div>
+
+
+            <div class="info-node">
+
+              <div class="info-icon">
+                03
+              </div>
+
+              <strong>
+                Lead captured
+              </strong>
+
+              <span>
+                Details stored securely
+              </span>
+
+            </div>
+
+
+            <div class="info-connector">
+              →
+            </div>
+
+
+            <div class="info-node">
+
+              <div class="info-icon">
+                04
+              </div>
+
+              <strong>
+                AI analysis
+              </strong>
+
+              <span>
+                Intent, interest & summary
+              </span>
+
+            </div>
+
+
+            <div class="info-connector">
+              →
+            </div>
+
+
+            <div class="info-node">
+
+              <div class="info-icon">
+                05
+              </div>
+
+              <strong>
+                Next action
+              </strong>
+
+              <span>
+                Your team knows what to do
+              </span>
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CONVERSATION
+    ====================================================== -->
+
+    <section class="conversation-section">
+
+      <div class="container">
+
+        <div class="conversation-layout">
+
+
+          <div class="phone reveal">
+
+            <div class="phone-screen">
+
+
+              <div class="phone-top">
+
+                <span>
+                  Manoj AI
+                </span>
+
+                <span>
+                  ● Connected
+                </span>
+
+              </div>
+
+
+              <div class="phone-agent">
+
+                <div class="agent-avatar">
+                  M
+                </div>
+
+                <div class="agent-name">
+                  Manoj
+                </div>
+
+                <div class="agent-status">
+                  Listening...
+                </div>
+
+
+                <div class="voice-bars">
+
+                  <span class="voice-bar"></span>
+                  <span class="voice-bar"></span>
+                  <span class="voice-bar"></span>
+                  <span class="voice-bar"></span>
+                  <span class="voice-bar"></span>
+                  <span class="voice-bar"></span>
+                  <span class="voice-bar"></span>
+                  <span class="voice-bar"></span>
+
+                </div>
+
+              </div>
+
+
+              <div class="chat-list">
+
+
+                <div class="chat ai">
+
+                  Hi, welcome! How can I help you today?
+
+                </div>
+
+
+                <div class="chat user">
+
+                  I wanted to know about the course and fees.
+
+                </div>
+
+
+                <div class="chat ai">
+
+                  Absolutely. I can explain the course and help you
+                  with the next steps.
+
+                </div>
+
+
+                <div class="chat user">
+
+                  Okay. Please ask someone to call me.
+
+                </div>
+
+
+                <div class="chat ai">
+
+                  Sure. I'll capture your details and arrange the
+                  follow-up.
+
+                </div>
+
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="conversation-copy reveal">
+
+            <span class="eyebrow">
+
+              <span class="eyebrow-dot"></span>
+
+              The conversation layer
+
+            </span>
+
+
+            <h3>
+
+              Make every customer interaction
+
+              <span class="gold-text">
+                feel human.
+              </span>
+
+            </h3>
+
+
+            <p>
+
+              Manoj is designed around real conversations. Customers can
+              explain what they need, ask questions and communicate naturally
+              while the system keeps track of the information your business
+              needs.
+
+            </p>
+
+
+            <div class="feature-list">
+
+
+              <div class="feature-item">
+
+                <div class="check">
+                  ✓
+                </div>
+
+                <div>
+
+                  Understands conversational requests instead of only keywords.
+
+                </div>
+
+              </div>
+
+
+              <div class="feature-item">
+
+                <div class="check">
+                  ✓
+                </div>
+
+                <div>
+
+                  Captures important lead information during the call.
+
+                </div>
+
+              </div>
+
+
+              <div class="feature-item">
+
+                <div class="check">
+                  ✓
+                </div>
+
+                <div>
+
+                  Keeps the conversation available as a transcript.
+
+                </div>
+
+              </div>
+
+
+              <div class="feature-item">
+
+                <div class="check">
+                  ✓
+                </div>
+
+                <div>
+
+                  Connects the conversation to the lead record.
+
+                </div>
+
+              </div>
+
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         INTELLIGENCE
+    ====================================================== -->
+
+    <section class="intelligence-section">
+
+      <div class="container">
+
+
+        <div class="section-heading reveal">
+
+          <span class="eyebrow">
+
+            <span class="eyebrow-dot"></span>
+
+            Conversation intelligence
+
+          </span>
+
+
+          <h2>
+
+            Know what the customer
+
+            <span class="gold-text">
+              really wants.
+            </span>
+
+          </h2>
+
+
+          <p>
+
+            Instead of making your team listen to every call manually,
+            turn the conversation into useful business signals.
+
+          </p>
+
+        </div>
+
+
+        <div class="intel-layout">
+
+
+          <div class="analysis-card reveal">
+
+            <div class="analysis-top">
+
+              <div class="analysis-title">
+                Conversation Analysis
+              </div>
+
+              <div class="status-pill">
+                Processed
+              </div>
+
+            </div>
+
+
+            <div class="analysis-row">
+
+              <div class="analysis-label">
+                Intent
+              </div>
+
+              <div class="analysis-value gold">
+                Course enquiry
+              </div>
+
+            </div>
+
+
+            <div class="analysis-row">
+
+              <div class="analysis-label">
+                Interest
+              </div>
+
+              <div class="analysis-value">
+                High
+              </div>
+
+            </div>
+
+
+            <div class="analysis-row">
+
+              <div class="analysis-label">
+                Sentiment
+              </div>
+
+              <div class="analysis-value">
+                Positive
+              </div>
+
+            </div>
+
+
+            <div class="analysis-row">
+
+              <div class="analysis-label">
+                Next action
+              </div>
+
+              <div class="analysis-value">
+                Callback requested
+              </div>
+
+            </div>
+
+
+            <div class="analysis-row">
+
+              <div class="analysis-label">
+                Lead status
+              </div>
+
+              <div class="analysis-value hot">
+                Warm lead
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="analysis-card reveal">
+
+            <div class="analysis-top">
+
+              <div class="analysis-title">
+                Lead Summary
+              </div>
+
+              <div class="status-pill">
+                Ready
+              </div>
+
+            </div>
+
+
+            <div class="analysis-row">
+
+              <div class="analysis-label">
+                Customer
+              </div>
+
+              <div class="analysis-value">
+                Ramesh
+              </div>
+
+            </div>
+
+
+            <div class="analysis-row">
+
+              <div class="analysis-label">
+                Requirement
+              </div>
+
+              <div class="analysis-value">
+                Interested in enrolment
+              </div>
+
+            </div>
+
+
+            <div class="analysis-row">
+
+              <div class="analysis-label">
+                Location
+              </div>
+
+              <div class="analysis-value">
+                Hyderabad
+              </div>
+
+            </div>
+
+
+            <div class="analysis-row">
+
+              <div class="analysis-label">
+                Follow-up
+              </div>
+
+              <div class="analysis-value gold">
+                Required
+              </div>
+
+            </div>
+
+
+            <div class="analysis-row">
+
+              <div class="analysis-label">
+                Priority
+              </div>
+
+              <div class="analysis-value hot">
+                High
+              </div>
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         RECORDINGS
+    ====================================================== -->
+
+    <section class="records-section">
+
+      <div class="container">
+
+
+        <div class="section-heading reveal">
+
+          <span class="eyebrow">
+
+            <span class="eyebrow-dot"></span>
+
+            Every call has a memory
+
+          </span>
+
+
+          <h2>
+
+            Recording.
+
+            <span class="gold-text">
+              Transcript.
+            </span>
+
+            Context.
+
+          </h2>
+
+
+          <p>
+
+            Give your team the complete story behind every customer
+            interaction.
+
+          </p>
+
+        </div>
+
+
+        <div class="records-layout">
+
+
+          <div class="record-card reveal">
+
+            <h3>
+              Call Recording
+            </h3>
+
+            <p>
+              Listen back to the actual conversation whenever needed.
+            </p>
+
+
+            <div class="recording-player">
+
+              <div class="recording-head">
+
+                <div class="play-button">
+                  ▶
+                </div>
+
+                <div>
+
+                  <div class="recording-name">
+                    Customer Call — 01
+                  </div>
+
+                  <div class="recording-time">
+                    01:36 · Completed
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <div class="progress">
+
+                <span></span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="record-card reveal">
+
+            <h3>
+              Live Transcript
+            </h3>
+
+            <p>
+              Review the conversation without replaying the entire call.
+            </p>
+
+
+            <div class="transcript">
+
+
+              <div class="transcript-line">
+
+                <div class="speaker">
+                  Manoj
+                </div>
+
+                <div class="transcript-text">
+                  How can I help you today?
+                </div>
+
+              </div>
+
+
+              <div class="transcript-line">
+
+                <div class="speaker">
+                  Customer
+                </div>
+
+                <div class="transcript-text">
+                  I want to know more about the course.
+                </div>
+
+              </div>
+
+
+              <div class="transcript-line">
+
+                <div class="speaker">
+                  Manoj
+                </div>
+
+                <div class="transcript-text">
+                  Sure. Are you looking to enrol soon?
+                </div>
+
+              </div>
+
+
+              <div class="transcript-line">
+
+                <div class="speaker">
+                  Customer
+                </div>
+
+                <div class="transcript-text">
+                  Yes, please ask someone to contact me.
+                </div>
+
+              </div>
+
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         WORKFLOW
+    ====================================================== -->
+
+    <section class="workflow-section">
+
+      <div class="container">
+
+
+        <div class="section-heading reveal">
+
+          <span class="eyebrow">
+
+            <span class="eyebrow-dot"></span>
+
+            From call to action
+
+          </span>
+
+
+          <h2>
+
+            One conversation.
+
+            <span class="gold-text">
+              Four useful outcomes.
+            </span>
+
+          </h2>
+
+        </div>
+
+
+        <div class="workflow-grid">
+
+
+          <div class="workflow-step reveal">
+
+            <div class="step-number">
+              01
+            </div>
+
+            <h3>
+              Talk
+            </h3>
+
+            <p>
+
+              Manoj speaks with the customer naturally and understands
+              the conversation.
+
+            </p>
+
+          </div>
+
+
+          <div class="workflow-step reveal">
+
+            <div class="step-number">
+              02
+            </div>
+
+            <h3>
+              Capture
+            </h3>
+
+            <p>
+
+              Important lead details and requirements are collected
+              during the interaction.
+
+            </p>
+
+          </div>
+
+
+          <div class="workflow-step reveal">
+
+            <div class="step-number">
+              03
+            </div>
+
+            <h3>
+              Understand
+            </h3>
+
+            <p>
+
+              The conversation becomes a transcript, summary and
+              actionable intelligence.
+
+            </p>
+
+          </div>
+
+
+          <div class="workflow-step reveal">
+
+            <div class="step-number">
+              04
+            </div>
+
+            <h3>
+              Act
+            </h3>
+
+            <p>
+
+              Your team knows who needs attention and what should
+              happen next.
+
+            </p>
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         DASHBOARD
+    ====================================================== -->
+
+    <section class="dashboard-section">
+
+      <div class="container">
+
+
+        <div class="section-heading reveal">
+
+          <span class="eyebrow">
+
+            <span class="eyebrow-dot"></span>
+
+            Command centre
+
+          </span>
+
+
+          <h2>
+
+            Everything important.
+
+            <span class="gold-text">
+              One dashboard.
+            </span>
+
+          </h2>
+
+
+          <p>
+
+            Calls, leads, recordings, transcripts and conversation
+            insights — organised in one place.
+
+          </p>
+
+        </div>
+
+
+        <div class="dashboard-shell reveal">
+
+          <div class="dashboard-ui">
+
+
+            <div class="dashboard-bar">
+
+              <div class="dashboard-brand">
+                Manoj Dashboard
+              </div>
+
+              <div class="dashboard-status">
+                ● System operational
+              </div>
+
+            </div>
+
+
+            <div class="dashboard-content">
+
+
+              <div class="dashboard-metrics">
+
+
+                <div class="metric">
+
+                  <small>
+                    Total Calls
+                  </small>
+
+                  <strong>
+                    128
+                  </strong>
+
+                </div>
+
+
+                <div class="metric">
+
+                  <small>
+                    Leads
+                  </small>
+
+                  <strong>
+                    74
+                  </strong>
+
+                </div>
+
+
+                <div class="metric">
+
+                  <small>
+                    Warm Leads
+                  </small>
+
+                  <strong>
+                    31
+                  </strong>
+
+                </div>
+
+
+                <div class="metric">
+
+                  <small>
+                    Callbacks
+                  </small>
+
+                  <strong>
+                    18
+                  </strong>
+
+                </div>
+
+
+              </div>
+
+
+              <div class="dashboard-table">
+
+
+                <div class="table-row header">
+
+                  <span>
+                    Lead
+                  </span>
+
+                  <span>
+                    Conversation
+                  </span>
+
+                  <span>
+                    Intent
+                  </span>
+
+                  <span>
+                    Status
+                  </span>
+
+                  <span>
+                    Call
+                  </span>
+
+                </div>
+
+
+                <div class="table-row">
+
+                  <span class="lead">
+                    Ramesh
+                  </span>
+
+                  <span>
+                    Course enquiry
+                  </span>
+
+                  <span class="warm">
+                    High
+                  </span>
+
+                  <span class="hot">
+                    Warm
+                  </span>
+
+                  <span>
+                    01:36
+                  </span>
+
+                </div>
+
+
+                <div class="table-row">
+
+                  <span class="lead">
+                    Priya
+                  </span>
+
+                  <span>
+                    Fee enquiry
+                  </span>
+
+                  <span class="warm">
+                    Medium
+                  </span>
+
+                  <span>
+                    Follow-up
+                  </span>
+
+                  <span>
+                    02:12
+                  </span>
+
+                </div>
+
+
+                <div class="table-row">
+
+                  <span class="lead">
+                    Arjun
+                  </span>
+
+                  <span>
+                    Admission
+                  </span>
+
+                  <span class="hot">
+                    High
+                  </span>
+
+                  <span class="hot">
+                    Hot
+                  </span>
+
+                  <span>
+                    03:04
+                  </span>
+
+                </div>
+
+
+                <div class="table-row">
+
+                  <span class="lead">
+                    Sneha
+                  </span>
+
+                  <span>
+                    General enquiry
+                  </span>
+
+                  <span>
+                    Low
+                  </span>
+
+                  <span>
+                    Closed
+                  </span>
+
+                  <span>
+                    00:58
+                  </span>
+
+                </div>
+
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         ROADMAP
+    ====================================================== -->
+
+    <section class="roadmap-section">
+
+      <div class="container">
+
+
+        <div class="section-heading reveal">
+
+          <span class="eyebrow">
+
+            <span class="eyebrow-dot"></span>
+
+            What's next
+
+          </span>
+
+
+          <h2>
+
+            The voice agent is only
+
+            <span class="gold-text">
+              version one.
+            </span>
+
+          </h2>
+
+
+          <p>
+
+            Manoj is being built as a larger conversation platform,
+            with more channels and business integrations coming over time.
+
+          </p>
+
+        </div>
+
+
+        <div class="roadmap">
+
+
+          <div class="roadmap-line"></div>
+
+
+          <div class="roadmap-card reveal">
+
+            <div class="roadmap-dot">
+              01
+            </div>
+
+            <div>
+
+              <h3>
+                AI Voice
+              </h3>
+
+              <p>
+                Natural voice conversations and lead capture.
+              </p>
+
+              <span class="roadmap-status">
+                Available
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="roadmap-card reveal">
+
+            <div class="roadmap-dot">
+              02
+            </div>
+
+            <div>
+
+              <h3>
+                WhatsApp
+              </h3>
+
+              <p>
+                Continue customer conversations beyond the phone.
+              </p>
+
+              <span class="roadmap-status">
+                Coming soon
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="roadmap-card reveal">
+
+            <div class="roadmap-dot">
+              03
+            </div>
+
+            <div>
+
+              <h3>
+                CRM
+              </h3>
+
+              <p>
+                Connect conversations directly with business workflows.
+              </p>
+
+              <span class="roadmap-status">
+                Coming soon
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="roadmap-card reveal">
+
+            <div class="roadmap-dot">
+              04
+            </div>
+
+            <div>
+
+              <h3>
+                Telephony
+              </h3>
+
+              <p>
+                Connect enterprise calling and telephony infrastructure.
+              </p>
+
+              <span class="roadmap-status">
+                Planned
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="roadmap-card reveal">
+
+            <div class="roadmap-dot">
+              05
+            </div>
+
+            <div>
+
+              <h3>
+                Advanced AI
+              </h3>
+
+              <p>
+                Deeper analytics, automation and business intelligence.
+              </p>
+
+              <span class="roadmap-status">
+                Future
+              </span>
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         DEMO FORM
+    ====================================================== -->
+
+    <section
+      class="demo-section"
+      id="demo"
+    >
+
+      <div class="container">
+
+
+        <div class="demo-box reveal">
+
+
+          <span class="eyebrow">
+
+            <span class="eyebrow-dot"></span>
+
+            Request access
+
+          </span>
+
+
+          <h2>
+
+            See what Manoj can do
+
+            <span class="gold-text">
+              for your business.
+            </span>
+
+          </h2>
+
+
+          <p>
+
+            Tell us a little about yourself and we'll take you to the
+            Manoj demo experience.
+
+          </p>
+
+
+          <form
+            class="demo-form"
+            id="demoForm"
+          >
+
+
+            <input
+              class="field"
+              type="text"
+              id="demoName"
+              placeholder="Your name"
+              required
+            >
+
+
+            <input
+              class="field"
+              type="tel"
+              id="demoPhone"
+              placeholder="Phone number"
+              required
+            >
+
+
+            <input
+              class="field"
+              type="text"
+              id="demoBusiness"
+              placeholder="Business / Company"
+              required
+            >
+
+
+            <input
+              class="field"
+              type="email"
+              id="demoEmail"
+              placeholder="Email address"
+            >
+
+
+            <input
+              class="field full"
+              type="text"
+              id="demoInterest"
+              placeholder="What would you like Manoj to help with?"
+            >
+
+
+            <button
+              class="demo-submit"
+              type="submit"
+            >
+
+              Continue to Manoj Demo →
+
+            </button>
+
+
+            <div
+              class="form-message"
+              id="formMessage"
+            >
+
+              Details saved. Opening the Manoj demo...
+
+            </div>
+
+
+          </form>
+
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         FINAL CTA
+    ====================================================== -->
+
+    <section class="final-cta">
+
+      <div class="container">
+
+
+        <div class="reveal">
+
+
+          <span class="eyebrow">
+
+            <span class="eyebrow-dot"></span>
+
+            Start the conversation
+
+          </span>
+
+
+          <h2>
+
+            Don't just answer calls.
+
+            <span class="gold-text">
+
+              Turn them into opportunities.
+
+            </span>
+
+          </h2>
+
+
+          <p>
+
+            Meet Manoj — your AI voice employee built to understand,
+            capture and move conversations forward.
+
+          </p>
+
+
+          <a
+            href="index.html"
+            class="final-button"
+          >
+
+            Talk to Manoj →
+
+          </a>
+
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+  </main>
+
+
+  <!-- =======================================================
+       FOOTER
+  ======================================================== -->
+
+  <footer>
+
+    <div class="container">
+
+      <div class="footer-inner">
+
+
+        <div class="footer-brand">
+          Manoj AI
+        </div>
+
+
+        <div class="footer-links">
+
+          <a href="product.html">
+            Product
+          </a>
+
+          <a href="solutions.html">
+            Solutions
+          </a>
+
+          <a href="roadmap.html">
+            Roadmap
+          </a>
+
+          <a href="contact.html">
+            Contact
+          </a>
+
+        </div>
+
+
+        <div class="footer-copy">
+
+          © 2026 Manoj AI.
+          Built for better conversations.
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <!-- =======================================================
+       WHATSAPP
+  ======================================================== -->
+
+  <a
+    href="https://wa.me/917981522447"
+    class="whatsapp-float"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Chat with us on WhatsApp"
+  >
+
+    <span class="whatsapp-icon">
+      ☏
+    </span>
+
+    <span class="whatsapp-tooltip">
+      Chat with us on WhatsApp
+    </span>
+
+  </a>
+
+
+  <!-- =======================================================
+       JAVASCRIPT
+  ======================================================== -->
+
+  <script>
+
+
+    /* =====================================================
+       CURSOR
+    ====================================================== */
+
+    const cursorDot =
+      document.querySelector(".cursor-dot");
+
+    const cursorRing =
+      document.querySelector(".cursor-ring");
+
+
+    document.addEventListener(
+      "mousemove",
+      (event) => {
+
+        if (!cursorDot || !cursorRing) {
+          return;
+        }
+
+        cursorDot.style.left =
+          event.clientX + "px";
+
+        cursorDot.style.top =
+          event.clientY + "px";
+
+        cursorRing.style.left =
+          event.clientX + "px";
+
+        cursorRing.style.top =
+          event.clientY + "px";
+
+      }
+    );
+
+
+    document
+      .querySelectorAll(
+        "a, button, input"
+      )
+      .forEach((element) => {
+
+        element.addEventListener(
+          "mouseenter",
+          () => {
+
+            cursorRing?.classList.add(
+              "active"
+            );
+
+          }
+        );
+
+
+        element.addEventListener(
+          "mouseleave",
+          () => {
+
+            cursorRing?.classList.remove(
+              "active"
+            );
+
+          }
+        );
+
+      });
+
+
+    /* =====================================================
+       SCROLL REVEAL
+    ====================================================== */
+
+    const revealElements =
+      document.querySelectorAll(
+        ".reveal"
+      );
+
+
+    const revealObserver =
+      new IntersectionObserver(
+        (entries) => {
+
+          entries.forEach(
+            (entry) => {
+
+              if (
+                entry.isIntersecting
+              ) {
+
+                entry.target.classList.add(
+                  "show"
+                );
+
+                revealObserver.unobserve(
+                  entry.target
+                );
+
+              }
+
+            }
+          );
+
+        },
+        {
+          threshold: 0.10
+        }
+      );
+
+
+    revealElements.forEach(
+      (element) => {
+
+        revealObserver.observe(
+          element
+        );
+
+      }
+    );
+
+
+    /* =====================================================
+       DEMO FORM
+    ====================================================== */
+
+    const demoForm =
+      document.getElementById(
+        "demoForm"
+      );
+
+    const formMessage =
+      document.getElementById(
+        "formMessage"
+      );
+
+
+    if (demoForm) {
+
+      demoForm.addEventListener(
+        "submit",
+        (event) => {
+
+          event.preventDefault();
+
+
+          const leadData = {
+
+            name:
+              document
+                .getElementById(
+                  "demoName"
+                )
+                ?.value
+                .trim() || "",
+
+            phone:
+              document
+                .getElementById(
+                  "demoPhone"
+                )
+                ?.value
+                .trim() || "",
+
+            business:
+              document
+                .getElementById(
+                  "demoBusiness"
+                )
+                ?.value
+                .trim() || "",
+
+            email:
+              document
+                .getElementById(
+                  "demoEmail"
+                )
+                ?.value
+                .trim() || "",
+
+            interest:
+              document
+                .getElementById(
+                  "demoInterest"
+                )
+                ?.value
+                .trim() || "",
+
+            created_at:
+              new Date().toISOString()
+
+          };
+
+
+          sessionStorage.setItem(
+            "manoj_demo_lead",
+            JSON.stringify(
+              leadData
+            )
+          );
+
+
+          if (formMessage) {
+
+            formMessage.style.display =
+              "block";
+
+          }
+
+
+          setTimeout(
+            () => {
+
+              window.location.href =
+                "index.html";
+
+            },
+            700
+          );
+
+        }
+      );
+
+    }
+
+
+    /* =====================================================
+       MOBILE MENU
+    ====================================================== */
+
+    const menuBtn =
+      document.getElementById(
+        "menuBtn"
+      );
+
+
+    if (menuBtn) {
+
+      menuBtn.addEventListener(
+        "click",
+        () => {
+
+          const links =
+            document.querySelector(
+              ".nav-links"
+            );
+
+
+          if (!links) {
+            return;
+          }
+
+
+          const isOpen =
+            links.dataset.mobileOpen ===
+            "true";
+
+
+          if (!isOpen) {
+
+
+            links.dataset.mobileOpen =
+              "true";
+
+
+            links.style.position =
+              "absolute";
+
+            links.style.top =
+              "64px";
+
+            links.style.left =
+              "0";
+
+            links.style.right =
+              "0";
+
+
+            links.style.display =
+              "flex";
+
+            links.style.flexDirection =
+              "column";
+
+            links.style.alignItems =
+              "stretch";
+
+            links.style.gap =
+              "0";
+
+
+            links.style.padding =
+              "8px";
+
+
+            links.style.border =
+              "1px solid rgba(255,255,255,0.08)";
+
+
+            links.style.borderRadius =
+              "15px";
+
+
+            links.style.background =
+              "#0b0b0b";
+
+
+            links.style.boxShadow =
+              "0 25px 60px rgba(0,0,0,0.55)";
+
+
+            links
+              .querySelectorAll("a")
+              .forEach(
+                (link) => {
+
+                  link.style.padding =
+                    "13px 12px";
+
+
+                  link.addEventListener(
+                    "click",
+                    () => {
+
+                      links.dataset.mobileOpen =
+                        "false";
+
+                      links.removeAttribute(
+                        "style"
+                      );
+
+                    },
+                    {
+                      once: true
+                    }
+                  );
+
+                }
+              );
+
+
+          } else {
+
+
+            links.dataset.mobileOpen =
+              "false";
+
+            links.removeAttribute(
+              "style"
+            );
+
+
+          }
+
+        }
+      );
+
+    }
+
+
+    /* =====================================================
+       PREVENT HORIZONTAL OVERFLOW
+    ====================================================== */
+
+    document.documentElement.style.overflowX =
+      "hidden";
+
+    document.body.style.overflowX =
+      "hidden";
+
+
+    /* =====================================================
+       HERO INITIAL ANIMATION
+    ====================================================== */
+
+    window.addEventListener(
+      "load",
+      () => {
+
+        document
+          .querySelectorAll(
+            ".hero .reveal"
+          )
+          .forEach(
+            (element, index) => {
+
+              setTimeout(
+                () => {
+
+                  element.classList.add(
+                    "show"
+                  );
+
+                },
+                150 + index * 180
+              );
+
+            }
+          );
+
+      }
+    );
+
+
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Manoj AI — Dashboard</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --black: #050505;
+      --charcoal: #0d0d0d;
+      --panel: #111111;
+      --panel-2: #151515;
+      --border: rgba(212, 175, 55, 0.18);
+      --gold: #d4af37;
+      --gold-bright: #f5c542;
+      --champagne: #f7e7b4;
+      --white: #ffffff;
+      --muted: #929292;
+      --green: #65d391;
+      --red: #ff7373;
+      --blue: #79a9ff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: "Inter", sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(212,175,55,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(212,175,55,0.025) 1px, transparent 1px);
+      background-size: 70px 70px;
+      mask-image: linear-gradient(to bottom, black, transparent 80%);
+      z-index: -2;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      right: -250px;
+      top: -220px;
+      border-radius: 50%;
+      background: rgba(212, 175, 55, 0.06);
+      filter: blur(100px);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* =========================
+       SIDEBAR
+    ========================== */
+
+    .sidebar {
+      width: 250px;
+      min-height: 100vh;
+      background: rgba(10, 10, 10, 0.96);
+      border-right: 1px solid rgba(255,255,255,0.07);
+      padding: 26px 16px;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 0 10px;
+      margin-bottom: 42px;
+    }
+
+    .brand-mark {
+      width: 39px;
+      height: 39px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, var(--gold-bright), var(--gold));
+      color: #050505;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 800;
+      font-size: 19px;
+      box-shadow: 0 0 25px rgba(245,197,66,0.16);
+    }
+
+    .brand-text strong {
+      display: block;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 17px;
+      letter-spacing: -0.3px;
+    }
+
+    .brand-text span {
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .nav-label {
+      color: #5f5f5f;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+      padding: 0 12px;
+      margin-bottom: 9px;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 11px;
+      color: #999;
+      font-size: 13px;
+      transition: 0.25s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      color: white;
+      background: rgba(255,255,255,0.035);
+    }
+
+    .nav-item.active {
+      color: var(--gold-bright);
+      background: rgba(212,175,55,0.09);
+      border: 1px solid rgba(212,175,55,0.12);
+    }
+
+    .nav-icon {
+      width: 18px;
+      text-align: center;
+      font-size: 15px;
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+    }
+
+    .agent-card {
+      border: 1px solid var(--border);
+      background: linear-gradient(
+        145deg,
+        rgba(212,175,55,0.08),
+        rgba(255,255,255,0.02)
+      );
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .agent-status {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      color: var(--green);
+      margin-bottom: 10px;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 10px rgba(101,211,145,0.7);
+    }
+
+    .agent-card strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .agent-card p {
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .logout-btn {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: transparent;
+      color: #888;
+      border-radius: 10px;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: 0.2s;
+    }
+
+    .logout-btn:hover {
+      color: white;
+      border-color: rgba(255,255,255,0.18);
+    }
+
+    /* =========================
+       MAIN
+    ========================== */
+
+    .main {
+      margin-left: 250px;
+      width: calc(100% - 250px);
+      min-height: 100vh;
+      padding: 26px 34px 60px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .page-title h1 {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(25px, 3vw, 34px);
+      letter-spacing: -1.2px;
+      margin-bottom: 5px;
+    }
+
+    .page-title p {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .date-pill {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.025);
+      border-radius: 10px;
+      padding: 10px 13px;
+      color: #aaa;
+      font-size: 11px;
+    }
+
+    .profile {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, #f5c542, #b28a1d);
+      color: #050505;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    /* =========================
+       STATS
+    ========================== */
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .stat-card {
+      background: linear-gradient(
+        145deg,
+        rgba(255,255,255,0.045),
+        rgba(255,255,255,0.015)
+      );
+      border: 1px solid rgba(255,255,255,0.075);
+      border-radius: 15px;
+      padding: 19px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::after {
+      content: "";
+      position: absolute;
+      width: 90px;
+      height: 90px;
+      right: -35px;
+      top: -35px;
+      border-radius: 50%;
+      background: rgba(212,175,55,0.06);
+      filter: blur(10px);
+    }
+
+    .stat-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 13px;
+    }
+
+    .stat-label {
+      color: #888;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+    }
+
+    .stat-icon {
+      color: var(--gold);
+      font-size: 15px;
+    }
+
+    .stat-value {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 5px;
+    }
+
+    .stat-change {
+      font-size: 10px;
+      color: var(--green);
+    }
+
+    .stat-change.neutral {
+      color: #777;
+    }
+
+    /* =========================
+       CONTENT GRID
+    ========================== */
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(300px, 0.75fr);
+      gap: 18px;
+    }
+
+    .panel {
+      background: rgba(14,14,14,0.88);
+      border: 1px solid rgba(255,255,255,0.075);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 18px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .panel-header h2 {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 15px;
+      letter-spacing: -0.3px;
+    }
+
+    .panel-header span {
+      color: #666;
+      font-size: 10px;
+    }
+
+    .view-all {
+      color: var(--gold-bright);
+      font-size: 10px;
+      cursor: pointer;
+    }
+
+    /* =========================
+       CALL TABLE
+    ========================== */
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 650px;
+    }
+
+    th {
+      color: #5e5e5e;
+      text-align: left;
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 13px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    td {
+      padding: 15px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.045);
+      font-size: 11px;
+      color: #aaa;
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr {
+      transition: 0.2s;
+      cursor: pointer;
+    }
+
+    tbody tr:hover {
+      background: rgba(212,175,55,0.035);
+    }
+
+    .lead-name {
+      color: white;
+      font-weight: 600;
+      font-size: 11px;
+    }
+
+    .lead-phone {
+      color: #666;
+      font-size: 9px;
+      margin-top: 3px;
+    }
+
+    .intent {
+      display: inline-flex;
+      padding: 5px 8px;
+      border-radius: 6px;
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .intent.hot {
+      color: #ff8585;
+      background: rgba(255,95,95,0.09);
+      border: 1px solid rgba(255,95,95,0.12);
+    }
+
+    .intent.warm {
+      color: var(--gold-bright);
+      background: rgba(245,197,66,0.08);
+      border: 1px solid rgba(245,197,66,0.12);
+    }
+
+    .intent.cold {
+      color: #8d9bb3;
+      background: rgba(141,155,179,0.08);
+      border: 1px solid rgba(141,155,179,0.12);
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 9px;
+    }
+
+    .status::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .status.completed {
+      color: var(--green);
+    }
+
+    .status.callback {
+      color: var(--gold-bright);
+    }
+
+    .status.missed {
+      color: var(--red);
+    }
+
+    .recording {
+      color: var(--gold-bright);
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    /* =========================
+       RIGHT SIDE
+    ========================== */
+
+    .side-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .activity-list {
+      padding: 7px 20px 12px;
+    }
+
+    .activity {
+      display: flex;
+      gap: 12px;
+      padding: 13px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .activity:last-child {
+      border-bottom: none;
+    }
+
+    .activity-icon {
+      width: 30px;
+      height: 30px;
+      flex: 0 0 30px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      color: var(--gold-bright);
+      background: rgba(212,175,55,0.08);
+      font-size: 12px;
+    }
+
+    .activity strong {
+      display: block;
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+
+    .activity p {
+      color: #777;
+      font-size: 9px;
+      line-height: 1.5;
+    }
+
+    .activity-time {
+      margin-left: auto;
+      color: #555;
+      font-size: 8px;
+      white-space: nowrap;
+    }
+
+    /* =========================
+       LEAD DISTRIBUTION
+    ========================== */
+
+    .lead-chart {
+      padding: 20px;
+    }
+
+    .donut-wrap {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+
+    .donut {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background:
+        conic-gradient(
+          var(--gold-bright) 0deg 140deg,
+          #9c7b23 140deg 245deg,
+          #424242 245deg 360deg
+        );
+      position: relative;
+      flex: 0 0 120px;
+    }
+
+    .donut::after {
+      content: "";
+      position: absolute;
+      inset: 22px;
+      border-radius: 50%;
+      background: #111;
+    }
+
+    .donut-center {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      z-index: 2;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .legend {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .legend-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      color: #888;
+    }
+
+    .legend-left {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .legend-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--gold-bright);
+    }
+
+    .legend-dot.warm {
+      background: #9c7b23;
+    }
+
+    .legend-dot.cold {
+      background: #424242;
+    }
+
+    .legend-value {
+      color: white;
+      font-weight: 600;
+    }
+
+    /* =========================
+       BOTTOM
+    ========================== */
+
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .summary-box {
+      padding: 20px;
+    }
+
+    .summary-main {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .summary-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: rgba(212,175,55,0.1);
+      color: var(--gold-bright);
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 700;
+    }
+
+    .summary-main strong {
+      font-size: 13px;
+    }
+
+    .summary-main p {
+      color: #777;
+      font-size: 9px;
+      margin-top: 4px;
+    }
+
+    .summary-text {
+      color: #aaa;
+      font-size: 11px;
+      line-height: 1.7;
+      padding: 14px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .summary-tags {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-top: 13px;
+    }
+
+    .tag {
+      color: #888;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 5px;
+      padding: 5px 7px;
+      font-size: 8px;
+    }
+
+    .recording-box {
+      padding: 20px;
+    }
+
+    .recording-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .recording-head strong {
+      font-size: 12px;
+    }
+
+    .waveform {
+      height: 55px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      margin-bottom: 15px;
+    }
+
+    .wave {
+      width: 3px;
+      border-radius: 4px;
+      background: var(--gold);
+      opacity: 0.65;
+      animation: wave 1.4s ease-in-out infinite alternate;
+    }
+
+    .wave:nth-child(1) { height: 12px; }
+    .wave:nth-child(2) { height: 22px; animation-delay: .1s; }
+    .wave:nth-child(3) { height: 35px; animation-delay: .2s; }
+    .wave:nth-child(4) { height: 18px; animation-delay: .3s; }
+    .wave:nth-child(5) { height: 40px; animation-delay: .4s; }
+    .wave:nth-child(6) { height: 28px; animation-delay: .5s; }
+    .wave:nth-child(7) { height: 45px; animation-delay: .6s; }
+    .wave:nth-child(8) { height: 25px; animation-delay: .7s; }
+    .wave:nth-child(9) { height: 37px; animation-delay: .8s; }
+    .wave:nth-child(10) { height: 18px; animation-delay: .9s; }
+    .wave:nth-child(11) { height: 30px; animation-delay: 1s; }
+    .wave:nth-child(12) { height: 15px; animation-delay: 1.1s; }
+    .wave:nth-child(13) { height: 32px; animation-delay: 1.2s; }
+    .wave:nth-child(14) { height: 22px; animation-delay: 1.3s; }
+
+    @keyframes wave {
+      from { transform: scaleY(.65); }
+      to { transform: scaleY(1.1); }
+    }
+
+    .player {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .play-btn {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      border: 1px solid rgba(212,175,55,0.35);
+      background: rgba(212,175,55,0.08);
+      color: var(--gold-bright);
+      cursor: pointer;
+    }
+
+    .progress {
+      height: 4px;
+      border-radius: 4px;
+      background: #272727;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      width: 45%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+    }
+
+    .duration {
+      color: #666;
+      font-size: 9px;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================== */
+
+    .mobile-menu {
+      display: none;
+    }
+
+    @media (max-width: 1100px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .bottom-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 800px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main {
+        margin-left: 0;
+        width: 100%;
+        padding: 20px 15px 40px;
+      }
+
+      .mobile-menu {
+        display: grid;
+        place-items: center;
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.025);
+        color: white;
+        cursor: pointer;
+      }
+
+      .topbar {
+        gap: 12px;
+      }
+
+      .top-actions {
+        gap: 7px;
+      }
+
+      .date-pill {
+        display: none;
+      }
+
+      .page-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .page-title h1 {
+        font-size: 24px;
+      }
+
+      .page-title p {
+        font-size: 10px;
+      }
+
+      .stats-grid {
+        gap: 9px;
+      }
+
+      .stat-card {
+        padding: 14px;
+      }
+
+      .stat-value {
+        font-size: 23px;
+      }
+
+      .donut-wrap {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .stat-label {
+        font-size: 9px;
+      }
+
+      .stat-value {
+        font-size: 20px;
+      }
+
+      .panel-header {
+        padding: 15px;
+      }
+
+      th,
+      td {
+        padding-left: 13px;
+        padding-right: 13px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside class="sidebar" id="sidebar">
+
+      <a href="landing.html" class="brand">
+        <div class="brand-mark">M</div>
+
+        <div class="brand-text">
+          <strong>Manoj AI</strong>
+          <span>Voice Intelligence</span>
+        </div>
+      </a>
+
+      <div class="nav-label">Workspace</div>
+
+      <nav class="nav">
+
+        <a href="dashboard.html" class="nav-item active">
+          <span class="nav-icon">◈</span>
+          <span>Overview</span>
+        </a>
+
+        <a href="#calls" class="nav-item">
+          <span class="nav-icon">◉</span>
+          <span>Calls</span>
+        </a>
+
+        <a href="#leads" class="nav-item">
+          <span class="nav-icon">♢</span>
+          <span>Leads</span>
+        </a>
+
+        <a href="#analytics" class="nav-item">
+          <span class="nav-icon">◫</span>
+          <span>Analytics</span>
+        </a>
+
+        <a href="product.html" class="nav-item">
+          <span class="nav-icon">✦</span>
+          <span>Product</span>
+        </a>
+
+      </nav>
+
+      <div class="sidebar-bottom">
+
+        <div class="agent-card">
+
+          <div class="agent-status">
+            <span class="status-dot"></span>
+            Manoj is online
+          </div>
+
+          <strong>AI Voice Agent</strong>
+
+          <p>
+            Handling conversations, qualifying leads
+            and capturing every interaction.
+          </p>
+
+        </div>
+
+        <button class="logout-btn" onclick="logout()">
+          Sign out
+        </button>
+
+      </div>
+
+    </aside>
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main class="main">
+
+      <header class="topbar">
+
+        <div class="page-title">
+
+          <button class="mobile-menu" onclick="toggleSidebar()">
+            ☰
+          </button>
+
+          <div>
+            <h1>Good morning, Manoj.</h1>
+            <p>Here's what's happening with your AI voice agent.</p>
+          </div>
+
+        </div>
+
+        <div class="top-actions">
+
+          <div class="date-pill" id="currentDate">
+            Today
+          </div>
+
+          <div class="profile">
+            M
+          </div>
+
+        </div>
+
+      </header>
+
+      <!-- =========================
+           STAT CARDS
+      ========================== -->
+
+      <section class="stats-grid">
+
+        <div class="stat-card">
+
+          <div class="stat-top">
+            <span class="stat-label">Total Calls</span>
+            <span class="stat-icon">◉</span>
+          </div>
+
+          <div class="stat-value" id="totalCalls">
+            12
+          </div>
+
+          <div class="stat-change">
+            ↑ 18% this week
+          </div>
+
+        </div>
+
+        <div class="stat-card">
+
+          <div class="stat-top">
+            <span class="stat-label">Leads Captured</span>
+            <span class="stat-icon">♢</span>
+          </div>
+
+          <div class="stat-value" id="totalLeads">
+            9
+          </div>
+
+          <div class="stat-change">
+            ↑ 25% this week
+          </div>
+
+        </div>
+
+        <div class="stat-card">
+
+          <div class="stat-top">
+            <span class="stat-label">Hot Leads</span>
+            <span class="stat-icon">✦</span>
+          </div>
+
+          <div class="stat-value" id="hotLeads">
+            3
+          </div>
+
+          <div class="stat-change">
+            Needs attention
+          </div>
+
+        </div>
+
+        <div class="stat-card">
+
+          <div class="stat-top">
+            <span class="stat-label">Avg. Call Time</span>
+            <span class="stat-icon">◷</span>
+          </div>
+
+          <div class="stat-value">
+            02:14
+          </div>
+
+          <div class="stat-change neutral">
+            Across all calls
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- =========================
+           MAIN CONTENT
+      ========================== -->
+
+      <section class="content-grid">
+
+        <!-- CALLS -->
+
+        <div class="panel" id="calls">
+
+          <div class="panel-header">
+
+            <div>
+              <h2>Recent conversations</h2>
+              <span>Latest interactions handled by Manoj</span>
+            </div>
+
+            <span class="view-all">
+              View all →
+            </span>
+
+          </div>
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+
+                <tr>
+                  <th>Lead</th>
+                  <th>Intent</th>
+                  <th>Duration</th>
+                  <th>Status</th>
+                  <th>Time</th>
+                  <th>Call</th>
+                </tr>
+
+              </thead>
+
+              <tbody>
+
+                <tr onclick="openConversation('Ramesh')">
+
+                  <td>
+                    <div class="lead-name">Ramesh</div>
+                    <div class="lead-phone">630-280-1718</div>
+                  </td>
+
+                  <td>
+                    <span class="intent warm">Warm</span>
+                  </td>
+
+                  <td>01:36</td>
+
+                  <td>
+                    <span class="status callback">
+                      Callback
+                    </span>
+                  </td>
+
+                  <td>Today</td>
+
+                  <td>
+                    <span class="recording">▶</span>
+                  </td>
+
+                </tr>
+
+                <tr onclick="openConversation('Priya')">
+
+                  <td>
+                    <div class="lead-name">Priya</div>
+                    <div class="lead-phone">984-xxx-xxxx</div>
+                  </td>
+
+                  <td>
+                    <span class="intent hot">Hot</span>
+                  </td>
+
+                  <td>03:21</td>
+
+                  <td>
+                    <span class="status completed">
+                      Completed
+                    </span>
+                  </td>
+
+                  <td>Yesterday</td>
+
+                  <td>
+                    <span class="recording">▶</span>
+                  </td>
+
+                </tr>
+
+                <tr>
+
+                  <td>
+                    <div class="lead-name">Arjun</div>
+                    <div class="lead-phone">903-xxx-xxxx</div>
+                  </td>
+
+                  <td>
+                    <span class="intent warm">Warm</span>
+                  </td>
+
+                  <td>02:08</td>
+
+                  <td>
+                    <span class="status completed">
+                      Completed
+                    </span>
+                  </td>
+
+                  <td>Yesterday</td>
+
+                  <td>
+                    <span class="recording">▶</span>
+                  </td>
+
+                </tr>
+
+                <tr>
+
+                  <td>
+                    <div class="lead-name">Sneha</div>
+                    <div class="lead-phone">799-xxx-xxxx</div>
+                  </td>
+
+                  <td>
+                    <span class="intent cold">Cold</span>
+                  </td>
+
+                  <td>00:48</td>
+
+                  <td>
+                    <span class="status missed">
+                      Missed
+                    </span>
+                  </td>
+
+                  <td>2 days ago</td>
+
+                  <td>
+                    <span class="recording">—</span>
+                  </td>
+
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+        <!-- RIGHT -->
+
+        <div class="side-stack">
+
+          <!-- ACTIVITY -->
+
+          <div class="panel">
+
+            <div class="panel-header">
+
+              <div>
+                <h2>AI activity</h2>
+                <span>What Manoj is doing</span>
+              </div>
+
+            </div>
+
+            <div class="activity-list">
+
+              <div class="activity">
+
+                <div class="activity-icon">
+                  ◉
+                </div>
+
+                <div>
+                  <strong>Call completed</strong>
+                  <p>
+                    Manoj spoke with Ramesh for 1m 36s.
+                  </p>
+                </div>
+
+                <span class="activity-time">Now</span>
+
+              </div>
+
+              <div class="activity">
+
+                <div class="activity-icon">
+                  ♢
+                </div>
+
+                <div>
+                  <strong>Lead captured</strong>
+                  <p>
+                    Ramesh was classified as a warm lead.
+                  </p>
+                </div>
+
+                <span class="activity-time">Now</span>
+
+              </div>
+
+              <div class="activity">
+
+                <div class="activity-icon">
+                  ✦
+                </div>
+
+                <div>
+                  <strong>Callback requested</strong>
+                  <p>
+                    Follow-up connection recommended.
+                  </p>
+                </div>
+
+                <span class="activity-time">Now</span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- LEAD DISTRIBUTION -->
+
+          <div class="panel" id="analytics">
+
+            <div class="panel-header">
+
+              <div>
+                <h2>Lead intelligence</h2>
+                <span>Intent distribution</span>
+              </div>
+
+            </div>
+
+            <div class="lead-chart">
+
+              <div class="donut-wrap">
+
+                <div class="donut">
+                  <div class="donut-center">
+                    9
+                  </div>
+                </div>
+
+                <div class="legend">
+
+                  <div class="legend-item">
+
+                    <div class="legend-left">
+                      <span class="legend-dot"></span>
+                      Hot
+                    </div>
+
+                    <span class="legend-value">3</span>
+
+                  </div>
+
+                  <div class="legend-item">
+
+                    <div class="legend-left">
+                      <span class="legend-dot warm"></span>
+                      Warm
+                    </div>
+
+                    <span class="legend-value">4</span>
+
+                  </div>
+
+                  <div class="legend-item">
+
+                    <div class="legend-left">
+                      <span class="legend-dot cold"></span>
+                      Cold
+                    </div>
+
+                    <span class="legend-value">2</span>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- =========================
+           DETAIL PREVIEW
+      ========================== -->
+
+      <section class="bottom-grid">
+
+        <div class="panel" id="leads">
+
+          <div class="panel-header">
+
+            <div>
+              <h2>Latest lead insight</h2>
+              <span>AI-generated conversation understanding</span>
+            </div>
+
+          </div>
+
+          <div class="summary-box">
+
+            <div class="summary-main">
+
+              <div class="summary-avatar">
+                R
+              </div>
+
+              <div>
+                <strong>Ramesh</strong>
+                <p>Enroll Agent course · Warm lead</p>
+              </div>
+
+            </div>
+
+            <div class="summary-text">
+
+              User is interested in an Enroll Agent course,
+              liked a Facebook post and wants to proceed.
+              They are currently in Hyderabad and have
+              provided their phone number for callback connection.
+
+            </div>
+
+            <div class="summary-tags">
+
+              <span class="tag">Course Interest</span>
+              <span class="tag">Facebook</span>
+              <span class="tag">Hyderabad</span>
+              <span class="tag">Callback Requested</span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- RECORDING -->
+
+        <div class="panel">
+
+          <div class="panel-header">
+
+            <div>
+              <h2>Call recording</h2>
+              <span>Ramesh · Latest call</span>
+            </div>
+
+            <span>01:36</span>
+
+          </div>
+
+          <div class="recording-box">
+
+            <div class="recording-head">
+
+              <strong>Conversation audio</strong>
+
+              <span style="color:#65d391;font-size:9px;">
+                ● Ready
+              </span>
+
+            </div>
+
+            <div class="waveform">
+
+              <span class="wave"></span>
+              <span class="wave"></span>
+              <span class="wave"></span>
+              <span class="wave"></span>
+              <span class="wave"></span>
+              <span class="wave"></span>
+              <span class="wave"></span>
+              <span class="wave"></span>
+              <span class="wave"></span>
+              <span class="wave"></span>
+              <span class="wave"></span>
+              <span class="wave"></span>
+              <span class="wave"></span>
+              <span class="wave"></span>
+
+            </div>
+
+            <div class="player">
+
+              <button class="play-btn" onclick="demoPlay()">
+                ▶
+              </button>
+
+              <div class="progress">
+                <span></span>
+              </div>
+
+              <span class="duration">
+                01:36
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <script>
+
+    function toggleSidebar() {
+      document
+        .getElementById("sidebar")
+        .classList.toggle("open");
+    }
+
+    function logout() {
+      sessionStorage.removeItem("manoj_demo_lead");
+      window.location.href = "landing.html";
+    }
+
+    function openConversation(name) {
+      alert(
+        "Conversation details for " +
+        name +
+        " will open here in the next dashboard step."
+      );
+    }
+
+    function demoPlay() {
+      alert(
+        "The real Supabase recording player will be connected in the next step."
+      );
+    }
+
+    const dateElement =
+      document.getElementById("currentDate");
+
+    const now = new Date();
+
+    dateElement.textContent =
+      now.toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+      });
+
+  </script>
+
+</body>
+</html>

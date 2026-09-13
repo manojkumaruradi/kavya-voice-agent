@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Manoj AI Voice Agent | Roadmap</title>
+  <meta
+    name="description"
+    content="Explore the Manoj AI Voice Agent roadmap, from voice conversations and lead capture to WhatsApp, CRM, phone integrations and intelligent follow-ups."
+  >
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+
+
+    :root {
+      --black: #050505;
+      --dark: #0b0b0b;
+      --card: #101010;
+      --gold: #d4af37;
+      --yellow: #f5c542;
+      --cream: #f7e7b4;
+      --white: #ffffff;
+      --muted: #929292;
+      --line: rgba(255,255,255,.08);
+      --gold-line: rgba(245,197,66,.2);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: "Inter", sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -2;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(245,197,66,.09), transparent 25%),
+        radial-gradient(circle at 85% 40%, rgba(212,175,55,.06), transparent 28%),
+        radial-gradient(circle at 50% 100%, rgba(245,197,66,.04), transparent 32%);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      opacity: .2;
+      background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 70px 70px;
+      mask-image: linear-gradient(to bottom, black, transparent 90%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(1180px, 90%);
+      margin: auto;
+    }
+
+    /* ================= NAV ================= */
+
+.nav {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: min(1160px, calc(100% - 32px));
+  height: 70px;
+
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+
+  padding: 10px 12px 10px 20px;
+
+  background: rgba(8, 8, 8, 0.82);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  box-shadow:
+    0 15px 50px rgba(0, 0, 0, 0.35),
+    inset 0 1px rgba(255, 255, 255, 0.04);
+}
+
+
+/* LOGO */
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+
+  color: #ffffff;
+
+  white-space: nowrap;
+}
+
+.logo-mark {
+  width: 36px;
+  height: 36px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 10px;
+
+  background: linear-gradient(
+    145deg,
+    #f5c542,
+    #d4af37
+  );
+
+  color: #050505;
+
+  font-size: 15px;
+  font-weight: 800;
+}
+
+
+/* NAV LINKS */
+
+.nav-links {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: center;
+  gap: 30px;
+
+  white-space: nowrap;
+}
+
+.nav-links a {
+  color: #a5a5a5;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  text-decoration: none;
+
+  transition:
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.nav-links a:hover {
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.nav-links a.active {
+  color: #f5c542;
+}
+
+
+/* REQUEST DEMO */
+
+.nav-cta {
+  margin-left: auto;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 148px;
+  height: 48px;
+
+  padding: 0 20px;
+
+  border-radius: 14px;
+
+  background: #f5c542;
+
+  color: #050505 !important;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  text-decoration: none;
+}
+
+
+/* MOBILE MENU */
+
+.menu-btn {
+  display: none;
+
+  width: 42px;
+  height: 42px;
+
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 11px;
+
+  background: rgba(255,255,255,0.04);
+
+  color: #ffffff;
+
+  font-size: 20px;
+
+  cursor: pointer;
+}
+
+    /* ================= COMMON ================= */
+
+    section {
+      padding: 115px 0;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: "Space Grotesk", sans-serif;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--gold-line);
+      background: rgba(245,197,66,.04);
+      color: var(--cream);
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--yellow);
+      box-shadow: 0 0 12px var(--yellow);
+    }
+
+    .section-title {
+      max-width: 900px;
+      margin-top: 22px;
+      font-size: clamp(42px, 5.5vw, 72px);
+      line-height: 1.02;
+      letter-spacing: -2.8px;
+    }
+
+    .gold {
+      color: var(--yellow);
+    }
+
+    .section-text {
+      max-width: 680px;
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    /* ================= HERO ================= */
+
+    .hero {
+      min-height: 90vh;
+      padding-top: 155px;
+      display: flex;
+      align-items: center;
+      text-align: center;
+    }
+
+    .hero-inner {
+      max-width: 950px;
+      margin: auto;
+    }
+
+    .hero h1 {
+      margin-top: 26px;
+      font-size: clamp(52px, 7vw, 92px);
+      line-height: .95;
+      letter-spacing: -4px;
+    }
+
+    .hero-copy {
+      max-width: 680px;
+      margin: 26px auto 0;
+      color: #969696;
+      font-size: 18px;
+    }
+
+    .hero-line {
+      width: min(700px, 85%);
+      height: 1px;
+      margin: 60px auto 0;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(245,197,66,.5),
+        transparent
+      );
+      position: relative;
+    }
+
+    .hero-line::after {
+      content: "";
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      left: 50%;
+      top: -3px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: var(--yellow);
+      box-shadow: 0 0 20px var(--yellow);
+    }
+
+    /* ================= STATUS ================= */
+
+    .status-section {
+      padding-top: 20px;
+    }
+
+    .status-board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      overflow: hidden;
+      background: rgba(255,255,255,.02);
+    }
+
+    .status-item {
+      padding: 30px;
+      border-right: 1px solid var(--line);
+    }
+
+    .status-item:last-child {
+      border-right: 0;
+    }
+
+    .status-label {
+      color: #666;
+      font-size: 10px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .status-item h3 {
+      margin-top: 15px;
+      font-size: 24px;
+    }
+
+    .status-item p {
+      margin-top: 7px;
+      color: #777;
+      font-size: 12px;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      margin-right: 7px;
+      border-radius: 50%;
+      background: var(--yellow);
+      box-shadow: 0 0 12px var(--yellow);
+    }
+
+    /* ================= ROADMAP ================= */
+
+    .roadmap-intro {
+      margin-bottom: 70px;
+    }
+
+    .timeline {
+      position: relative;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 1px;
+      transform: translateX(-50%);
+      background: linear-gradient(
+        to bottom,
+        transparent,
+        rgba(245,197,66,.35) 8%,
+        rgba(245,197,66,.2) 92%,
+        transparent
+      );
+    }
+
+    .timeline-item {
+      position: relative;
+      width: 50%;
+      padding: 0 55px 90px 0;
+    }
+
+    .timeline-item:nth-child(even) {
+      margin-left: 50%;
+      padding: 0 0 90px 55px;
+    }
+
+    .timeline-node {
+      position: absolute;
+      top: 0;
+      right: -8px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--black);
+      border: 2px solid var(--yellow);
+      box-shadow: 0 0 20px rgba(245,197,66,.2);
+      z-index: 2;
+    }
+
+    .timeline-item:nth-child(even) .timeline-node {
+      left: -8px;
+      right: auto;
+    }
+
+    .timeline-card {
+      padding: 28px;
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.045),
+          rgba(255,255,255,.015)
+        );
+      transition: .35s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .timeline-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(245,197,66,.3);
+    }
+
+    .timeline-card::after {
+      content: "";
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      right: -80px;
+      bottom: -80px;
+      border-radius: 50%;
+      background: rgba(245,197,66,.05);
+    }
+
+    .phase {
+      color: var(--yellow);
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .timeline-card h3 {
+      margin-top: 13px;
+      font-size: 28px;
+    }
+
+    .timeline-card p {
+      margin-top: 10px;
+      color: #858585;
+      font-size: 14px;
+    }
+
+    .timeline-list {
+      margin-top: 20px;
+      display: grid;
+      gap: 9px;
+    }
+
+    .timeline-list div {
+      color: #aaa;
+      font-size: 12px;
+    }
+
+    .timeline-list span {
+      margin-right: 8px;
+      color: var(--yellow);
+    }
+
+    .tag {
+      display: inline-flex;
+      margin-top: 22px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(245,197,66,.16);
+      background: rgba(245,197,66,.05);
+      color: var(--cream);
+      font-size: 10px;
+    }
+
+    /* ================= FUTURE VISUAL ================= */
+
+    .future {
+      background:
+        linear-gradient(
+          180deg,
+          transparent,
+          rgba(245,197,66,.025),
+          transparent
+        );
+    }
+
+    .future-board {
+      margin-top: 60px;
+      padding: 30px;
+      border-radius: 26px;
+      border: 1px solid var(--line);
+      background: #090909;
+      overflow: hidden;
+    }
+
+    .future-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .future-header strong {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 18px;
+    }
+
+    .future-header span {
+      color: var(--yellow);
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .future-network {
+      min-height: 390px;
+      margin-top: 30px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .network-core {
+      width: 135px;
+      height: 135px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(
+          circle,
+          rgba(245,197,66,.16),
+          rgba(245,197,66,.03) 65%,
+          transparent 70%
+        );
+      border: 1px solid rgba(245,197,66,.35);
+      color: var(--yellow);
+      font: 700 35px "Space Grotesk";
+      box-shadow: 0 0 65px rgba(245,197,66,.09);
+      z-index: 3;
+    }
+
+    .network-ring {
+      position: absolute;
+      width: 250px;
+      height: 250px;
+      border-radius: 50%;
+      border: 1px dashed rgba(245,197,66,.18);
+      animation: rotate 22s linear infinite;
+    }
+
+    .network-ring.second {
+      width: 360px;
+      height: 360px;
+      border-color: rgba(255,255,255,.06);
+      animation-direction: reverse;
+      animation-duration: 30s;
+    }
+
+    @keyframes rotate {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .network-item {
+      position: absolute;
+      padding: 12px 15px;
+      border-radius: 13px;
+      border: 1px solid rgba(255,255,255,.09);
+      background: rgba(15,15,15,.9);
+      color: #aaa;
+      font-size: 11px;
+      z-index: 4;
+    }
+
+    .network-item strong {
+      display: block;
+      color: var(--cream);
+      font-size: 12px;
+    }
+
+    .network-item small {
+      color: #686868;
+      font-size: 9px;
+    }
+
+    .network-1 {
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .network-2 {
+      top: 115px;
+      left: 7%;
+    }
+
+    .network-3 {
+      top: 115px;
+      right: 7%;
+    }
+
+    .network-4 {
+      bottom: 30px;
+      left: 18%;
+    }
+
+    .network-5 {
+      bottom: 30px;
+      right: 18%;
+    }
+
+    /* ================= PRINCIPLES ================= */
+
+    .principles {
+      margin-top: 60px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .principle {
+      padding: 28px;
+      min-height: 230px;
+      border: 1px solid var(--line);
+      border-radius: 21px;
+      background: rgba(255,255,255,.025);
+    }
+
+    .principle-number {
+      color: var(--yellow);
+      font: 700 12px "Space Grotesk";
+    }
+
+    .principle h3 {
+      margin-top: 34px;
+      font-size: 21px;
+    }
+
+    .principle p {
+      margin-top: 10px;
+      color: #7d7d7d;
+      font-size: 13px;
+    }
+
+    /* ================= CTA ================= */
+
+    .cta {
+      text-align: center;
+      padding: 150px 0;
+    }
+
+    .cta h2 {
+      max-width: 850px;
+      margin: 20px auto 0;
+      font-size: clamp(44px,6vw,78px);
+      line-height: 1;
+      letter-spacing: -3px;
+    }
+
+    .cta p {
+      max-width: 580px;
+      margin: 20px auto 30px;
+      color: #858585;
+    }
+
+    .btn {
+      min-height: 50px;
+      padding: 0 23px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: .3s ease;
+    }
+
+    .btn-primary {
+      color: #080808;
+      background: linear-gradient(135deg,var(--yellow),var(--gold));
+      box-shadow: 0 12px 40px rgba(245,197,66,.12);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 45px rgba(245,197,66,.2);
+    }
+
+    /* ================= FOOTER ================= */
+
+    footer {
+      padding: 30px 0;
+      border-top: 1px solid var(--line);
+      color: #626262;
+      font-size: 12px;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 22px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a:hover {
+      color: var(--yellow);
+    }
+
+    /* ================= REVEAL ================= */
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .8s ease, transform .8s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+   @media(max-width:900px) {
+
+  .nav {
+    top: 12px;
+    width: calc(100% - 24px);
+    height: 64px;
+    padding: 8px 10px 8px 14px;
+  }
+
+  .logo {
+    font-size: 18px;
+    gap: 9px;
+  }
+
+  .logo-mark {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+  }
+
+  .menu-btn {
+    display: grid;
+    place-items: center;
+
+    width: 42px;
+    height: 42px;
+
+    margin-left: auto;
+
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 11px;
+
+    background: rgba(255,255,255,0.04);
+
+    color: #ffffff;
+
+    font-size: 20px;
+
+    cursor: pointer;
+  }
+
+  .nav-links {
+    position: absolute;
+
+    top: 74px;
+    left: 0;
+
+    width: 100%;
+
+    transform: none;
+
+    padding: 18px 18px;
+
+    display: none;
+
+    flex-direction: column;
+    align-items: stretch;
+
+    gap: 0;
+
+    background: rgba(8,8,8,0.97);
+
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+
+    box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .nav-links a {
+    width: 100%;
+
+    padding: 13px 8px;
+
+    font-size: 14px;
+
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .nav-links a:last-child {
+    border-bottom: none;
+  }
+
+  .nav-cta {
+    display: none;
+  }
+
+  section {
+    padding: 75px 0;
+  }
+
+  .hero {
+    min-height: auto;
+    padding-top: 125px;
+    padding-bottom: 65px;
+  }
+
+  .hero h1 {
+    letter-spacing: -2.5px;
+  }
+
+  .status-board {
+    grid-template-columns: 1fr;
+  }
+
+  .status-item {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .status-item:last-child {
+    border-bottom: 0;
+  }
+
+  .timeline::before {
+    left: 8px;
+  }
+
+  .timeline-item,
+  .timeline-item:nth-child(even) {
+    width: 100%;
+    margin-left: 0;
+    padding: 0 0 45px 40px;
+  }
+
+  .timeline-node,
+  .timeline-item:nth-child(even) .timeline-node {
+    left: 0;
+    right: auto;
+    width: 16px;
+    height: 16px;
+  }
+
+  .principles {
+    grid-template-columns: 1fr;
+  }
+
+  .future-board {
+    padding: 18px;
+  }
+
+  .future-network {
+    min-height: 430px;
+  }
+
+  .network-ring {
+    width: 190px;
+    height: 190px;
+  }
+
+  .network-ring.second {
+    width: 290px;
+    height: 290px;
+  }
+
+  .network-item {
+    padding: 9px 11px;
+  }
+
+  .network-2 {
+    left: 0;
+  }
+
+  .network-3 {
+    right: 0;
+  }
+
+  .network-4 {
+    left: 4%;
+  }
+
+  .network-5 {
+    right: 4%;
+  }
+
+  .cta {
+    padding: 95px 0;
+  }
+}
+
+    @media(max-width:520px) {
+
+      .container {
+        width: 91%;
+      }
+
+      .hero h1 {
+        font-size: 49px;
+      }
+
+      .hero-copy,
+      .section-text {
+        font-size: 15px;
+      }
+
+      .section-title {
+        letter-spacing: -1.7px;
+      }
+
+      .timeline-card {
+        padding: 23px;
+      }
+
+      .timeline-card h3 {
+        font-size: 23px;
+      }
+
+      .future-network {
+        min-height: 420px;
+        transform: scale(.9);
+      }
+
+      .network-item {
+        font-size: 9px;
+      }
+
+      .network-item strong {
+        font-size: 10px;
+      }
+
+      .network-item small {
+        font-size: 8px;
+      }
+
+      .network-2 {
+        left: -8px;
+      }
+
+      .network-3 {
+        right: -8px;
+      }
+
+      .network-4 {
+        left: -3px;
+      }
+
+      .network-5 {
+        right: -3px;
+      }
+
+      .cta h2 {
+        letter-spacing: -2px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVIGATION -->
+
+<nav class="nav">
+
+  <a href="landing.html" class="logo">
+
+    <span class="logo-mark">
+      M
+    </span>
+
+    Manoj AI
+
+  </a>
+
+
+  <div class="nav-links" id="navLinks">
+
+    <a href="landing.html">
+      Home
+    </a>
+
+    <a href="product.html">
+      Product
+    </a>
+
+    <a href="solutions.html">
+      Solutions
+    </a>
+
+    <a href="roadmap.html" class="active">
+      Roadmap
+    </a>
+
+    <a href="about.html">
+      About
+    </a>
+
+    <a href="contact.html">
+      Contact
+    </a>
+
+  </div>
+
+
+  <a
+    href="contact.html"
+    class="nav-cta"
+  >
+    Request Demo →
+  </a>
+
+
+  <button
+    class="menu-btn"
+    id="menuBtn"
+    aria-label="Open menu"
+  >
+    ☰
+  </button>
+
+</nav>
+
+  <!-- HERO -->
+
+  <section class="hero">
+
+    <div class="container hero-inner reveal">
+
+      <div class="eyebrow">
+        Where we're going
+      </div>
+
+      <h1>
+        Building the future of
+        <span class="gold">AI conversations.</span>
+      </h1>
+
+      <p class="hero-copy">
+        Manoj starts with voice. The bigger vision is a connected AI
+        communication layer that understands customers, preserves context
+        and helps businesses take the next step.
+      </p>
+
+      <div class="hero-line"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- CURRENT STATUS -->
+
+  <section class="status-section">
+
+    <div class="container">
+
+      <div class="status-board reveal">
+
+        <div class="status-item">
+
+          <div class="status-label">
+            Current stage
+          </div>
+
+          <h3>
+            <span class="status-dot"></span>
+            Live foundation
+          </h3>
+
+          <p>
+            Core voice agent experience is available.
+          </p>
+
+        </div>
+
+
+        <div class="status-item">
+
+          <div class="status-label">
+            Focus
+          </div>
+
+          <h3>
+            Conversation intelligence
+          </h3>
+
+          <p>
+            Making every interaction more useful.
+          </p>
+
+        </div>
+
+
+        <div class="status-item">
+
+          <div class="status-label">
+            Direction
+          </div>
+
+          <h3>
+            Connected AI
+          </h3>
+
+          <p>
+            Voice, messaging, CRM and workflows.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ROADMAP -->
+
+  <section>
+
+    <div class="container">
+
+      <div class="roadmap-intro reveal">
+
+        <div class="eyebrow">
+          Product roadmap
+        </div>
+
+        <h2 class="section-title">
+          From one AI voice agent
+          to an <span class="gold">AI communication system.</span>
+        </h2>
+
+        <p class="section-text">
+          The roadmap is designed around one idea: every customer interaction
+          should create useful context for the business.
+        </p>
+
+      </div>
+
+
+      <div class="timeline">
+
+        <!-- PHASE 01 -->
+
+        <div class="timeline-item reveal">
+
+          <div class="timeline-node"></div>
+
+          <div class="timeline-card">
+
+            <div class="phase">
+              Phase 01 · Current
+            </div>
+
+            <h3>
+              Voice foundation
+            </h3>
+
+            <p>
+              Establish a reliable real-time voice experience that can
+              communicate naturally with customers.
+            </p>
+
+            <div class="timeline-list">
+
+              <div>
+                <span>✓</span>
+                Real-time AI voice conversation
+              </div>
+
+              <div>
+                <span>✓</span>
+                Natural customer interaction
+              </div>
+
+              <div>
+                <span>✓</span>
+                Lead information capture
+              </div>
+
+              <div>
+                <span>✓</span>
+                Call recording
+              </div>
+
+            </div>
+
+            <div class="tag">
+              Foundation
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- PHASE 02 -->
+
+        <div class="timeline-item reveal">
+
+          <div class="timeline-node"></div>
+
+          <div class="timeline-card">
+
+            <div class="phase">
+              Phase 02 · Now building
+            </div>
+
+            <h3>
+              Conversation intelligence
+            </h3>
+
+            <p>
+              Turn conversations into structured information that teams
+              can review and act on.
+            </p>
+
+            <div class="timeline-list">
+
+              <div>
+                <span>→</span>
+                Better conversation summaries
+              </div>
+
+              <div>
+                <span>→</span>
+                Intent understanding
+              </div>
+
+              <div>
+                <span>→</span>
+                Lead quality signals
+              </div>
+
+              <div>
+                <span>→</span>
+                Smarter follow-up context
+              </div>
+
+            </div>
+
+            <div class="tag">
+              Intelligence
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- PHASE 03 -->
+
+        <div class="timeline-item reveal">
+
+          <div class="timeline-node"></div>
+
+          <div class="timeline-card">
+
+            <div class="phase">
+              Phase 03 · Coming next
+            </div>
+
+            <h3>
+              WhatsApp integration
+            </h3>
+
+            <p>
+              Extend conversations beyond voice and give businesses another
+              way to continue customer interactions.
+            </p>
+
+            <div class="timeline-list">
+
+              <div>
+                <span>→</span>
+                WhatsApp conversations
+              </div>
+
+              <div>
+                <span>→</span>
+                Follow-up messaging
+              </div>
+
+              <div>
+                <span>→</span>
+                Conversation continuity
+              </div>
+
+              <div>
+                <span>→</span>
+                Voice + messaging context
+              </div>
+
+            </div>
+
+            <div class="tag">
+              Messaging
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- PHASE 04 -->
+
+        <div class="timeline-item reveal">
+
+          <div class="timeline-node"></div>
+
+          <div class="timeline-card">
+
+            <div class="phase">
+              Phase 04 · Expansion
+            </div>
+
+            <h3>
+              CRM integration
+            </h3>
+
+            <p>
+              Connect conversations with the systems businesses already
+              use to manage leads and customers.
+            </p>
+
+            <div class="timeline-list">
+
+              <div>
+                <span>→</span>
+                Lead synchronization
+              </div>
+
+              <div>
+                <span>→</span>
+                Customer context
+              </div>
+
+              <div>
+                <span>→</span>
+                Conversation history
+              </div>
+
+              <div>
+                <span>→</span>
+                Workflow handoff
+              </div>
+
+            </div>
+
+            <div class="tag">
+              Integrations
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- PHASE 05 -->
+
+        <div class="timeline-item reveal">
+
+          <div class="timeline-node"></div>
+
+          <div class="timeline-card">
+
+            <div class="phase">
+              Phase 05 · Future
+            </div>
+
+            <h3>
+              Phone infrastructure
+            </h3>
+
+            <p>
+              Expand from browser-based experiences into production phone
+              infrastructure and business calling workflows.
+            </p>
+
+            <div class="timeline-list">
+
+              <div>
+                <span>→</span>
+                Phone system integration
+              </div>
+
+              <div>
+                <span>→</span>
+                Production inbound calls
+              </div>
+
+              <div>
+                <span>→</span>
+                Outbound follow-ups
+              </div>
+
+              <div>
+                <span>→</span>
+                Scalable calling workflows
+              </div>
+
+            </div>
+
+            <div class="tag">
+              Voice infrastructure
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- PHASE 06 -->
+
+        <div class="timeline-item reveal">
+
+          <div class="timeline-node"></div>
+
+          <div class="timeline-card">
+
+            <div class="phase">
+              Phase 06 · Long term
+            </div>
+
+            <h3>
+              Autonomous workflows
+            </h3>
+
+            <p>
+              Move beyond answering conversations toward AI-powered workflows
+              that can help businesses act on customer intent.
+            </p>
+
+            <div class="timeline-list">
+
+              <div>
+                <span>→</span>
+                Automated follow-ups
+              </div>
+
+              <div>
+                <span>→</span>
+                Multi-channel context
+              </div>
+
+              <div>
+                <span>→</span>
+                Intelligent routing
+              </div>
+
+              <div>
+                <span>→</span>
+                Business workflow automation
+              </div>
+
+            </div>
+
+            <div class="tag">
+              AI operations
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- FUTURE SYSTEM -->
+
+  <section class="future">
+
+    <div class="container">
+
+      <div class="reveal">
+
+        <div class="eyebrow">
+          The bigger picture
+        </div>
+
+        <h2 class="section-title">
+          Voice is only the
+          <span class="gold">beginning.</span>
+        </h2>
+
+        <p class="section-text">
+          The long-term direction is a connected system where customer
+          conversations can move naturally between voice, messaging,
+          CRM and business workflows.
+        </p>
+
+      </div>
+
+
+      <div class="future-board reveal">
+
+        <div class="future-header">
+
+          <strong>
+            Manoj Communication Layer
+          </strong>
+
+          <span>
+            Future vision
+          </span>
+
+        </div>
+
+
+        <div class="future-network">
+
+          <div class="network-ring"></div>
+          <div class="network-ring second"></div>
+
+
+          <div class="network-core">
+            M
+          </div>
+
+
+          <div class="network-item network-1">
+
+            <strong>Voice</strong>
+
+            <small>
+              Conversations
+            </small>
+
+          </div>
+
+
+          <div class="network-item network-2">
+
+            <strong>WhatsApp</strong>
+
+            <small>
+              Messaging
+            </small>
+
+          </div>
+
+
+          <div class="network-item network-3">
+
+            <strong>CRM</strong>
+
+            <small>
+              Customer data
+            </small>
+
+          </div>
+
+
+          <div class="network-item network-4">
+
+            <strong>Follow-ups</strong>
+
+            <small>
+              Next actions
+            </small>
+
+          </div>
+
+
+          <div class="network-item network-5">
+
+            <strong>Analytics</strong>
+
+            <small>
+              Intelligence
+            </small>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- PRINCIPLES -->
+
+  <section>
+
+    <div class="container">
+
+      <div class="reveal">
+
+        <div class="eyebrow">
+          Product principles
+        </div>
+
+        <h2 class="section-title">
+          What stays constant
+          as Manoj <span class="gold">grows.</span>
+        </h2>
+
+      </div>
+
+
+      <div class="principles">
+
+        <div class="principle reveal">
+
+          <div class="principle-number">
+            01 / HUMAN
+          </div>
+
+          <h3>
+            Conversations first
+          </h3>
+
+          <p>
+            Technology should make customer conversations easier,
+            not make them feel more complicated.
+          </p>
+
+        </div>
+
+
+        <div class="principle reveal">
+
+          <div class="principle-number">
+            02 / CONTEXT
+          </div>
+
+          <h3>
+            Never lose the story
+          </h3>
+
+          <p>
+            The information created during an interaction should remain
+            useful after the conversation ends.
+          </p>
+
+        </div>
+
+
+        <div class="principle reveal">
+
+          <div class="principle-number">
+            03 / ACTION
+          </div>
+
+          <h3>
+            Intelligence should move work
+          </h3>
+
+          <p>
+            Insights matter most when they help a business understand
+            what should happen next.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- FINAL CTA -->
+
+  <section class="cta">
+
+    <div class="container reveal">
+
+      <div class="eyebrow">
+        Start with voice
+      </div>
+
+      <h2>
+        The future starts with
+        one <span class="gold">conversation.</span>
+      </h2>
+
+      <p>
+        Experience the current Manoj voice agent and see where the
+        product is heading.
+      </p>
+
+      <a href="index.html" class="btn btn-primary">
+        Talk to Manoj →
+      </a>
+
+    </div>
+
+  </section>
+
+
+  <!-- FOOTER -->
+
+  <footer>
+
+    <div class="container footer-inner">
+
+      <div>
+        © 2026 Manoj AI Voice Agent
+      </div>
+
+      <div class="footer-links">
+
+        <a href="landing.html">Home</a>
+
+        <a href="product.html">Product</a>
+
+        <a href="solutions.html">Solutions</a>
+
+        <a href="roadmap.html">Roadmap</a>
+
+        <a href="about.html">About</a>
+
+        <a href="contact.html">Contact</a>
+
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <script>
+
+    /* MOBILE MENU */
+
+    const menuBtn = document.getElementById("menuBtn");
+    const navLinks = document.getElementById("navLinks");
+
+    menuBtn.addEventListener("click", () => {
+      navLinks.classList.toggle("open");
+    });
+
+    document.querySelectorAll(".nav-links a").forEach(link => {
+      link.addEventListener("click", () => {
+        navLinks.classList.remove("open");
+      });
+    });
+
+
+    /* SCROLL REVEAL */
+
+    const revealItems = document.querySelectorAll(".reveal");
+
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          }
+
+        });
+      },
+      {
+        threshold: 0.12
+      }
+    );
+
+    revealItems.forEach(item => {
+      observer.observe(item);
+    });
+  </script>
+
+</body>
+</html>
