@@ -17,6 +17,13 @@ let localStream = null;
 let audioElement = null;
 
 let currentAssistantText = "";
+// ========================================
+// CONVERSATION STORAGE
+// ========================================
+
+let conversationTranscript = [];
+let conversationStartedAt = null;
+let currentLeadId = null;
 
 let isSpeaking = false;
 
@@ -32,6 +39,331 @@ let ttsGeneration = 0;
 // ========================================
 
 let activePCMSourceNodes = [];
+
+// ========================================
+// CALL RECORDING
+// ========================================
+
+let mediaRecorder = null;
+let recordingChunks = [];
+let recordingDestination = null;
+let recordingStartedAt = null;
+let microphoneAudioSource = null;
+let isDisconnecting = false;
+
+// ========================================
+// START CALL RECORDING
+// ========================================
+
+function startCallRecording() {
+
+    try {
+
+        console.log("🎙️ Starting call recording...");
+
+        // ----------------------------------------
+        // CREATE / REUSE AUDIO CONTEXT
+        // ----------------------------------------
+
+        if (!window.manojAudioContext) {
+
+            window.manojAudioContext =
+                new (
+                    window.AudioContext ||
+                    window.webkitAudioContext
+                )({
+                    sampleRate: 16000
+                });
+
+        }
+
+        const audioContext =
+            window.manojAudioContext;
+
+        // ----------------------------------------
+        // CREATE RECORDING DESTINATION
+        // ----------------------------------------
+
+        recordingDestination =
+            audioContext.createMediaStreamDestination();
+
+        // ----------------------------------------
+        // CONNECT MICROPHONE TO RECORDER
+        // ----------------------------------------
+
+        if (localStream) {
+
+            microphoneAudioSource =
+                audioContext.createMediaStreamSource(
+                    localStream
+                );
+
+            microphoneAudioSource.connect(
+                recordingDestination
+            );
+
+            console.log(
+                "🎤 Microphone connected to recording mixer"
+            );
+
+        } else {
+
+            console.warn(
+                "⚠️ No microphone stream available for recording"
+            );
+
+        }
+
+        // ----------------------------------------
+        // FIND SUPPORTED RECORDING FORMAT
+        // ----------------------------------------
+
+        let mimeType =
+            "audio/webm;codecs=opus";
+
+        if (
+            !MediaRecorder.isTypeSupported(
+                mimeType
+            )
+        ) {
+
+            mimeType =
+                "audio/webm";
+
+        }
+
+        if (
+            !MediaRecorder.isTypeSupported(
+                mimeType
+            )
+        ) {
+
+            console.error(
+                "❌ Browser does not support WebM recording"
+            );
+
+            return;
+
+        }
+
+        // ----------------------------------------
+        // CREATE MEDIA RECORDER
+        // ----------------------------------------
+
+        mediaRecorder =
+            new MediaRecorder(
+                recordingDestination.stream,
+                {
+                    mimeType: mimeType
+                }
+            );
+
+        recordingChunks = [];
+
+        // ----------------------------------------
+        // COLLECT AUDIO CHUNKS
+        // ----------------------------------------
+
+        mediaRecorder.ondataavailable =
+            function (event) {
+
+                if (
+                    event.data &&
+                    event.data.size > 0
+                ) {
+
+                    recordingChunks.push(
+                        event.data
+                    );
+
+                }
+
+            };
+
+        // ----------------------------------------
+        // RECORDING STARTED
+        // ----------------------------------------
+
+        mediaRecorder.onstart =
+            function () {
+
+                recordingStartedAt =
+                    Date.now();
+
+                console.log(
+                    "🔴 Call recording started"
+                );
+
+            };
+
+        // ----------------------------------------
+        // RECORDING ERROR
+        // ----------------------------------------
+
+        mediaRecorder.onerror =
+            function (event) {
+
+                console.error(
+                    "❌ MediaRecorder error:",
+                    event
+                );
+
+            };
+
+        // ----------------------------------------
+        // START RECORDING
+        // ----------------------------------------
+
+        mediaRecorder.start(1000);
+
+        console.log(
+            "✅ MediaRecorder started:",
+            mimeType
+        );
+
+    } catch (error) {
+
+        console.error(
+            "❌ Could not start call recording:",
+            error
+        );
+
+    }
+
+}
+
+// ========================================
+// STOP AND UPLOAD CALL RECORDING
+// ========================================
+
+async function stopAndUploadCallRecording() {
+
+    if (
+        !mediaRecorder ||
+        mediaRecorder.state === "inactive"
+    ) {
+
+        console.log(
+            "ℹ️ No active call recording to stop"
+        );
+
+        return;
+    }
+
+    console.log(
+        "🛑 Stopping call recording..."
+    );
+
+    return new Promise(function (resolve) {
+
+        mediaRecorder.onstop =
+            async function () {
+
+                try {
+
+                    const audioBlob =
+                        new Blob(
+                            recordingChunks,
+                            {
+                                type:
+                                    mediaRecorder.mimeType ||
+                                    "audio/webm"
+                            }
+                        );
+
+                    console.log(
+                        "🎙️ Recording blob created:",
+                        audioBlob.size,
+                        "bytes"
+                    );
+
+                    let durationSeconds = 0;
+
+                    if (recordingStartedAt) {
+
+                        durationSeconds =
+                            Math.round(
+                                (
+                                    Date.now() -
+                                    recordingStartedAt
+                                ) / 1000
+                            );
+
+                    }
+
+                    console.log(
+                        "⏱️ Recording duration:",
+                        durationSeconds,
+                        "seconds"
+                    );
+
+                    const response =
+    await fetch(
+        `/call-recording?duration_seconds=${durationSeconds}&lead_id=${currentLeadId || ""}`,
+        {
+            method:
+                "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "audio/webm"
+                                },
+
+                                body:
+                                    audioBlob
+                            }
+                        );
+
+                    const result =
+                        await response.json();
+
+                    if (!response.ok) {
+
+                        console.error(
+                            "❌ Recording upload failed:",
+                            result
+                        );
+
+                        resolve();
+
+                        return;
+                    }
+
+                    console.log(
+                        "✅ Recording uploaded successfully:",
+                        result
+                    );
+
+                    recordingChunks = [];
+
+                    mediaRecorder = null;
+
+                    recordingDestination = null;
+
+                    microphoneAudioSource = null;
+
+                    recordingStartedAt = null;
+
+                    resolve();
+
+                } catch (error) {
+
+                    console.error(
+                        "❌ Recording upload error:",
+                        error
+                    );
+
+                    resolve();
+
+                }
+
+            };
+
+        mediaRecorder.stop();
+
+    });
+
+}
 
 // ========================================
 // ADD MESSAGE TO SCREEN
@@ -483,9 +815,26 @@ while (true) {
     source.buffer =
         audioBuffer;
 
+  // ------------------------------------
+// PLAY MANOJ AUDIO THROUGH SPEAKERS
+// ------------------------------------
+
+source.connect(
+    audioContext.destination
+);
+
+
+// ------------------------------------
+// ALSO SEND MANOJ AUDIO TO RECORDER
+// ------------------------------------
+
+if (recordingDestination) {
+
     source.connect(
-        audioContext.destination
+        recordingDestination
     );
+
+}
 
     activePCMSourceNodes.push(
         source
@@ -825,6 +1174,271 @@ if (
 
 }
 
+// ========================================
+// SAVE CONVERSATION TO SUPABASE
+// ========================================
+
+async function saveConversation() {
+
+    if (
+        !conversationTranscript ||
+        conversationTranscript.length === 0
+    ) {
+
+        console.log(
+            "ℹ️ No conversation to save"
+        );
+
+        return;
+
+    }
+
+
+    const endedAt =
+        new Date().toISOString();
+
+
+    let durationSeconds = null;
+
+    if (conversationStartedAt) {
+
+        durationSeconds =
+            Math.round(
+                (
+                    new Date(endedAt).getTime() -
+                    new Date(conversationStartedAt).getTime()
+                ) / 1000
+            );
+
+    }
+
+
+    const conversationText =
+        conversationTranscript
+            .map(function (message) {
+
+                const role =
+                    message.role === "user"
+                        ? "USER"
+                        : "MANOJ";
+
+                return `${role}: ${message.text}`;
+
+            })
+            .join("\n\n");
+
+
+    try {
+
+        console.log(
+            "💾 Saving conversation..."
+        );
+
+
+        const response =
+            await fetch(
+                "/conversation-log",
+                {
+
+                    method:
+                        "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            conversation_text:
+                                conversationText,
+
+                            started_at:
+                                conversationStartedAt,
+
+                            ended_at:
+                                endedAt,
+
+                            duration_seconds:
+                                durationSeconds,
+
+                                lead_id:
+    currentLeadId
+                                
+                        })
+
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            console.error(
+                "❌ Failed to save conversation:",
+                result
+            );
+
+            return;
+
+        }
+
+
+        console.log(
+            "✅ Conversation saved:",
+            result
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "❌ Conversation storage error:",
+            error
+        );
+
+    }
+
+}
+
+// ========================================
+// HANDLE LEAD CAPTURE
+// ========================================
+
+async function handleLeadCapture(
+    callId,
+    argumentsJson
+) {
+
+    try {
+
+        console.log(
+            "📋 Lead capture arguments:",
+            argumentsJson
+        );
+
+
+        const leadData =
+            JSON.parse(argumentsJson);
+
+
+        // --------------------------------
+        // SEND LEAD TO SERVER
+        // --------------------------------
+
+        const response =
+            await fetch(
+                "/lead",
+                {
+                    method:
+                        "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(
+                            leadData
+                        )
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            console.error(
+                "❌ Lead save failed:",
+                result
+            );
+
+            return;
+
+        }
+
+
+        console.log(
+            "✅ Lead saved:",
+            result
+        );
+        currentLeadId = result.lead_id;
+
+console.log(
+    "🔗 Current lead ID set:",
+    currentLeadId
+);
+
+
+        // --------------------------------
+        // SEND TOOL RESULT BACK TO OPENAI
+        // --------------------------------
+
+        dataChannel.send(
+            JSON.stringify({
+
+                type:
+                    "conversation.item.create",
+
+                item: {
+
+                    type:
+                        "function_call_output",
+
+                    call_id:
+                        callId,
+
+                    output:
+                        JSON.stringify({
+
+                            success:
+                                true,
+
+                            lead_id:
+                                result.lead_id
+
+                        })
+
+                }
+
+            })
+        );
+
+
+        // --------------------------------
+        // LET MANOJ CONTINUE
+        // --------------------------------
+
+        dataChannel.send(
+            JSON.stringify({
+
+                type:
+                    "response.create"
+
+            })
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "❌ Lead capture error:",
+            error
+        );
+
+    }
+
+}
 
 // ========================================
 // START CONVERSATION
@@ -834,6 +1448,12 @@ startBtn.onclick =
     async function () {
 
         try {
+            conversationTranscript = [];
+            conversationStartedAt =
+                new Date().toISOString();
+
+                currentLeadId = null;
+
 
             startBtn.disabled =
                 true;
@@ -876,6 +1496,12 @@ startBtn.onclick =
             console.log(
                 "ðŸŽ¤ Microphone access granted"
             );
+
+            // ========================================
+// START CALL RECORDING
+// ========================================
+
+startCallRecording();
 
 
             // ========================================
@@ -1126,6 +1752,11 @@ startBtn.onclick =
                             if (
                                 data.transcript
                             ) {
+                                conversationTranscript.push({
+    role: "user",
+    text: data.transcript,
+    timestamp: new Date().toISOString()
+});
 
                                 addMessage(
                                     "user",
@@ -1250,6 +1881,11 @@ return;
                                 "ðŸ“ OpenAI final response:",
                                 finalText
                             );
+                            conversationTranscript.push({
+    role: "assistant",
+    text: finalText,
+    timestamp: new Date().toISOString()
+});
                             await speakWithManoj(
     finalText
 );
@@ -1284,56 +1920,70 @@ return;
 
 
                         // ========================================
-                        // KNOWLEDGE TOOL CALL
-                        // ========================================
+// FUNCTION TOOL CALL
+// ========================================
 
-                        if (
-                            data.type ===
-                            "response.function_call_arguments.done"
-                        ) {
+if (
+    data.type ===
+    "response.function_call_arguments.done"
+) {
 
-                            console.log(
-                                "ðŸ”Ž Knowledge tool call received"
-                            );
+    console.log(
+        "🔧 Function tool call received:",
+        data.name
+    );
 
+    const functionName =
+        data.name;
 
-                            const functionName =
-                                data.name;
+    const argumentsJson =
+        data.arguments;
 
-
-                            const argumentsJson =
-                                data.arguments;
-
-
-                            const callId =
-                                data.call_id;
+    const callId =
+        data.call_id;
 
 
-                            if (
-                                functionName ===
-                                "knowledge_lookup"
-                            ) {
+    // ========================================
+    // KNOWLEDGE LOOKUP
+    // ========================================
 
-                                await handleKnowledgeLookup(
+    if (
+        functionName ===
+        "knowledge_lookup"
+    ) {
 
-                                    callId,
+        await handleKnowledgeLookup(
+            callId,
+            argumentsJson
+        );
 
-                                    argumentsJson
-
-                                );
-
-                            }
-
-
-                            return;
-
-                        }
+    }
 
 
+    // ========================================
+    // LEAD CAPTURE
+    // ========================================
+
+    if (
+        functionName ===
+        "lead_capture"
+    ) {
+
+        await handleLeadCapture(
+            callId,
+            argumentsJson
+        );
+
+    }
+
+
+    return;
+
+}
                     } catch (error) {
 
                         console.error(
-                            "âŒ Data channel error:",
+                            "❌ Data channel error:",
                             error
                         );
 
@@ -1544,11 +2194,25 @@ disconnectBtn.onclick =
 // DISCONNECT
 // ========================================
 
-function disconnectConversation() {
+async function disconnectConversation() {
 
     console.log(
-        "ðŸ”´ Disconnecting..."
-    );
+    "🔴 Disconnecting..."
+);
+
+
+// --------------------------------
+// SAVE CONVERSATION TRANSCRIPT
+// --------------------------------
+
+await saveConversation();
+
+
+// --------------------------------
+// STOP AND UPLOAD CALL RECORDING
+// --------------------------------
+
+await stopAndUploadCallRecording();
 
 
     // --------------------------------

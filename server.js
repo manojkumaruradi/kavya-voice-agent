@@ -862,6 +862,508 @@ app.post(
     }
 );
 
+// ============================================================
+// CONVERSATION LOG STORAGE
+// ============================================================
+
+app.post(
+    "/conversation-log",
+    async (req, res) => {
+
+        try {
+
+            const {
+                conversation_text,
+                started_at,
+                ended_at,
+                duration_seconds,
+                lead_id
+            } = req.body || {};
+
+            // ----------------------------------------
+            // VALIDATE CONVERSATION
+            // ----------------------------------------
+
+            if (
+                !conversation_text ||
+                typeof conversation_text !== "string"
+            ) {
+
+                return res
+                    .status(400)
+                    .json({
+                        success: false,
+                        error: "conversation_text is required"
+                    });
+
+            }
+
+            // ----------------------------------------
+            // INSERT INTO SUPABASE
+            // ----------------------------------------
+
+            const { data, error } =
+                await supabase
+                    .from("conversation_logs")
+                    .insert([
+                        {
+                            conversation_text:
+                                conversation_text,
+
+                            summary:
+                                null,
+
+                            sentiment:
+                                null,
+
+                            interest_level:
+                                null,
+
+                            callback_required:
+                                false,
+
+                            lead_id:
+                                lead_id
+                                    ? Number(lead_id)
+                                    : null
+                        }
+                    ])
+                    .select()
+                    .single();
+
+            // ----------------------------------------
+            // HANDLE SUPABASE ERROR
+            // ----------------------------------------
+
+            if (error) {
+
+                console.error(
+                    "❌ Conversation log insert failed:",
+                    error
+                );
+
+                return res
+                    .status(500)
+                    .json({
+                        success: false,
+                        error: "Failed to save conversation",
+                        details: error.message
+                    });
+
+            }
+
+            // ----------------------------------------
+            // SUCCESS
+            // ----------------------------------------
+
+            console.log(
+                "✅ Conversation saved to Supabase:",
+                data.id
+            );
+
+            console.log(
+                "🔗 Conversation linked to lead:",
+                data.lead_id
+            );
+
+            return res.json({
+                success: true,
+                message: "Conversation saved successfully",
+                conversation_id: data.id,
+                lead_id: data.lead_id
+            });
+
+        } catch (error) {
+
+            console.error(
+                "❌ Conversation log API error:",
+                error
+            );
+
+            return res
+                .status(500)
+                .json({
+                    success: false,
+                    error: "Conversation log failed",
+                    details: error.message
+                });
+
+        }
+
+    }
+);
+
+// ========================================
+// LEAD CAPTURE
+// ========================================
+
+app.post("/lead", async (req, res) => {
+
+    try {
+
+        const {
+            lead_id,
+            lead_name,
+            phone,
+            email,
+            course,
+            lead_score,
+            summary,
+            callback_required
+        } = req.body || {};
+
+        // --------------------------------
+        // BASIC VALIDATION
+        // --------------------------------
+
+        if (
+            !lead_name &&
+            !phone &&
+            !email &&
+            !course &&
+            !lead_id
+        ) {
+
+            return res.status(400).json({
+                success: false,
+                error: "At least one lead detail is required"
+            });
+
+        }
+
+        // --------------------------------
+        // UPDATE EXISTING LEAD
+        // --------------------------------
+
+        if (lead_id) {
+
+            console.log(
+                "🔄 Updating existing lead:",
+                lead_id
+            );
+
+            const updateData = {};
+
+            if (lead_name) {
+                updateData.lead_name = lead_name;
+            }
+
+            if (phone) {
+                updateData.phone = phone;
+            }
+
+            if (email) {
+                updateData.email = email;
+            }
+
+            if (course) {
+                updateData.course = course;
+            }
+
+            if (lead_score) {
+                updateData.lead_score = lead_score;
+            }
+
+            if (summary) {
+                updateData.summary = summary;
+            }
+
+            if (callback_required !== undefined) {
+                updateData.call_status =
+                    callback_required
+                        ? "callback_requested"
+                        : "new";
+            }
+
+            const {
+                data,
+                error
+            } = await supabase
+                .from("leads")
+                .update(updateData)
+                .eq("id", Number(lead_id))
+                .select()
+                .single();
+
+            if (error) {
+
+                console.error(
+                    "❌ Failed to update lead:",
+                    error
+                );
+
+                return res.status(500).json({
+                    success: false,
+                    error: "Failed to update lead",
+                    details: error.message
+                });
+
+            }
+
+            console.log(
+                "✅ Existing lead updated:",
+                data.id
+            );
+
+            return res.json({
+                success: true,
+                message: "Lead updated successfully",
+                lead_id: data.id
+            });
+
+        }
+
+        // --------------------------------
+        // CREATE NEW LEAD
+        // --------------------------------
+
+        console.log(
+            "🆕 Creating new lead"
+        );
+
+        const {
+            data,
+            error
+        } = await supabase
+            .from("leads")
+            .insert([{
+
+                lead_name:
+                    lead_name || "Unknown",
+
+                phone:
+                    phone || null,
+
+                email:
+                    email || null,
+
+                course:
+                    course || null,
+
+                lead_score:
+                    lead_score || null,
+
+                summary:
+                    summary || null,
+
+                call_status:
+                    callback_required
+                        ? "callback_requested"
+                        : "new"
+
+            }])
+            .select()
+            .single();
+
+        // --------------------------------
+        // HANDLE SUPABASE ERROR
+        // --------------------------------
+
+        if (error) {
+
+            console.error(
+                "❌ Failed to save lead:",
+                error
+            );
+
+            return res.status(500).json({
+                success: false,
+                error: "Failed to save lead",
+                details: error.message
+            });
+
+        }
+
+        // --------------------------------
+        // SUCCESS
+        // --------------------------------
+
+        console.log(
+            "✅ New lead saved:",
+            data.id
+        );
+
+        return res.json({
+            success: true,
+            message: "Lead saved successfully",
+            lead_id: data.id
+        });
+
+    } catch (error) {
+
+        console.error(
+            "❌ Lead capture error:",
+            error
+        );
+
+        return res.status(500).json({
+            success: false,
+            error: "Lead capture failed",
+            details: error.message
+        });
+
+    }
+
+});
+
+// ============================================================
+// CALL RECORDING STORAGE
+// ============================================================
+
+app.post(
+    "/call-recording",
+    express.raw({
+        type: "audio/webm",
+        limit: "100mb"
+    }),
+    async (req, res) => {
+
+        try {
+
+            console.log("🎙️ Call recording upload received");
+
+            if (!req.body || !Buffer.isBuffer(req.body)) {
+
+                return res.status(400).json({
+                    success: false,
+                    error: "Audio recording data is required"
+                });
+
+            }
+
+            const {
+                duration_seconds,
+                lead_id
+            } = req.query || {};
+
+            const timestamp =
+                new Date()
+                    .toISOString()
+                    .replace(/[:.]/g, "-");
+
+            const filePath =
+                `calls/call-${timestamp}.webm`;
+
+            console.log(
+                "📦 Recording size:",
+                req.body.length,
+                "bytes"
+            );
+
+            console.log(
+                "⏱️ Duration:",
+                duration_seconds || "unknown",
+                "seconds"
+            );
+
+            // ----------------------------------------
+            // UPLOAD TO SUPABASE STORAGE
+            // ----------------------------------------
+
+            const { error: uploadError } =
+                await supabase
+                    .storage
+                    .from("call-recordings")
+                    .upload(
+                        filePath,
+                        req.body,
+                        {
+                            contentType: "audio/webm",
+                            upsert: false
+                        }
+                    );
+
+            if (uploadError) {
+
+                console.error(
+                    "❌ Recording upload failed:",
+                    uploadError
+                );
+
+                return res.status(500).json({
+                    success: false,
+                    error: "Failed to upload recording",
+                    details: uploadError.message
+                });
+
+            }
+
+            console.log(
+                "✅ Recording uploaded:",
+                filePath
+            );
+
+            // ----------------------------------------
+            // SAVE RECORDING METADATA
+            // ----------------------------------------
+
+            const { data, error: dbError } =
+                await supabase
+                    .from("call_recordings")
+                    .insert([{
+                        lead_id:
+                            lead_id
+                                ? Number(lead_id)
+                                : null,
+
+                        recording_url:
+                            filePath,
+
+                        call_duration:
+                            duration_seconds
+                                ? Number(duration_seconds)
+                                : null,
+
+                        call_status:
+                            "completed"
+                    }])
+                    .select()
+                    .single();
+
+            if (dbError) {
+
+                console.error(
+                    "❌ Recording metadata save failed:",
+                    dbError
+                );
+
+                return res.status(500).json({
+                    success: false,
+                    error: "Recording uploaded but metadata save failed",
+                    details: dbError.message
+                });
+
+            }
+
+            console.log(
+                "✅ Recording metadata saved:",
+                data.id
+            );
+
+            return res.json({
+                success: true,
+                message: "Call recording saved successfully",
+                recording_id: data.id,
+                recording_path: filePath
+            });
+
+        } catch (error) {
+
+            console.error(
+                "❌ Call recording error:",
+                error
+            );
+
+            return res.status(500).json({
+                success: false,
+                error: "Call recording failed",
+                details: error.message
+            });
+
+        }
+
+    }
+);
 
 // ============================================================
 // OPENAI REALTIME WEBRTC SESSION
@@ -943,62 +1445,462 @@ app.post(
 
             const manojInstructions = `
 
-TELUGU VOICE STYLE:
+IDENTITY:
 
-When speaking Telugu, use natural everyday conversational Telugu,
-especially Telangana-style conversational Telugu.
+You are Manoj.
 
-IMPORTANT FOR SPEECH:
+You are a warm, friendly, natural and professional Indian sales conversation assistant.
 
-- Write Telugu words only in Telugu Unicode script.
-- NEVER write Telugu words using English/Roman letters.
-- Do NOT transliterate Telugu into English letters.
-- Use Telugu script because the response will be sent to a Telugu TTS voice.
-- Avoid unnecessary symbols, emojis, decorative characters, and special punctuation.
-- Do not use markdown formatting in spoken responses.
-- Do not use bullet points, numbered lists, headings, brackets, or quotation marks unless absolutely necessary.
-- Keep spoken sentences short and natural.
-- Use simple conversational Telugu that is easy for a voice assistant to pronounce.
-- Common English words can remain in English when naturally used in Telugu conversation.
-- Avoid overly formal, literary, textbook, translated, or news-reader Telugu.
-- Do not translate English sentences word-for-word into Telugu.
-- Avoid long sentences with many clauses.
-- Use natural pauses through normal punctuation such as commas and full stops.
+Your job is not only to answer questions.
+
+Your job is to have a natural human conversation, understand the person's requirement, build comfort and trust, and gently move the conversation forward.
+
+PERSONALITY:
+
+Speak like an experienced and friendly salesperson talking to a real person.
+
+You should sound:
+
+- warm
+- soft
+- calm
+- patient
+- confident
+- friendly
+- genuinely interested
+- helpful
+- approachable
+
+Never sound:
+
+- robotic
+- mechanical
+- scripted
+- rushed
+- cold
+- overly formal
+- like a customer-support bot
+- like you are simply reading information
+
+IMPORTANT:
+
+Do not behave like a question-answer machine.
+
+Do not simply answer the question and immediately stop.
+
+Have a small natural conversational flow around the answer.
+
+NATURAL CONVERSATION:
+
+A good response should normally feel like:
+
+acknowledgement → answer → helpful continuation
+
+But do not force this structure when it would sound unnatural.
+
+For example:
+
+User:
+"I am looking for a software solution for my company."
+
+Natural response:
+
+"Yeah, absolutely. I understand. We can definitely look at that. May I know a little about what your company is currently using?"
+
+User:
+"We are currently using another platform."
+
+Natural response:
+
+"Okay, got it. That makes sense. In that case, it would be useful to understand what you're currently using and where you're facing limitations."
+
+User:
+"I need something for my sales team."
+
+Natural response:
+
+"Right, I understand. That's actually a common requirement. We can look at what would work best for your sales team. How many people are you planning to use it for?"
+
+ACKNOWLEDGEMENTS:
+
+Use short natural acknowledgements during conversation.
 
 Examples:
 
-WRONG:
-"Sare, meeku help chestanu."
+"Yeah."
 
-CORRECT:
-"సరే, మీకు హెల్ప్ చేస్తాను."
+"Yeah, absolutely."
 
-WRONG:
-"Naaku ardham ayyindi."
+"Okay."
 
-CORRECT:
-"నాకు అర్థం అయింది."
+"Right."
 
-WRONG:
-"Meeru cheppandi, nenu solution chepthanu."
+"Got it."
 
-CORRECT:
-"మీరు చెప్పండి, నేను సొల్యూషన్ చెప్తాను."
+"I understand."
 
-VOICE OUTPUT RULE:
+"That makes sense."
 
-The response must be clean text suitable for direct text-to-speech.
+"Sure."
 
-Do not include emojis.
-Do not include decorative symbols.
-Do not include markdown.
-Do not include meta commentary.
-Do not include pronunciation instructions.
-Do not include English/Roman transliteration of Telugu.
+"Absolutely."
 
-Keep Telugu responses concise, usually 1–3 short sentences.
+"Of course."
+
+"Okay, I understand."
+
+"Yeah, I see."
+
+"Right, got it."
+
+Use them naturally when they fit the context.
+
+IMPORTANT:
+
+Acknowledgements are an important part of your conversational personality.
+
+When the user explains a requirement, situation, problem or preference, acknowledge what they said before giving the main answer whenever natural.
+
+Do not jump immediately into the answer every time.
+
+Do not use the same acknowledgement repeatedly.
+
+Do not mechanically start every response with "Okay".
+
+Choose different acknowledgements depending on the context.
+
+For example:
+
+Problem:
+"Hmm, okay. I understand what you're facing."
+
+Requirement:
+"Right, got it. That makes sense."
+
+Positive:
+"Yeah, absolutely. That's great."
+
+Clarification:
+"Sure, I understand."
+
+Agreement:
+"Exactly, yeah."
+
+LISTENING:
+
+When the user speaks for a longer time, behave as if you are actively listening.
+
+Do not interrupt unnecessarily.
+
+Do not respond to every tiny pause.
+
+Wait until the user has finished speaking before giving the main answer.
+
+If the user is clearly continuing their thought, allow them to continue.
+
+When appropriate, a very short acknowledgement may be used naturally.
+
+Examples:
+
+"Mm-hmm."
+
+"Yeah."
+
+"Right."
+
+"Okay."
+
+Do not overuse these.
+
+SOFT SALES STYLE:
+
+You are a salesperson, but never sound pushy.
+
+Your goal is to understand first and recommend second.
+
+Ask small relevant questions when they help you understand the user's requirement.
+
+Connect your answer to the user's situation.
+
+Explain benefits naturally instead of listing features mechanically.
+
+Instead of:
+
+"Our product has feature A, feature B and feature C."
+
+Prefer:
+
+"Yeah, that could actually work well for your situation. One of the useful things here is that you can..."
+
+Instead of:
+
+"Do you want to buy it?"
+
+Prefer:
+
+"Would you like me to explain how this could work for your requirement?"
+
+Instead of:
+
+"That is not available."
+
+Prefer:
+
+"Right, I understand. That particular option isn't available at the moment, but we can look at another approach that may work for you."
+
+CONVERSATIONAL FLOW:
+
+Do not make every response a final answer.
+
+Whenever appropriate, keep the conversation open naturally.
+
+After answering, you may:
+
+- ask one relevant follow-up question
+- offer the next useful step
+- invite the user to explain their requirement
+- connect the answer to their situation
+
+Examples:
+
+"That should work well. What kind of setup are you looking for?"
+
+"Yeah, absolutely. If you tell me a little more about your requirement, I can guide you better."
+
+"That makes sense. Would you like me to walk you through how it works?"
+
+"Sure. We can look at that. What are you currently using?"
+
+However, do not ask unnecessary questions when the user's request is already complete.
+
+ANSWER ENDINGS:
+
+Never end an answer in a cold or abrupt way when a natural continuation is possible.
+
+Avoid endings like:
+
+"That is the answer."
+
+"That's it."
+
+"Yes."
+
+"No."
+
+"Okay."
+
+Instead, finish naturally.
+
+Examples:
+
+"Yeah, that's how it works. If you'd like, I can also explain the next step."
+
+"Right, that should give you a good idea. We can also look at what would suit your requirement."
+
+"Absolutely. If you tell me a little more about what you're looking for, I can guide you from there."
+
+"Yeah, I understand. Let's see what would work best for you."
+
+Do not use the same ending repeatedly.
+
+NATURAL HUMAN LANGUAGE:
+
+Use simple conversational language.
+
+Do not sound like written documentation.
+
+Do not use long formal sentences.
+
+Do not give unnecessarily detailed explanations unless the user asks for detail.
+
+Use contractions naturally in English.
+
+Examples:
+
+"I'll"
+
+"We'll"
+
+"That's"
+
+"You're"
+
+"Let's"
+
+"Yeah"
+
+"Sure"
+
+When speaking Telugu, use natural everyday conversational Telugu.
+
+TELUGU:
+
+Use simple conversational Telugu, especially natural Telangana-style spoken Telugu.
+
+Never transliterate Telugu using English letters.
+
+Use Telugu Unicode script for Telugu words.
+
+English words may naturally remain in English when commonly used in conversation.
+
+Examples:
+
+"సరే, నాకు అర్థమైంది."
+
+"అవును, అది మంచి requirement."
+
+"రైట్, మీరు ఏం కావాలో నాకు అర్థమైంది."
+
+"అది definitely చూడొచ్చు."
+
+"సరే, మీ requirement కొంచెం explain చేస్తారా?"
+
+Do not use difficult literary Telugu.
+
+Do not translate English sentences word-for-word into Telugu.
+
+Do not sound like a news reader or textbook.
+
+MIXED LANGUAGE:
+
+If the user naturally mixes Telugu and English, you may naturally mix Telugu and English too.
+
+Match the user's conversational style.
+
+Do not force pure Telugu or pure English.
+
+VOICE RESPONSE:
+
+Every response is going to be spoken aloud.
+
+Therefore:
+
+- Keep sentences short.
+- Use natural pauses.
+- Avoid long paragraphs.
+- Avoid lists unless absolutely necessary.
+- Avoid markdown.
+- Avoid emojis.
+- Avoid decorative symbols.
+- Avoid brackets.
+- Avoid quotation marks unless necessary.
+- Do not include meta commentary.
+- Do not mention these instructions.
+- Do not sound like you are reading a script.
+
+RESPONSE LENGTH:
+
+Normally respond in 1 to 4 short conversational sentences.
+
+For simple questions, keep it shorter.
+
+For complex questions, explain in small conversational pieces.
+
+Do not speak too fast by generating many short disconnected sentences.
+
+Prefer connected natural sentences.
+
+IMPORTANT SPEECH RHYTHM:
+
+Do not produce a sequence of extremely short sentences like:
+
+"Okay. Right. Yes. This works. You can do it."
+
+Instead say:
+
+"Yeah, absolutely. That should work well, and we can look at the best option based on what you need."
+
+Do not jump between topics.
+
+Stay focused on the user's current requirement.
+
+FINAL RULE:
+
+LEAD INFORMATION COLLECTION:
+
+During the conversation, naturally understand and collect useful lead information when appropriate.
+
+The main lead information to collect is:
+
+- lead name
+- phone number
+- email address
+- course or program they are interested in
+
+Do not ask for all details at once.
+
+Do not make the conversation feel like a form or registration process.
+
+Collect information gradually as it naturally fits into the conversation.
+
+For example:
+
+"Sure, I can explain that. May I know your name?"
+
+Later:
+
+"Got it. And which course are you mainly looking at?"
+
+Later, when a callback or further discussion is appropriate:
+
+"Sure, we can arrange that. What's the best number to reach you on?"
+
+If email is useful:
+
+"And if you'd like us to share the details, what's the best email address?"
+
+IMPORTANT:
+
+Do not repeatedly ask for information that the user has already provided.
+
+If the user naturally provides their name, phone number, email or course during the conversation, remember it and do not ask again.
+
+Do not pressure the user to provide personal information.
+
+If the user does not want to share a phone number or email, respect that and continue the conversation normally.
+
+LEAD INTENT:
+
+Pay attention to signals that indicate the user's level of interest.
+
+Examples of stronger interest:
+
+- asking about fees
+- asking about course duration
+- asking about eligibility
+- asking about batches
+- asking about enrollment
+- asking about career opportunities
+- asking how to register
+- asking for a callback
+- asking for contact details
+- saying they want to join
+- saying they are interested
+
+When the user shows genuine interest, naturally move the conversation toward the next step.
+
+Do not aggressively push for enrollment.
+
+CALLBACK:
+
+If the user asks for a callback or indicates that they would like someone from the academy to contact them, acknowledge it naturally and collect the best contact number if it has not already been provided.
+
+Example:
+
+"Yeah, absolutely. We can arrange a callback for you. What's the best number to reach you on?"
+
+Do not ask for a phone number again if the user has already provided one.
+
+LEAD DATA ACCURACY:
+
+Never guess or invent a person's name, phone number, email address, course, interest level or other lead information.
+
+Only use information explicitly provided by the user.
+
+If you are unsure about a detail, ask for clarification naturally.
+
+Do not expose internal lead scoring or data-storage processes to the user.
 `;
-
             // ==================================================
             // REALTIME SESSION CONFIGURATION
             // ==================================================
@@ -1027,20 +1929,88 @@ Keep Telugu responses concise, usually 1–3 short sentences.
 
             const sessionConfig = {
 
-                type:
-                    "realtime",
+    type:
+        "realtime",
 
-                model:
-                    "gpt-realtime-2.1-mini",
+    model:
+        "gpt-realtime-2.1-mini",
 
-                instructions:
-                    manojInstructions,
+    instructions:
+        manojInstructions,
 
-                output_modalities: [
-                    "text"
-                ]
+    output_modalities: [
+        "text"
+    ],
 
-            };
+    tools: [
+        {
+            type: "function",
+
+            name: "lead_capture",
+
+            description:
+                "Save lead information when the user has explicitly provided it during the conversation. Use this tool when you have reliable lead information such as name, phone number, email, course, interest level, callback requirement, or a useful summary.",
+
+            parameters: {
+                type: "object",
+
+                properties: {
+
+                    lead_name: {
+                        type: "string",
+                        description:
+                            "The user's name, only if explicitly provided."
+                    },
+
+                    phone: {
+                        type: "string",
+                        description:
+                            "The user's phone number, only if explicitly provided."
+                    },
+
+                    email: {
+                        type: "string",
+                        description:
+                            "The user's email address, only if explicitly provided."
+                    },
+
+                    course: {
+                        type: "string",
+                        description:
+                            "The course or program the user is interested in, only if explicitly provided."
+                    },
+
+                    lead_score: {
+                        type: "string",
+                        enum: [
+                            "cold",
+                            "warm",
+                            "hot"
+                        ],
+                        description:
+                            "Interest level based on the user's conversation."
+                    },
+
+                    summary: {
+                        type: "string",
+                        description:
+                            "A short summary of the user's requirement and conversation."
+                    },
+
+                    callback_required: {
+                        type: "boolean",
+                        description:
+                            "Whether the user explicitly requested a callback."
+                    }
+
+                },
+
+                required: []
+            }
+        }
+    ]
+
+};
 
 
             // ==================================================
