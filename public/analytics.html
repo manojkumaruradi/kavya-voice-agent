@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analytics — Manoj AI</title>
+<style>
+*{box-sizing:border-box}
+:root{--bg:#050505;--panel:#0d0d0d;--panel2:#111;--border:#202020;--gold:#d4af37;--bright:#f5c542;--muted:#777;--text:#f4f4f4}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif;font-size:13px}
+button,select,input{font:inherit}
+.app{min-height:100vh;display:flex}
+.sidebar{width:258px;position:fixed;inset:0 auto 0 0;background:#080808;border-right:1px solid #1d1d1d;padding:28px 16px;z-index:20}
+.brand{display:flex;align-items:center;gap:12px;padding:0 10px 34px}
+.logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(145deg,#f5c542,#c79620);color:#090909;display:grid;place-items:center;font-weight:900;font-size:18px;box-shadow:0 8px 28px rgba(212,175,55,.12)}
+.brand strong{font-size:16px}.brand span{display:block;color:#555;font-size:9px;letter-spacing:.17em;margin-top:4px}
+.nav-title{font-size:9px;color:#555;letter-spacing:.18em;padding:0 13px 10px;text-transform:uppercase}
+.nav a{display:flex;align-items:center;gap:14px;color:#aaa;text-decoration:none;padding:13px 14px;border-radius:12px;margin:4px 0;font-size:13px}
+.nav a:hover,.nav a.active{background:rgba(212,175,55,.09);color:var(--bright)}
+.nav-icon{width:16px;text-align:center;color:inherit}
+.online{position:absolute;left:16px;right:16px;bottom:74px;border:1px solid rgba(212,175,55,.2);border-radius:14px;padding:16px;background:linear-gradient(180deg,#10100d,#0b0b0b)}
+.online-dot{color:#4ee28c}.online b{display:block;margin:8px 0 4px;font-size:12px}.online p{margin:0;color:#777;font-size:10px;line-height:1.5}
+.signout{position:absolute;left:16px;right:16px;bottom:24px;text-align:center;border:1px solid #222;border-radius:11px;padding:10px;color:#888;font-size:11px}
+.main{margin-left:258px;width:calc(100% - 258px);padding:30px 34px 60px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:25px}
+.eyebrow{color:var(--gold);font-size:9px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:7px}
+h1{font-size:27px;margin:0 0 6px}.sub{color:#777;font-size:11px}
+.refresh{border:1px solid rgba(212,175,55,.3);background:#141208;color:var(--bright);padding:10px 15px;border-radius:10px;cursor:pointer}.refresh:hover{background:#1a170b}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:18px}
+.card{background:linear-gradient(145deg,#0d0d0d,#0a0a0a);border:1px solid #1d1d1d;border-radius:15px}
+.kpi{padding:18px 19px;position:relative;overflow:hidden}.kpi:after{content:"";position:absolute;width:80px;height:80px;border-radius:50%;right:-35px;top:-35px;border:1px solid rgba(212,175,55,.12)}
+.kpi-label{color:#777;font-size:9px;text-transform:uppercase;letter-spacing:.13em}.kpi-value{font-size:25px;font-weight:700;margin-top:10px}.kpi-note{font-size:9px;color:#666;margin-top:6px}.gold{color:var(--bright)}
+.grid{display:grid;grid-template-columns:1.35fr 1fr;gap:16px;margin-bottom:16px}
+.panel{padding:19px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}.panel-title{font-weight:700;font-size:13px}.panel-note{color:#666;font-size:9px}
+.chart{height:245px;position:relative}
+.bars{height:205px;display:flex;align-items:flex-end;gap:10px;padding:12px 5px 24px;border-bottom:1px solid #242424}
+.bar-wrap{height:100%;flex:1;display:flex;align-items:flex-end;justify-content:center;gap:3px;position:relative}
+.bar{width:58%;min-height:3px;border-radius:6px 6px 2px 2px;background:linear-gradient(180deg,#f5c542,#8e6e18);position:relative}
+.bar span{position:absolute;bottom:-21px;left:50%;transform:translateX(-50%);font-size:9px;color:#666;white-space:nowrap}
+.bar-value{position:absolute;top:-16px;font-size:8px;color:#999;left:50%;transform:translateX(-50%)}
+.axis{position:absolute;left:0;right:0;top:0;bottom:42px;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none}
+.axis i{border-top:1px dashed #181818;width:100%;display:block}
+.donut-area{height:245px;display:flex;align-items:center;justify-content:center;gap:30px}
+.donut{width:170px;height:170px;border-radius:50%;position:relative;background:conic-gradient(#f5c542 0deg,#f5c542 0deg,#7e7e7e 0deg,#7e7e7e 0deg,#3c3c3c 0deg,#3c3c3c 360deg)}
+.donut:after{content:"";position:absolute;inset:28px;border-radius:50%;background:#0d0d0d;border:1px solid #222}
+.donut-center{position:absolute;z-index:2;inset:0;display:grid;place-items:center;text-align:center}.donut-center b{font-size:25px}.donut-center span{display:block;color:#666;font-size:8px;text-transform:uppercase;letter-spacing:.1em}
+.legend{min-width:125px}.legend-row{display:flex;justify-content:space-between;gap:18px;padding:8px 0;border-bottom:1px solid #181818;color:#aaa;font-size:10px}.legend-row:last-child{border:0}.dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:7px;background:#777}.dot.gold-dot{background:#f5c542}.dot.gray-dot{background:#7e7e7e}.dot.dark-dot{background:#3c3c3c}
+.course-row{margin:13px 0}.course-top{display:flex;justify-content:space-between;font-size:10px;color:#aaa;margin-bottom:7px}.track{height:7px;border-radius:20px;background:#191919;overflow:hidden}.fill{height:100%;border-radius:20px;background:linear-gradient(90deg,#8e6e18,#f5c542)}
+.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.metric{padding:13px;border:1px solid #1c1c1c;border-radius:10px;background:#0b0b0b}.metric label{display:block;color:#666;text-transform:uppercase;font-size:8px;letter-spacing:.1em}.metric strong{display:block;font-size:18px;margin-top:7px}.metric small{display:block;color:#666;margin-top:4px;font-size:9px}
+.activity{width:100%;border-collapse:collapse}.activity th{text-align:left;color:#555;font-size:8px;text-transform:uppercase;letter-spacing:.12em;padding:9px 8px;border-bottom:1px solid #222}.activity td{padding:11px 8px;border-bottom:1px solid #161616;color:#aaa;font-size:10px}.activity td:first-child{color:#eee;font-weight:600}.pill{font-size:8px;padding:4px 7px;border-radius:20px;background:#18140a;color:var(--bright);border:1px solid rgba(212,175,55,.18)}
+.empty,.loading{text-align:center;padding:50px;color:#666}
+.updated{color:#555;font-size:9px;margin-top:9px}
+.mobile-head{display:none}
+@media(max-width:900px){.sidebar{width:220px}.main{margin-left:220px;width:calc(100% - 220px);padding:25px}.kpis{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}
+@media(max-width:650px){
+.sidebar{display:none}.main{margin:0;width:100%;padding:18px}.mobile-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}.mobile-brand{display:flex;align-items:center;gap:9px;font-weight:700}.mobile-logo{width:34px;height:34px;border-radius:9px;background:#f5c542;color:#111;display:grid;place-items:center}.menu{color:#aaa;font-size:20px}
+.top{margin-bottom:18px}.top h1{font-size:23px}.refresh{padding:9px 11px}.kpis{grid-template-columns:1fr 1fr}.kpi{padding:14px}.kpi-value{font-size:20px}.donut-area{gap:12px}.donut{width:140px;height:140px}.legend{min-width:105px}.panel{padding:15px}.activity{min-width:540px}.panel.scroll{overflow:auto}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">M</div><div><strong>Manoj AI</strong><span>VOICE INTELLIGENCE</span></div></div>
+  <div class="nav-title">Workspace</div>
+  <nav class="nav">
+    <a href="/dashboard.html"><span class="nav-icon">◇</span>Overview</a>
+    <a href="/calls.html"><span class="nav-icon">◉</span>Calls</a>
+    <a href="/leads.html"><span class="nav-icon">♢</span>Leads</a>
+    <a class="active" href="/analytics.html"><span class="nav-icon">▥</span>Analytics</a>
+    <a href="/product.html"><span class="nav-icon">✦</span>Product</a>
+  </nav>
+  <div class="online"><div class="online-dot">● Manoj is online</div><b>AI Voice Agent</b><p>Handling conversations, qualifying leads and capturing every interaction.</p></div>
+  <div class="signout">Sign out</div>
+</aside>
+
+<main class="main">
+  <div class="mobile-head"><div class="mobile-brand"><div class="mobile-logo">M</div>Manoj AI</div><div class="menu">☰</div></div>
+
+  <div class="top">
+    <div><div class="eyebrow">Voice Intelligence</div><h1>Analytics</h1><div class="sub">Real-time performance insights from your AI voice conversations.</div><div class="updated" id="updated">Loading live data...</div></div>
+    <button class="refresh" onclick="loadAnalytics()">↻ Refresh</button>
+  </div>
+
+  <section class="kpis">
+    <div class="card kpi"><div class="kpi-label">Total Calls</div><div class="kpi-value" id="totalCalls">—</div><div class="kpi-note">All recorded calls</div></div>
+    <div class="card kpi"><div class="kpi-label">Leads Captured</div><div class="kpi-value gold" id="totalLeads">—</div><div class="kpi-note">Leads stored in Supabase</div></div>
+    <div class="card kpi"><div class="kpi-label">Hot Leads</div><div class="kpi-value gold" id="hotLeads">—</div><div class="kpi-note">High-intent prospects</div></div>
+    <div class="card kpi"><div class="kpi-label">Callback Rate</div><div class="kpi-value" id="callbackRate">—</div><div class="kpi-note" id="callbackNote">Callback requests</div></div>
+  </section>
+
+  <div class="grid">
+    <section class="card panel">
+      <div class="panel-head"><div class="panel-title">Call Activity</div><div class="panel-note">Last 7 active days</div></div>
+      <div class="chart" id="activityChart"><div class="loading">Building chart...</div></div>
+    </section>
+
+    <section class="card panel">
+      <div class="panel-head"><div class="panel-title">Lead Quality</div><div class="panel-note">Current lead distribution</div></div>
+      <div class="donut-area">
+        <div class="donut" id="donut"><div class="donut-center"><div><b id="leadTotal">0</b><span>Leads</span></div></div></div>
+        <div class="legend" id="legend"></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="grid">
+    <section class="card panel">
+      <div class="panel-head"><div class="panel-title">Course Interest</div><div class="panel-note">Captured leads</div></div>
+      <div id="courses"><div class="loading">Loading courses...</div></div>
+    </section>
+
+    <section class="card panel">
+      <div class="panel-head"><div class="panel-title">Performance Metrics</div><div class="panel-note">From call history</div></div>
+      <div class="metrics">
+        <div class="metric"><label>Avg Call Time</label><strong id="avgDuration">—</strong><small>Average recorded duration</small></div>
+        <div class="metric"><label>Completed Calls</label><strong id="completed">—</strong><small id="completedRate">—</small></div>
+        <div class="metric"><label>Callback Requests</label><strong id="callbacks">—</strong><small>Leads requiring follow-up</small></div>
+        <div class="metric"><label>Calls / Lead</label><strong id="callsPerLead">—</strong><small>Conversation volume</small></div>
+      </div>
+    </section>
+  </div>
+
+  <section class="card panel scroll">
+    <div class="panel-head"><div class="panel-title">Recent Call Activity</div><div class="panel-note" id="activityCount">—</div></div>
+    <div id="recent"><div class="loading">Loading activity...</div></div>
+  </section>
+</main>
+</div>
+
+<script>
+let dashboardData={};
+
+const esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+const dur=s=>{s=Number(s)||0;return String(Math.floor(s/60)).padStart(2,"0")+":"+String(Math.floor(s%60)).padStart(2,"0")};
+const dt=v=>{if(!v)return"—";const d=new Date(v);return Number.isNaN(d.getTime())?"—":d.toLocaleString("en-IN",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})};
+
+function renderActivity(calls){
+  const el=document.getElementById("activityChart");
+  const days=[];
+  for(let i=6;i>=0;i--){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-i);days.push(d)}
+  const counts=days.map(day=>calls.filter(c=>{const d=new Date(c.recording_created_at||c.created_at);return !Number.isNaN(d.getTime())&&d.toDateString()===day.toDateString()}).length);
+  const max=Math.max(...counts,1);
+  el.innerHTML=`<div class="axis"><i></i><i></i><i></i><i></i></div><div class="bars">${days.map((d,i)=>`<div class="bar-wrap"><div class="bar" style="height:${Math.max(3,(counts[i]/max)*88)}%"><b class="bar-value">${counts[i]}</b><span>${d.toLocaleDateString("en-IN",{weekday:"short"})}</span></div></div>`).join("")}</div>`;
+}
+
+function renderLeads(leads){
+  const counts={hot:0,warm:0,cold:0,unknown:0};
+  leads.forEach(l=>{let s=String(l.lead_score||"").toLowerCase();counts[s in counts?s:"unknown"]++});
+  const total=leads.length||1;
+  const h=counts.hot/total*360,w=counts.warm/total*360,c=counts.cold/total*360;
+  document.getElementById("donut").style.background=`conic-gradient(#f5c542 0deg ${h}deg,#7e7e7e ${h}deg ${h+w}deg,#3c3c3c ${h+w}deg ${h+w+c}deg,#222 ${h+w+c}deg 360deg)`;
+  document.getElementById("leadTotal").textContent=leads.length;
+  document.getElementById("legend").innerHTML=[
+    ["gold-dot","Hot",counts.hot],["gray-dot","Warm",counts.warm],["dark-dot","Cold",counts.cold],["","Unclassified",counts.unknown]
+  ].map(x=>`<div class="legend-row"><span><i class="dot ${x[0]}"></i>${x[1]}</span><b>${x[2]}</b></div>`).join("");
+  document.getElementById("hotLeads").textContent=counts.hot;
+}
+
+function renderCourses(leads){
+  const map={};
+  leads.forEach(l=>{const c=(l.course||"Not specified").trim();map[c]=(map[c]||0)+1});
+  const rows=Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const max=Math.max(...rows.map(x=>x[1]),1);
+  document.getElementById("courses").innerHTML=rows.length?rows.map(([name,n])=>`<div class="course-row"><div class="course-top"><span>${esc(name)}</span><b>${n}</b></div><div class="track"><div class="fill" style="width:${(n/max)*100}%"></div></div></div>`).join(""):"<div class='empty'>No course data yet.</div>";
+}
+
+function renderRecent(calls){
+  const rows=calls.slice().sort((a,b)=>new Date(b.recording_created_at||b.created_at)-new Date(a.recording_created_at||a.created_at)).slice(0,8);
+  document.getElementById("activityCount").textContent=rows.length+" latest calls";
+  if(!rows.length){document.getElementById("recent").innerHTML="<div class='empty'>No calls available yet.</div>";return}
+  document.getElementById("recent").innerHTML=`<table class="activity"><thead><tr><th>Lead</th><th>Course</th><th>Score</th><th>Duration</th><th>Status</th><th>Date</th></tr></thead><tbody>${rows.map(c=>`<tr><td>${esc(c.lead_name||"Unknown")}</td><td>${esc(c.course||"Not specified")}</td><td><span class="pill">${esc(String(c.lead_score||"Unclassified").toUpperCase())}</span></td><td>${dur(c.call_duration)}</td><td>${esc(c.call_status||"—")}</td><td>${esc(dt(c.recording_created_at||c.created_at))}</td></tr>`).join("")}</tbody></table>`;
+}
+
+function render(data){
+  const stats=data.stats||{},leads=Array.isArray(data.leads)?data.leads:[],calls=Array.isArray(data.calls)?data.calls:[];
+  const totalCalls=Number(stats.total_calls)||calls.length;
+  const totalLeads=Number(stats.total_leads)||leads.length;
+  const callbacks=Number(stats.callback_requests)||leads.filter(l=>String(l.call_status||"").toLowerCase()==="callback_requested").length;
+  const completed=calls.filter(c=>String(c.call_status||"").toLowerCase()==="completed").length;
+  document.getElementById("totalCalls").textContent=totalCalls;
+  document.getElementById("totalLeads").textContent=totalLeads;
+  document.getElementById("callbackRate").textContent=(totalLeads?Math.round(callbacks/totalLeads*100):0)+"%";
+  document.getElementById("callbackNote").textContent=callbacks+" callback request"+(callbacks===1?"":"s");
+  document.getElementById("avgDuration").textContent=dur(stats.average_call_duration);
+  document.getElementById("completed").textContent=completed;
+  document.getElementById("completedRate").textContent=(totalCalls?Math.round(completed/totalCalls*100):0)+"% of recorded calls";
+  document.getElementById("callbacks").textContent=callbacks;
+  document.getElementById("callsPerLead").textContent=totalLeads?(totalCalls/totalLeads).toFixed(1):"0.0";
+  renderActivity(calls);renderLeads(leads);renderCourses(leads);renderRecent(calls);
+  document.getElementById("updated").textContent="Updated "+new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
+}
+
+async function loadAnalytics(){
+  document.getElementById("updated").textContent="Refreshing live data...";
+  try{
+    const r=await fetch("/api/dashboard");
+    if(!r.ok)throw new Error("Dashboard API returned "+r.status);
+    const data=await r.json();
+    if(!data.success)throw new Error(data.error||"Dashboard API failed");
+    dashboardData=data;render(data);
+    console.log("✅ Analytics loaded:",{leads:(data.leads||[]).length,calls:(data.calls||[]).length});
+  }catch(e){
+    console.error("❌ Analytics loading failed:",e);
+    document.getElementById("updated").textContent="Unable to load live analytics";
+  }
+}
+loadAnalytics();
+</script>
+</body>
+</html>

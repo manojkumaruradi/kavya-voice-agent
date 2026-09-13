@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manoj AI — Calls</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#050505;--panel:#101010;--panel2:#151515;--gold:#d4af37;--bright:#f5c542;
+  --white:#fff;--muted:#8d8d8d;--green:#65d391;--red:#ff7373;--blue:#79a9ff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--black);color:var(--white);font-family:Inter,sans-serif;min-height:100vh;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(rgba(212,175,55,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(212,175,55,.025) 1px,transparent 1px);background-size:70px 70px;mask-image:linear-gradient(to bottom,#000,transparent 80%);z-index:-1}
+a{color:inherit;text-decoration:none}
+button,input,select{font:inherit}
+.app{min-height:100vh}
+.sidebar{width:250px;min-height:100vh;background:#0a0a0a;border-right:1px solid rgba(255,255,255,.07);padding:26px 16px;position:fixed;inset:0 auto 0 0;z-index:100;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:11px;padding:0 10px;margin-bottom:42px}
+.brand-mark{width:39px;height:39px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(145deg,var(--bright),var(--gold));color:#050505;font:800 19px "Space Grotesk";box-shadow:0 0 25px rgba(245,197,66,.16)}
+.brand-text strong{display:block;font:700 17px "Space Grotesk"}
+.brand-text span{color:#666;font-size:10px;letter-spacing:1.5px;text-transform:uppercase}
+.nav-label{color:#5f5f5f;font-size:10px;letter-spacing:1.8px;text-transform:uppercase;padding:0 12px;margin-bottom:9px}
+.nav{display:flex;flex-direction:column;gap:5px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:11px;color:#999;font-size:13px}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.035)}
+.nav-item.active{color:var(--bright);background:rgba(212,175,55,.09);border:1px solid rgba(212,175,55,.12)}
+.nav-icon{width:18px;text-align:center}
+.sidebar-bottom{margin-top:auto}
+.agent-card{border:1px solid rgba(212,175,55,.18);background:linear-gradient(145deg,rgba(212,175,55,.08),rgba(255,255,255,.02));border-radius:14px;padding:14px;margin-bottom:12px}
+.agent-status{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--green);margin-bottom:10px}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px rgba(101,211,145,.7)}
+.agent-card strong{display:block;font-size:13px;margin-bottom:4px}
+.agent-card p{color:#777;font-size:10px;line-height:1.5}
+.logout-btn{width:100%;border:1px solid rgba(255,255,255,.08);background:transparent;color:#888;border-radius:10px;padding:10px;cursor:pointer;font-size:12px}
+.main{margin-left:250px;width:calc(100% - 250px);min-height:100vh;padding:26px 34px 60px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.page-title h1{font:700 clamp(25px,3vw,34px)/1.1 "Space Grotesk";letter-spacing:-1.2px;margin-bottom:5px}
+.page-title p{color:var(--muted);font-size:12px}
+.top-actions{display:flex;align-items:center;gap:12px}
+.date-pill{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.025);border-radius:10px;padding:10px 13px;color:#aaa;font-size:11px}
+.profile{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#f5c542,#b28a1d);color:#050505;font-weight:800;font-size:13px}
+.mobile-menu{display:none;width:38px;height:38px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:transparent;color:#fff;cursor:pointer}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+.kpi{background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.075);border-radius:15px;padding:17px 18px}
+.kpi label{display:block;color:#777;font-size:10px;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.kpi strong{font:700 26px "Space Grotesk"}
+.kpi span{display:block;color:#666;font-size:9px;margin-top:4px}
+.toolbar{background:rgba(14,14,14,.88);border:1px solid rgba(255,255,255,.075);border-radius:15px;padding:14px;display:flex;gap:10px;margin-bottom:16px}
+.search{flex:1;position:relative}.search span{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#666}
+.search input,.filter{height:40px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:#0b0b0b;color:#aaa;outline:none;font-size:11px}
+.search input{width:100%;padding:0 13px 0 36px}.filter{padding:0 12px;min-width:135px}
+.search input:focus,.filter:focus{border-color:rgba(212,175,55,.35)}
+.refresh{height:40px;padding:0 14px;border-radius:10px;border:1px solid rgba(212,175,55,.22);background:rgba(212,175,55,.08);color:var(--bright);cursor:pointer;font-size:11px}
+.panel{background:rgba(14,14,14,.88);border:1px solid rgba(255,255,255,.075);border-radius:16px;overflow:hidden}
+.panel-head{padding:18px 20px;display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.06)}
+.panel-head h2{font:600 15px "Space Grotesk"}.panel-head span{color:#666;font-size:10px}
+.table-wrap{overflow-x:auto}
+table{width:100%;min-width:950px;border-collapse:collapse}
+th{text-align:left;color:#5e5e5e;font-size:9px;text-transform:uppercase;letter-spacing:1px;padding:13px 18px;border-bottom:1px solid rgba(255,255,255,.05)}
+td{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.045);font-size:11px;color:#aaa;vertical-align:middle}
+tbody tr{cursor:pointer}.tbody tr:hover,tbody tr:hover{background:rgba(212,175,55,.035)}
+.lead{display:flex;align-items:center;gap:10px}.avatar{width:35px;height:35px;border-radius:10px;display:grid;place-items:center;background:rgba(212,175,55,.09);border:1px solid rgba(212,175,55,.12);color:var(--bright);font-weight:700;font-size:11px}
+.name{color:#fff;font-weight:600}.phone{color:#666;font-size:9px;margin-top:3px}
+.intent{display:inline-flex;padding:5px 8px;border-radius:6px;font-size:9px;font-weight:600;text-transform:uppercase}
+.hot{color:#ff8585;background:rgba(255,95,95,.09);border:1px solid rgba(255,95,95,.12)}
+.warm{color:var(--bright);background:rgba(245,197,66,.08);border:1px solid rgba(245,197,66,.12)}
+.cold{color:#8d9bb3;background:rgba(141,155,179,.08);border:1px solid rgba(141,155,179,.12)}
+.unknown{color:#888;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)}
+.status{display:inline-flex;align-items:center;gap:5px;font-size:9px}.status:before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}
+.status.callback{color:var(--bright)}.status.completed,.status.connected,.status.new{color:var(--green)}.status.other{color:#888}
+.duration{font-family:"Space Grotesk";color:#ddd}.date{color:#777;font-size:9px;white-space:nowrap}
+.view{border:1px solid rgba(212,175,55,.18);background:rgba(212,175,55,.06);color:var(--bright);border-radius:7px;padding:6px 9px;cursor:pointer;font-size:9px}
+.loading,.empty{padding:55px;text-align:center;color:#666;font-size:11px}.error{margin:16px;padding:14px;border:1px solid rgba(255,115,115,.18);background:rgba(255,115,115,.05);color:#ff9999;border-radius:10px;font-size:11px}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);z-index:300;padding:20px;align-items:center;justify-content:center}.modal-bg.show{display:flex}
+.modal{width:min(760px,100%);max-height:90vh;overflow:auto;background:#101010;border:1px solid rgba(212,175,55,.18);border-radius:18px}
+.modal-head{padding:18px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between}.modal-head h2{font:600 17px "Space Grotesk"}.close{width:32px;height:32px;background:transparent;border:1px solid rgba(255,255,255,.08);border-radius:9px;color:#aaa;cursor:pointer}
+.modal-body{padding:20px}.detail-head{display:flex;align-items:center;gap:13px;margin-bottom:18px}.detail-avatar{width:48px;height:48px;border-radius:13px;display:grid;place-items:center;background:rgba(212,175,55,.1);color:var(--bright);font-weight:800}.detail-name{font:600 19px "Space Grotesk"}.detail-meta{color:#777;font-size:10px;margin-top:3px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}.item,.intelligence{margin-top:14px}
+.intelligence-title{font-size:10px;font-weight:700;color:#f5c542;margin-bottom:9px;text-transform:uppercase;letter-spacing:.08em}
+.analyze-btn{
+  width:100%;
+  margin-bottom:10px;
+  padding:10px 13px;
+  border-radius:9px;
+  border:1px solid rgba(212,175,55,.25);
+  background:rgba(212,175,55,.08);
+  color:var(--bright);
+  cursor:pointer;
+  font-size:10px;
+  font-weight:600;
+  transition:.2s ease;
+}
+
+.analyze-btn:hover{
+  background:rgba(212,175,55,.14);
+  border-color:rgba(212,175,55,.4);
+}
+
+.analyze-btn:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+.intel-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.intel-card{background:#0b0b0b;border:1px solid rgba(212,175,55,.13);border-radius:10px;padding:11px}
+.intel-card label{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:#777;margin-bottom:6px}
+.intel-card strong{font-size:11px;color:#eee}
+.intel-card strong.hot{color:#f5c542}.intel-card strong.warm{color:#d4af37}.intel-card strong.cold{color:#999}
+@media(max-width:650px){.intel-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.summary,.transcript{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05);border-radius:10px;padding:13px}.item label,.summary label,.transcript label{display:block;color:#666;font-size:8px;text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px}.item strong{font-size:11px;color:#ddd}.summary p,.transcript pre{color:#aaa;font:11px/1.7 Inter,sans-serif;white-space:pre-wrap;word-break:break-word}
+.transcript{margin-top:10px;max-height:280px;overflow:auto}.audio-note{margin-top:12px;padding:12px;border:1px dashed rgba(212,175,55,.18);border-radius:10px;color:#777;font-size:10px}
+.audio-player{margin-top:12px;background:rgba(212,175,55,.045);border:1px solid rgba(212,175,55,.14);border-radius:12px;padding:14px}
+.audio-player-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.audio-player-title{font-size:10px;color:#ddd;font-weight:600}
+.audio-player-state{font-size:9px;color:#777}
+.audio-player audio{width:100%;height:38px;display:block}
+.audio-error{color:#ff9999;font-size:10px;margin-top:8px;display:none}
+.modal-foot{padding:14px 20px;border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:flex-end}.close-btn{padding:9px 13px;border-radius:9px;background:transparent;color:#888;border:1px solid rgba(255,255,255,.08);cursor:pointer}
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:800px){
+.sidebar{transform:translateX(-100%);transition:.3s}.sidebar.open{transform:translateX(0)}
+.main{margin-left:0;width:100%;padding:20px 15px 40px}.mobile-menu{display:grid;place-items:center}
+.page-title{display:flex;align-items:center;gap:10px}.date-pill{display:none}.top-actions{gap:7px}.toolbar{flex-wrap:wrap}.search{flex-basis:100%}.filter{flex:1}
+}
+@media(max-width:500px){.kpis{grid-template-columns:1fr 1fr;gap:9px}.kpi{padding:13px}.kpi strong{font-size:22px}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+  <a href="landing.html" class="brand"><div class="brand-mark">M</div><div class="brand-text"><strong>Manoj AI</strong><span>Voice Intelligence</span></div></a>
+  <div class="nav-label">Workspace</div>
+  <nav class="nav">
+    <a href="dashboard.html" class="nav-item"><span class="nav-icon">◈</span>Overview</a>
+    <a href="calls.html" class="nav-item active"><span class="nav-icon">◉</span>Calls</a>
+    <a href="leads.html" class="nav-item"><span class="nav-icon">♢</span>Leads</a>
+    <a href="analytics.html" class="nav-item"><span class="nav-icon">◫</span>Analytics</a>
+    <a href="product.html" class="nav-item"><span class="nav-icon">✦</span>Product</a>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="agent-card"><div class="agent-status"><span class="status-dot"></span>Manoj is online</div><strong>AI Voice Agent</strong><p>Handling conversations, qualifying leads and capturing every interaction.</p></div>
+    <button class="logout-btn" onclick="logout()">Sign out</button>
+  </div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+  <div class="page-title">
+    <button class="mobile-menu" onclick="toggleSidebar()">☰</button>
+    <div><h1>Calls</h1><p>Every conversation handled by Manoj, connected to its lead.</p></div>
+  </div>
+  <div class="top-actions"><div class="date-pill" id="currentDate">Today</div><div class="profile">M</div></div>
+</header>
+
+<section class="kpis">
+  <div class="kpi"><label>Total Calls</label><strong id="totalCalls">—</strong><span>Recorded calls</span></div>
+  <div class="kpi"><label>Completed</label><strong id="completedCalls">—</strong><span>Successful recordings</span></div>
+  <div class="kpi"><label>Callbacks</label><strong id="callbackCalls">—</strong><span>Follow-up requested</span></div>
+  <div class="kpi"><label>Avg. Duration</label><strong id="avgDuration">—</strong><span>Across recorded calls</span></div>
+</section>
+
+<section class="toolbar">
+  <div class="search"><span>⌕</span><input id="searchInput" placeholder="Search lead, phone, course..." autocomplete="off"></div>
+  <select class="filter" id="scoreFilter"><option value="all">All Intent</option><option value="hot">Hot</option><option value="warm">Warm</option><option value="cold">Cold</option><option value="unknown">Not Classified</option></select>
+  <select class="filter" id="statusFilter"><option value="all">All Status</option><option value="completed">Completed</option><option value="callback_requested">Callback</option><option value="connected">Connected</option></select>
+  <button class="refresh" onclick="loadCalls()">↻ Refresh</button>
+</section>
+
+<section class="panel">
+  <div class="panel-head"><div><h2>Call history</h2><span id="resultCount">Loading real data...</span></div><span id="lastUpdated">—</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Lead</th><th>Course</th><th>Intent</th><th>Duration</th><th>Status</th><th>Date</th><th>Details</th></tr></thead>
+      <tbody id="callsBody"><tr><td colspan="7"><div class="loading">Loading calls...</div></td></tr></tbody>
+    </table>
+  </div>
+</section>
+</main>
+</div>
+
+<div class="modal-bg" id="callModal" onclick="closeModal(event)">
+<div class="modal">
+  <div class="modal-head"><h2>Call details</h2><button class="close" onclick="closeCallModal()">×</button></div>
+  <div class="modal-body" id="modalBody"></div>
+  <div class="modal-foot"><button class="close-btn" onclick="closeCallModal()">Close</button></div>
+</div>
+</div>
+
+<script>
+let allCalls=[];
+
+function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open")}
+function logout(){sessionStorage.removeItem("manoj_demo_lead");window.location.href="landing.html"}
+function escapeHtml(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
+function initials(name){let p=String(name||"Unknown").trim().split(/\s+/);return (p.length>1?p[0][0]+p[p.length-1][0]:p[0].slice(0,2)).toUpperCase()}
+function score(v){v=String(v||"").toLowerCase().trim();return ["hot","warm","cold"].includes(v)?v:"unknown"}
+function duration(s){s=Number(s)||0;return String(Math.floor(s/60)).padStart(2,"0")+":"+String(Math.floor(s%60)).padStart(2,"0")}
+function date(v){if(!v)return"—";let d=new Date(v);return Number.isNaN(d.getTime())?"—":d.toLocaleString("en-IN",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})}
+function status(v){v=String(v||"").toLowerCase();if(v==="callback_requested")return["Callback","callback"];if(v==="completed")return["Completed","completed"];if(v==="connected")return["Connected","connected"];return[v||"—","other"]}
+
+async function loadCalls(){
+  const body=document.getElementById("callsBody");
+  body.innerHTML='<tr><td colspan="7"><div class="loading">Loading real Supabase call data...</div></td></tr>';
+  try{
+    const r=await fetch("/api/dashboard");
+    if(!r.ok)throw new Error("Dashboard API returned "+r.status);
+    const data=await r.json();
+    if(!data.success)throw new Error(data.error||"Dashboard API failed");
+    allCalls=Array.isArray(data.calls)?data.calls:[];
+    updateStats(data.stats||{});
+    renderCalls();
+    document.getElementById("lastUpdated").textContent="Updated "+new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
+    console.log("✅ Calls loaded:",allCalls.length);
+  }catch(e){
+    console.error("❌ Calls loading failed:",e);
+    body.innerHTML='<tr><td colspan="7"><div class="error">Unable to load calls. '+escapeHtml(e.message)+'</div></td></tr>';
+    document.getElementById("resultCount").textContent="Unable to load data";
+  }
+}
+
+function updateStats(stats){
+  document.getElementById("totalCalls").textContent=stats.total_calls||0;
+  document.getElementById("avgDuration").textContent=duration(stats.average_call_duration);
+  document.getElementById("completedCalls").textContent=allCalls.filter(c=>String(c.call_status||"").toLowerCase()==="completed").length;
+  document.getElementById("callbackCalls").textContent=allCalls.filter(c=>String(c.lead_status||"").toLowerCase()==="callback_requested"||c.callback_required===true).length;
+}
+
+function filtered(){
+  let q=document.getElementById("searchInput").value.toLowerCase().trim();
+  let s=document.getElementById("scoreFilter").value;
+  let st=document.getElementById("statusFilter").value;
+  return allCalls.filter(c=>{
+    let text=[c.lead_name,c.phone,c.email,c.course,c.lead_summary].filter(Boolean).join(" ").toLowerCase();
+    return (!q||text.includes(q)) && (s==="all"||score(c.lead_score)===s) && (st==="all"||String(c.call_status||"").toLowerCase()===st);
+  });
+}
+
+function renderCalls(){
+  let body=document.getElementById("callsBody"), rows=filtered();
+  document.getElementById("resultCount").textContent=rows.length+" of "+allCalls.length+" calls";
+  if(!rows.length){body.innerHTML='<tr><td colspan="7"><div class="empty">No calls match your filters.</div></td></tr>';return}
+  body.innerHTML=rows.map(c=>{
+    let sc=score(c.lead_score), st=status(c.call_status);
+    return `<tr onclick="openCall(${Number(c.id)})">
+      <td><div class="lead"><div class="avatar">${escapeHtml(initials(c.lead_name))}</div><div><div class="name">${escapeHtml(c.lead_name||"Unknown")}</div><div class="phone">${escapeHtml(c.phone||c.email||"No contact")}</div></div></div></td>
+      <td>${escapeHtml(c.course||"Not specified")}</td>
+      <td><span class="intent ${sc}">${sc==="unknown"?"Unclassified":sc}</span></td>
+      <td class="duration">${duration(c.call_duration)}</td>
+      <td><span class="status ${st[1]}">${escapeHtml(st[0])}</span></td>
+      <td class="date">${escapeHtml(date(c.recording_created_at))}</td>
+      <td><button class="view" onclick="event.stopPropagation();openCall(${Number(c.id)})">View</button></td>
+    </tr>`;
+  }).join("");
+}
+
+async function openCall(id){
+  let c=allCalls.find(x=>Number(x.id)===Number(id));
+  if(!c)return;
+
+  let sc=score(c.lead_score),st=status(c.call_status);
+
+  document.getElementById("modalBody").innerHTML=`
+    <div class="detail-head">
+      <div class="detail-avatar">${escapeHtml(initials(c.lead_name))}</div>
+      <div>
+        <div class="detail-name">${escapeHtml(c.lead_name||"Unknown")}</div>
+        <div class="detail-meta">${escapeHtml(c.phone||"No phone")} ${c.email?" · "+escapeHtml(c.email):""}</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="item"><label>Course</label><strong>${escapeHtml(c.course||"Not specified")}</strong></div>
+      <div class="item"><label>Lead Score</label><strong>${escapeHtml(sc==="unknown"?"Not classified":sc.toUpperCase())}</strong></div>
+      <div class="item"><label>Call Duration</label><strong>${duration(c.call_duration)}</strong></div>
+      <div class="item"><label>Status</label><strong>${escapeHtml(st[0])}</strong></div>
+      <div class="item"><label>Call ID</label><strong>#${escapeHtml(c.id)}</strong></div>
+      <div class="item"><label>Lead ID</label><strong>#${escapeHtml(c.lead_id||"—")}</strong></div>
+    </div>
+
+    <div class="audio-player">
+      <div class="audio-player-head">
+        <div class="audio-player-title">🎙️ Call Recording</div>
+        <div class="audio-player-state" id="audioState">Getting secure audio...</div>
+      </div>
+
+      <audio id="callAudio" controls preload="metadata"></audio>
+
+      <div class="audio-error" id="audioError"></div>
+    </div>
+
+    <div class="intelligence">
+      <div class="intelligence-title">Call Intelligence</div>
+
+      <button class="analyze-btn" onclick="event.stopPropagation(); analyzeCall(${Number(c.id)})">
+  ✦ Analyze Call with AI
+</button>
+
+      <div class="intel-grid">
+        <div class="intel-card">
+          <label>Lead Score</label>
+          <strong class="${sc}">${escapeHtml(sc==="unknown"?"Not analyzed":sc.toUpperCase())}</strong>
+        </div>
+        <div class="intel-card">
+          <label>Interest Level</label>
+          <strong>${escapeHtml(c.interest_level||"Not analyzed")}</strong>
+        </div>
+        <div class="intel-card">
+          <label>Sentiment</label>
+          <strong>${escapeHtml(c.sentiment||"Not analyzed")}</strong>
+        </div>
+        <div class="intel-card">
+          <label>Callback</label>
+          <strong>${(c.callback_required===true || String(c.lead_status||"").toLowerCase()==="callback_requested") ? "Requested" : "Not requested"}</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary">
+      <label>AI / Lead Summary</label>
+      <p>${escapeHtml(c.lead_summary||c.conversation_summary||"No summary is available for this call yet.")}</p>
+    </div>
+
+    <div class="transcript">
+      <label>Conversation Transcript</label>
+      <pre>${escapeHtml(c.conversation_text||"Transcript not available.")}</pre>
+    </div>
+  `;
+
+  document.getElementById("callModal").classList.add("show");
+
+  // Request a short-lived signed URL from the backend.
+  try {
+    const response = await fetch(
+      "/api/call-recording/" + encodeURIComponent(c.id)
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        "Recording API returned " + response.status
+      );
+    }
+
+    const result = await response.json();
+
+    if (!result.success || !result.url) {
+      throw new Error(
+        result.error || "Secure recording URL was not returned"
+      );
+    }
+
+    const audio = document.getElementById("callAudio");
+    const state = document.getElementById("audioState");
+
+    if (!audio || !state) return;
+
+    audio.src = result.url;
+    audio.load();
+
+    state.textContent = "Ready to play";
+
+    console.log(
+      "✅ Secure recording connected:",
+      c.id
+    );
+
+  } catch (error) {
+
+    console.error(
+      "❌ Recording connection failed:",
+      error
+    );
+
+    const state = document.getElementById("audioState");
+    const errorBox = document.getElementById("audioError");
+
+    if (state) {
+      state.textContent = "Unavailable";
+    }
+
+    if (errorBox) {
+      errorBox.textContent =
+        "Unable to load recording: " +
+        error.message;
+
+      errorBox.style.display = "block";
+    }
+  }
+}
+async function analyzeCall(id){
+  const button = document.querySelector(".analyze-btn");
+
+  if(!button) return;
+
+  const originalText = button.textContent;
+
+  button.disabled = true;
+  button.textContent = "⏳ Analyzing call...";
+
+  try{
+    const response = await fetch(
+      "/api/analyze-call/" + encodeURIComponent(id),
+      {
+        method: "POST"
+      }
+    );
+
+    const result = await response.json();
+
+    if(!response.ok || !result.success){
+      throw new Error(
+        result.error || "AI analysis failed"
+      );
+    }
+
+    console.log("✅ AI analysis completed:", result);
+
+    alert("AI analysis completed successfully.");
+
+    // Refresh dashboard data so the new intelligence appears.
+    await loadCalls();
+
+    // Re-open the same call with updated data.
+    openCall(id);
+
+  }catch(error){
+
+    console.error(
+      "❌ AI analysis failed:",
+      error
+    );
+
+    alert(
+      "Unable to analyze this call: " +
+      error.message
+    );
+
+    button.disabled = false;
+    button.textContent = originalText;
+  }
+}
+function closeCallModal(){document.getElementById("callModal").classList.remove("show")}
+function closeModal(e){if(e.target.id==="callModal")closeCallModal()}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeCallModal()});
+document.getElementById("searchInput").addEventListener("input",renderCalls);
+document.getElementById("scoreFilter").addEventListener("change",renderCalls);
+document.getElementById("statusFilter").addEventListener("change",renderCalls);
+document.getElementById("currentDate").textContent=new Date().toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
+loadCalls();
+</script>
+</body>
+</html>

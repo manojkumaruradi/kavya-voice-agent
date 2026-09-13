@@ -2153,6 +2153,720 @@ Do not expose internal lead scoring or data-storage processes to the user.
     }
 );
 
+// ============================================================
+// SECURE CALL RECORDING URL
+// ============================================================
+
+app.get("/api/call-recording/:id", async (req, res) => {
+    try {
+
+        const recordingId = Number(req.params.id);
+
+        if (!recordingId) {
+            return res.status(400).json({
+                success: false,
+                error: "Invalid recording ID"
+            });
+        }
+
+        console.log(
+            "🎙️ Recording URL requested:",
+            recordingId
+        );
+
+
+        // ----------------------------------------
+        // GET RECORDING FROM DATABASE
+        // ----------------------------------------
+
+        const {
+            data: recording,
+            error: recordingError
+        } = await supabase
+            .from("call_recordings")
+            .select("*")
+            .eq("id", recordingId)
+            .single();
+
+
+        if (recordingError || !recording) {
+
+            console.error(
+                "❌ Recording not found:",
+                recordingError
+            );
+
+            return res.status(404).json({
+                success: false,
+                error: "Recording not found"
+            });
+        }
+
+
+        // ----------------------------------------
+        // CHECK RECORDING PATH
+        // ----------------------------------------
+
+        if (!recording.recording_url) {
+
+            return res.status(404).json({
+                success: false,
+                error: "Recording file not available"
+            });
+        }
+
+
+        // ----------------------------------------
+        // CREATE SIGNED URL
+        // Valid for 1 hour
+        // ----------------------------------------
+
+        const {
+            data: signedUrlData,
+            error: signedUrlError
+        } = await supabase
+            .storage
+            .from("call-recordings")
+            .createSignedUrl(
+                recording.recording_url,
+                60 * 60
+            );
+
+
+        if (signedUrlError || !signedUrlData) {
+
+            console.error(
+                "❌ Signed URL creation failed:",
+                signedUrlError
+            );
+
+            return res.status(500).json({
+                success: false,
+                error: "Could not create secure recording URL",
+                details:
+                    signedUrlError?.message || null
+            });
+        }
+
+
+        console.log(
+            "✅ Secure recording URL created:",
+            recordingId
+        );
+
+
+        // ----------------------------------------
+        // RESPONSE
+        // ----------------------------------------
+
+        return res.json({
+            success: true,
+            recording_id: recording.id,
+            lead_id: recording.lead_id,
+            duration: recording.call_duration,
+            status: recording.call_status,
+            url: signedUrlData.signedUrl
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "❌ Secure recording API error:",
+            error
+        );
+
+        return res.status(500).json({
+            success: false,
+            error: "Failed to create recording URL",
+            details: error.message
+        });
+    }
+});
+
+// ============================================================
+// DASHBOARD API
+// ============================================================
+
+app.get("/api/dashboard", async (req, res) => {
+    try {
+
+        console.log("📊 Dashboard API request received");
+
+        // ----------------------------------------
+        // FETCH LEADS
+        // ----------------------------------------
+
+        const {
+            data: leads,
+            error: leadsError
+        } = await supabase
+            .from("leads")
+            .select("*")
+            .order("created_at", {
+                ascending: false
+            });
+
+        if (leadsError) {
+            console.error(
+                "❌ Dashboard leads fetch failed:",
+                leadsError
+            );
+
+            return res.status(500).json({
+                success: false,
+                error: "Failed to fetch leads",
+                details: leadsError.message
+            });
+        }
+
+
+        // ----------------------------------------
+        // FETCH CONVERSATIONS
+        // ----------------------------------------
+
+        const {
+            data: conversations,
+            error: conversationsError
+        } = await supabase
+            .from("conversation_logs")
+            .select("*")
+            .order("created_at", {
+                ascending: false
+            });
+
+        if (conversationsError) {
+            console.error(
+                "❌ Dashboard conversations fetch failed:",
+                conversationsError
+            );
+
+            return res.status(500).json({
+                success: false,
+                error: "Failed to fetch conversations",
+                details: conversationsError.message
+            });
+        }
+
+
+        // ----------------------------------------
+        // FETCH CALL RECORDINGS
+        // ----------------------------------------
+
+        const {
+            data: recordings,
+            error: recordingsError
+        } = await supabase
+            .from("call_recordings")
+            .select("*")
+            .order("created_at", {
+                ascending: false
+            });
+
+        if (recordingsError) {
+            console.error(
+                "❌ Dashboard recordings fetch failed:",
+                recordingsError
+            );
+
+            return res.status(500).json({
+                success: false,
+                error: "Failed to fetch recordings",
+                details: recordingsError.message
+            });
+        }
+
+
+        // ----------------------------------------
+        // CALCULATE DASHBOARD STATS
+        // ----------------------------------------
+
+        const totalLeads = leads?.length || 0;
+
+        const totalCalls = recordings?.length || 0;
+
+        const callbackRequests =
+            leads?.filter(
+                lead =>
+                    lead.call_status ===
+                    "callback_requested"
+            ).length || 0;
+
+
+        const durations =
+            recordings
+                ?.map(recording =>
+                    Number(
+                        recording.call_duration
+                    )
+                )
+                .filter(
+                    duration =>
+                        Number.isFinite(duration)
+                ) || [];
+
+
+        const averageCallDuration =
+            durations.length > 0
+                ? Math.round(
+                    durations.reduce(
+                        (sum, duration) =>
+                            sum + duration,
+                        0
+                    ) / durations.length
+                )
+                : 0;
+
+
+        // ----------------------------------------
+        // COMBINE CALL DATA WITH LEAD DATA
+        // ----------------------------------------
+
+        const calls =
+            (recordings || []).map(recording => {
+
+                const lead =
+                    (leads || []).find(
+                        item =>
+                            Number(item.id) ===
+                            Number(recording.lead_id)
+                    );
+
+
+                const conversation =
+                    (conversations || []).find(
+                        item =>
+                            Number(item.lead_id) ===
+                            Number(recording.lead_id)
+                    );
+
+
+                return {
+                    id: recording.id,
+
+                    lead_id:
+                        recording.lead_id,
+
+                    lead_name:
+                        lead?.lead_name ||
+                        "Unknown",
+
+                    phone:
+                        lead?.phone ||
+                        "",
+
+                    email:
+                        lead?.email ||
+                        "",
+
+                    course:
+                        lead?.course ||
+                        "",
+
+                    lead_score:
+                        lead?.lead_score ||
+                        "",
+
+                    lead_status:
+                        lead?.call_status ||
+                        "",
+
+                    lead_summary:
+                        lead?.summary ||
+                        "",
+
+                    recording_url:
+                        recording.recording_url ||
+                        "",
+
+                    call_duration:
+                        recording.call_duration ||
+                        0,
+
+                    call_status:
+                        recording.call_status ||
+                        "",
+
+                    recording_created_at:
+                        recording.created_at ||
+                        null,
+
+                    conversation_id:
+                        conversation?.id ||
+                        null,
+
+                    conversation_text:
+                        conversation?.conversation_text ||
+                        "",
+
+                    conversation_summary:
+                        conversation?.summary ||
+                        "",
+
+                    sentiment:
+                        conversation?.sentiment ||
+                        "",
+
+                    interest_level:
+                        conversation?.interest_level ||
+                        "",
+
+                    callback_required:
+                        conversation?.callback_required ||
+                        false
+                };
+
+            });
+
+
+        // ----------------------------------------
+        // RESPONSE
+        // ----------------------------------------
+
+        console.log(
+            "✅ Dashboard data prepared:",
+            {
+                leads: totalLeads,
+                calls: totalCalls,
+                callbacks: callbackRequests
+            }
+        );
+
+
+        return res.json({
+            success: true,
+
+            stats: {
+                total_leads:
+                    totalLeads,
+
+                total_calls:
+                    totalCalls,
+
+                callback_requests:
+                    callbackRequests,
+
+                average_call_duration:
+                    averageCallDuration
+            },
+
+            leads:
+                leads || [],
+
+            conversations:
+                conversations || [],
+
+            recordings:
+                recordings || [],
+
+            calls
+
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "❌ Dashboard API error:",
+            error
+        );
+
+        return res.status(500).json({
+            success: false,
+            error: "Dashboard API failed",
+            details: error.message
+        });
+
+    }
+});
+
+// ============================================================
+// AI CALL ANALYSIS
+// ============================================================
+
+app.post("/api/analyze-call/:id", async (req, res) => {
+    try {
+        const callId = Number(req.params.id);
+
+        if (!callId) {
+            return res.status(400).json({
+                success: false,
+                error: "Valid call ID is required"
+            });
+        }
+
+        console.log("🤖 AI analysis requested for call:", callId);
+
+        // GET RECORDING / LEAD LINK
+        const { data: recording, error: recordingError } =
+            await supabase
+                .from("call_recordings")
+                .select("id, lead_id, call_duration")
+                .eq("id", callId)
+                .single();
+
+        if (recordingError || !recording) {
+            return res.status(404).json({
+                success: false,
+                error: "Call recording not found"
+            });
+        }
+
+        if (!recording.lead_id) {
+            return res.status(400).json({
+                success: false,
+                error: "This call is not linked to a lead"
+            });
+        }
+
+        // GET LATEST CONVERSATION FOR THIS LEAD
+        const { data: conversation, error: conversationError } =
+            await supabase
+                .from("conversation_logs")
+                .select("id, conversation_text")
+                .eq("lead_id", recording.lead_id)
+                .order("created_at", { ascending: false })
+                .limit(1)
+                .single();
+
+        if (conversationError || !conversation) {
+            return res.status(404).json({
+                success: false,
+                error: "Conversation transcript not found"
+            });
+        }
+
+        if (
+            !conversation.conversation_text ||
+            !conversation.conversation_text.trim()
+        ) {
+            return res.status(400).json({
+                success: false,
+                error: "Conversation transcript is empty"
+            });
+        }
+
+        console.log(
+            "📝 Analyzing conversation:",
+            conversation.id
+        );
+
+        const analysisPrompt = `
+You are analyzing a sales/admission counseling call for iLead Tax Academy.
+
+Analyze the conversation below and return ONLY valid JSON.
+
+Required JSON format:
+
+{
+  "summary": "Short professional summary of the lead's requirement and conversation",
+  "sentiment": "positive | neutral | negative",
+  "interest_level": "high | medium | low",
+  "callback_required": true,
+  "lead_score": "hot | warm | cold"
+}
+
+Rules:
+
+- summary must be concise and factual.
+- sentiment describes the lead's overall attitude.
+- interest_level describes buying/admission intent.
+- callback_required is true only when the lead explicitly asks for a callback or clearly requests someone to contact them.
+- lead_score:
+  - hot = strong admission/buying intent or clear next-step intent
+  - warm = genuine interest but not ready to commit
+  - cold = weak, uncertain, or very low intent
+- Do not invent information.
+- Return JSON only.
+
+CONVERSATION:
+
+${conversation.conversation_text}
+`;
+
+        const openAIResponse = await fetch(
+            "https://api.openai.com/v1/responses",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization":
+                        `Bearer ${process.env.OPENAI_API_KEY}`
+                },
+                body: JSON.stringify({
+                    model: "gpt-5.6-luna",
+                    input: analysisPrompt,
+                    max_output_tokens: 300
+                })
+            }
+        );
+
+        const rawResponse = await openAIResponse.text();
+
+        console.log(
+            "OpenAI analysis status:",
+            openAIResponse.status
+        );
+
+        if (!openAIResponse.ok) {
+            console.error(
+                "❌ OpenAI analysis failed:",
+                rawResponse
+            );
+
+            return res.status(500).json({
+                success: false,
+                error: "OpenAI analysis failed",
+                details: rawResponse
+            });
+        }
+
+        const openAIData = JSON.parse(rawResponse);
+
+        let analysisText =
+            openAIData.output_text || "";
+
+        if (!analysisText && Array.isArray(openAIData.output)) {
+            for (const item of openAIData.output) {
+                if (!Array.isArray(item.content)) continue;
+
+                for (const content of item.content) {
+                    if (
+                        content.type === "output_text" &&
+                        content.text
+                    ) {
+                        analysisText += content.text;
+                    }
+                }
+            }
+        }
+
+        if (!analysisText) {
+            throw new Error(
+                "OpenAI returned no analysis text"
+            );
+        }
+
+        analysisText = analysisText
+            .replace(/^```json\s*/i, "")
+            .replace(/^```\s*/i, "")
+            .replace(/\s*```$/i, "")
+            .trim();
+
+        const analysis = JSON.parse(analysisText);
+
+        const sentiment = [
+            "positive",
+            "neutral",
+            "negative"
+        ].includes(
+            String(analysis.sentiment || "").toLowerCase()
+        )
+            ? String(analysis.sentiment).toLowerCase()
+            : "neutral";
+
+        const interestLevel = [
+            "high",
+            "medium",
+            "low"
+        ].includes(
+            String(analysis.interest_level || "").toLowerCase()
+        )
+            ? String(analysis.interest_level).toLowerCase()
+            : "medium";
+
+        const leadScore = [
+            "hot",
+            "warm",
+            "cold"
+        ].includes(
+            String(analysis.lead_score || "").toLowerCase()
+        )
+            ? String(analysis.lead_score).toLowerCase()
+            : "warm";
+
+        const callbackRequired =
+            analysis.callback_required === true;
+
+        const { error: updateError } =
+            await supabase
+                .from("conversation_logs")
+                .update({
+                    summary:
+                        String(analysis.summary || "").trim(),
+                    sentiment,
+                    interest_level: interestLevel,
+                    callback_required: callbackRequired
+                })
+                .eq("id", conversation.id);
+
+        if (updateError) {
+            console.error(
+                "❌ Conversation analysis save failed:",
+                updateError
+            );
+
+            return res.status(500).json({
+                success: false,
+                error: "Failed to save AI analysis",
+                details: updateError.message
+            });
+        }
+
+        const { error: leadUpdateError } =
+            await supabase
+                .from("leads")
+                .update({
+                    lead_score: leadScore,
+                    summary:
+                        String(analysis.summary || "").trim(),
+                    call_status:
+                        callbackRequired
+                            ? "callback_requested"
+                            : "completed"
+                })
+                .eq("id", recording.lead_id);
+
+        if (leadUpdateError) {
+            console.warn(
+                "⚠️ Lead analysis update failed:",
+                leadUpdateError.message
+            );
+        }
+
+        console.log(
+            "✅ AI call analysis saved:",
+            conversation.id
+        );
+
+        return res.json({
+            success: true,
+            call_id: callId,
+            conversation_id: conversation.id,
+            lead_id: recording.lead_id,
+            analysis: {
+                summary:
+                    String(analysis.summary || "").trim(),
+                sentiment,
+                interest_level: interestLevel,
+                callback_required: callbackRequired,
+                lead_score: leadScore
+            }
+        });
+
+    } catch (error) {
+        console.error(
+            "❌ AI call analysis error:",
+            error
+        );
+
+        return res.status(500).json({
+            success: false,
+            error: "AI call analysis failed",
+            details: error.message
+        });
+    }
+});
 
 // ============================================================
 // EXOTEL WEBSOCKET

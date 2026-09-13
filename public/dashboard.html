@@ -987,17 +987,17 @@
           <span>Overview</span>
         </a>
 
-        <a href="#calls" class="nav-item">
+        <a href="calls.html" class="nav-item">
           <span class="nav-icon">◉</span>
           <span>Calls</span>
         </a>
 
-        <a href="#leads" class="nav-item">
+        <a href="leads.html" class="nav-item">
           <span class="nav-icon">♢</span>
           <span>Leads</span>
         </a>
 
-        <a href="#analytics" class="nav-item">
+        <a href="analytics.html" class="nav-item">
           <span class="nav-icon">◫</span>
           <span>Analytics</span>
         </a>
@@ -1134,8 +1134,8 @@
             <span class="stat-icon">◷</span>
           </div>
 
-          <div class="stat-value">
-            02:14
+          <div class="stat-value" id="avgCallTime">
+            00:00
           </div>
 
           <div class="stat-change neutral">
@@ -1186,116 +1186,12 @@
 
               </thead>
 
-              <tbody>
-
-                <tr onclick="openConversation('Ramesh')">
-
-                  <td>
-                    <div class="lead-name">Ramesh</div>
-                    <div class="lead-phone">630-280-1718</div>
-                  </td>
-
-                  <td>
-                    <span class="intent warm">Warm</span>
-                  </td>
-
-                  <td>01:36</td>
-
-                  <td>
-                    <span class="status callback">
-                      Callback
-                    </span>
-                  </td>
-
-                  <td>Today</td>
-
-                  <td>
-                    <span class="recording">▶</span>
-                  </td>
-
-                </tr>
-
-                <tr onclick="openConversation('Priya')">
-
-                  <td>
-                    <div class="lead-name">Priya</div>
-                    <div class="lead-phone">984-xxx-xxxx</div>
-                  </td>
-
-                  <td>
-                    <span class="intent hot">Hot</span>
-                  </td>
-
-                  <td>03:21</td>
-
-                  <td>
-                    <span class="status completed">
-                      Completed
-                    </span>
-                  </td>
-
-                  <td>Yesterday</td>
-
-                  <td>
-                    <span class="recording">▶</span>
-                  </td>
-
-                </tr>
-
+              <tbody id="recentCallsBody">
                 <tr>
-
-                  <td>
-                    <div class="lead-name">Arjun</div>
-                    <div class="lead-phone">903-xxx-xxxx</div>
+                  <td colspan="6" style="text-align:center;color:#666;padding:28px;">
+                    Loading live call data...
                   </td>
-
-                  <td>
-                    <span class="intent warm">Warm</span>
-                  </td>
-
-                  <td>02:08</td>
-
-                  <td>
-                    <span class="status completed">
-                      Completed
-                    </span>
-                  </td>
-
-                  <td>Yesterday</td>
-
-                  <td>
-                    <span class="recording">▶</span>
-                  </td>
-
                 </tr>
-
-                <tr>
-
-                  <td>
-                    <div class="lead-name">Sneha</div>
-                    <div class="lead-phone">799-xxx-xxxx</div>
-                  </td>
-
-                  <td>
-                    <span class="intent cold">Cold</span>
-                  </td>
-
-                  <td>00:48</td>
-
-                  <td>
-                    <span class="status missed">
-                      Missed
-                    </span>
-                  </td>
-
-                  <td>2 days ago</td>
-
-                  <td>
-                    <span class="recording">—</span>
-                  </td>
-
-                </tr>
-
               </tbody>
 
             </table>
@@ -1321,59 +1217,15 @@
 
             </div>
 
-            <div class="activity-list">
-
+            <div class="activity-list" id="activityList">
               <div class="activity">
-
-                <div class="activity-icon">
-                  ◉
-                </div>
-
+                <div class="activity-icon">◉</div>
                 <div>
-                  <strong>Call completed</strong>
-                  <p>
-                    Manoj spoke with Ramesh for 1m 36s.
-                  </p>
+                  <strong>Loading activity...</strong>
+                  <p>Fetching the latest live dashboard activity.</p>
                 </div>
-
-                <span class="activity-time">Now</span>
-
+                <span class="activity-time">—</span>
               </div>
-
-              <div class="activity">
-
-                <div class="activity-icon">
-                  ♢
-                </div>
-
-                <div>
-                  <strong>Lead captured</strong>
-                  <p>
-                    Ramesh was classified as a warm lead.
-                  </p>
-                </div>
-
-                <span class="activity-time">Now</span>
-
-              </div>
-
-              <div class="activity">
-
-                <div class="activity-icon">
-                  ✦
-                </div>
-
-                <div>
-                  <strong>Callback requested</strong>
-                  <p>
-                    Follow-up connection recommended.
-                  </p>
-                </div>
-
-                <span class="activity-time">Now</span>
-
-              </div>
-
             </div>
 
           </div>
@@ -1392,54 +1244,25 @@
             </div>
 
             <div class="lead-chart">
-
               <div class="donut-wrap">
-
-                <div class="donut">
-                  <div class="donut-center">
-                    9
+                <div class="donut" id="leadDonut">
+                  <div class="donut-center" id="leadDonutTotal">0</div>
+                </div>
+                <div class="legend" id="leadLegend">
+                  <div class="legend-item">
+                    <div class="legend-left"><span class="legend-dot"></span>Hot</div>
+                    <span class="legend-value">0</span>
+                  </div>
+                  <div class="legend-item">
+                    <div class="legend-left"><span class="legend-dot warm"></span>Warm</div>
+                    <span class="legend-value">0</span>
+                  </div>
+                  <div class="legend-item">
+                    <div class="legend-left"><span class="legend-dot cold"></span>Cold</div>
+                    <span class="legend-value">0</span>
                   </div>
                 </div>
-
-                <div class="legend">
-
-                  <div class="legend-item">
-
-                    <div class="legend-left">
-                      <span class="legend-dot"></span>
-                      Hot
-                    </div>
-
-                    <span class="legend-value">3</span>
-
-                  </div>
-
-                  <div class="legend-item">
-
-                    <div class="legend-left">
-                      <span class="legend-dot warm"></span>
-                      Warm
-                    </div>
-
-                    <span class="legend-value">4</span>
-
-                  </div>
-
-                  <div class="legend-item">
-
-                    <div class="legend-left">
-                      <span class="legend-dot cold"></span>
-                      Cold
-                    </div>
-
-                    <span class="legend-value">2</span>
-
-                  </div>
-
-                </div>
-
               </div>
-
             </div>
 
           </div>
@@ -1465,39 +1288,22 @@
 
           </div>
 
-          <div class="summary-box">
-
+          <div class="summary-box" id="latestInsight">
             <div class="summary-main">
-
-              <div class="summary-avatar">
-                R
-              </div>
-
+              <div class="summary-avatar" id="insightAvatar">—</div>
               <div>
-                <strong>Ramesh</strong>
-                <p>Enroll Agent course · Warm lead</p>
+                <strong id="insightName">No lead yet</strong>
+                <p id="insightMeta">Waiting for live call data</p>
               </div>
-
             </div>
 
-            <div class="summary-text">
-
-              User is interested in an Enroll Agent course,
-              liked a Facebook post and wants to proceed.
-              They are currently in Hyderabad and have
-              provided their phone number for callback connection.
-
+            <div class="summary-text" id="insightSummary">
+              No lead insight is available yet.
             </div>
 
-            <div class="summary-tags">
-
-              <span class="tag">Course Interest</span>
-              <span class="tag">Facebook</span>
-              <span class="tag">Hyderabad</span>
-              <span class="tag">Callback Requested</span>
-
+            <div class="summary-tags" id="insightTags">
+              <span class="tag">No data</span>
             </div>
-
           </div>
 
         </div>
@@ -1509,60 +1315,48 @@
           <div class="panel-header">
 
             <div>
-              <h2>Call recording</h2>
-              <span>Ramesh · Latest call</span>
+              <h2>Latest call recording</h2>
+              <span id="recordingLead">No recording selected</span>
             </div>
 
-            <span>01:36</span>
+            <span id="recordingDuration">00:00</span>
 
           </div>
 
           <div class="recording-box">
 
             <div class="recording-head">
-
               <strong>Conversation audio</strong>
-
-              <span style="color:#65d391;font-size:9px;">
-                ● Ready
+              <span id="recordingStatus" style="color:#777;font-size:9px;">
+                ● No recording
               </span>
-
             </div>
 
             <div class="waveform">
-
-              <span class="wave"></span>
-              <span class="wave"></span>
-              <span class="wave"></span>
-              <span class="wave"></span>
-              <span class="wave"></span>
-              <span class="wave"></span>
-              <span class="wave"></span>
-              <span class="wave"></span>
-              <span class="wave"></span>
-              <span class="wave"></span>
-              <span class="wave"></span>
-              <span class="wave"></span>
-              <span class="wave"></span>
-              <span class="wave"></span>
-
+              <span class="wave"></span><span class="wave"></span>
+              <span class="wave"></span><span class="wave"></span>
+              <span class="wave"></span><span class="wave"></span>
+              <span class="wave"></span><span class="wave"></span>
+              <span class="wave"></span><span class="wave"></span>
+              <span class="wave"></span><span class="wave"></span>
+              <span class="wave"></span><span class="wave"></span>
             </div>
 
             <div class="player">
-
-              <button class="play-btn" onclick="demoPlay()">
+              <button class="play-btn" id="recordingPlayBtn" onclick="playLatestRecording()" disabled>
                 ▶
               </button>
 
               <div class="progress">
-                <span></span>
+                <span id="recordingProgress"></span>
               </div>
 
-              <span class="duration">
-                01:36
+              <span class="duration" id="recordingPlayerDuration">
+                00:00
               </span>
-
             </div>
+
+            <audio id="latestAudio" preload="metadata" style="display:none;"></audio>
 
           </div>
 
@@ -1576,44 +1370,667 @@
 
   <script>
 
-    function toggleSidebar() {
-      document
-        .getElementById("sidebar")
-        .classList.toggle("open");
+  // ============================================
+  // SIDEBAR
+  // ============================================
+
+  function toggleSidebar() {
+    document
+      .getElementById("sidebar")
+      .classList.toggle("open");
+  }
+
+  document.querySelectorAll(".nav-item").forEach(item => {
+    item.addEventListener("click", () => {
+      document.getElementById("sidebar").classList.remove("open");
+    });
+  });
+
+
+  // ============================================
+  // LOGOUT
+  // ============================================
+
+  function logout() {
+    sessionStorage.removeItem("manoj_demo_lead");
+    window.location.href = "landing.html";
+  }
+
+
+  // ============================================
+  // HELPERS
+  // ============================================
+
+  let dashboardData = {
+    stats: {},
+    leads: [],
+    calls: [],
+    recordings: [],
+    conversations: []
+  };
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function normalizeScore(value) {
+    const score = String(value || "").toLowerCase().trim();
+    return ["hot", "warm", "cold"].includes(score) ? score : "cold";
+  }
+
+  function statusInfo(value) {
+    const status = String(value || "").toLowerCase().trim();
+
+    if (status === "callback_requested") {
+      return ["Callback", "callback"];
     }
 
-    function logout() {
-      sessionStorage.removeItem("manoj_demo_lead");
-      window.location.href = "landing.html";
+    if (status === "completed") {
+      return ["Completed", "completed"];
     }
 
-    function openConversation(name) {
-      alert(
-        "Conversation details for " +
-        name +
-        " will open here in the next dashboard step."
+    if (status === "connected") {
+      return ["Connected", "completed"];
+    }
+
+    if (status === "missed") {
+      return ["Missed", "missed"];
+    }
+
+    return [value || "—", "completed"];
+  }
+
+  function relativeTime(value) {
+    if (!value) return "—";
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "—";
+
+    const diff = Date.now() - date.getTime();
+    const minutes = Math.floor(diff / 60000);
+
+    if (minutes < 1) return "Now";
+    if (minutes < 60) return minutes + "m ago";
+
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return hours + "h ago";
+
+    const days = Math.floor(hours / 24);
+    if (days < 7) return days + "d ago";
+
+    return date.toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short"
+    });
+  }
+
+  function getCallLeadName(call) {
+    return call.lead_name || call.name || "Unknown lead";
+  }
+
+  function getCallPhone(call) {
+    return call.phone || call.lead_phone || "—";
+  }
+
+  function getCallCourse(call) {
+    return call.course || call.lead_course || "Course not specified";
+  }
+
+  function getCallSummary(call) {
+    return (
+      call.lead_summary ||
+      call.conversation_summary ||
+      call.summary ||
+      "No AI summary available yet."
+    );
+  }
+
+
+  // ============================================
+  // RECENT CALLS
+  // ============================================
+
+  function renderRecentCalls() {
+    const body = document.getElementById("recentCallsBody");
+    const calls = Array.isArray(dashboardData.calls)
+      ? dashboardData.calls.slice(0, 5)
+      : [];
+
+    if (!calls.length) {
+      body.innerHTML = `
+        <tr>
+          <td colspan="6" style="text-align:center;color:#666;padding:28px;">
+            No calls recorded yet.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    body.innerHTML = calls.map(call => {
+      const score = normalizeScore(call.lead_score);
+      const [statusText, statusClass] = statusInfo(
+        call.call_status || call.lead_status
       );
+
+      return `
+        <tr onclick="openConversation(${Number(call.id) || 0})">
+          <td>
+            <div class="lead-name">${escapeHtml(getCallLeadName(call))}</div>
+            <div class="lead-phone">${escapeHtml(getCallPhone(call))}</div>
+          </td>
+
+          <td>
+            <span class="intent ${score}">
+              ${escapeHtml(score)}
+            </span>
+          </td>
+
+          <td>${formatDuration(call.call_duration)}</td>
+
+          <td>
+            <span class="status ${statusClass}">
+              ${escapeHtml(statusText)}
+            </span>
+          </td>
+
+          <td>${escapeHtml(relativeTime(call.created_at))}</td>
+
+          <td>
+            <span class="recording">
+              ${call.id ? "▶" : "—"}
+            </span>
+          </td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+
+  // ============================================
+  // AI ACTIVITY
+  // ============================================
+
+  function renderActivity() {
+    const container = document.getElementById("activityList");
+    const calls = Array.isArray(dashboardData.calls)
+      ? dashboardData.calls.slice(0, 3)
+      : [];
+
+    if (!calls.length) {
+      container.innerHTML = `
+        <div class="activity">
+          <div class="activity-icon">◉</div>
+          <div>
+            <strong>No recent activity</strong>
+            <p>New call activity will appear here.</p>
+          </div>
+          <span class="activity-time">—</span>
+        </div>
+      `;
+      return;
     }
 
-    function demoPlay() {
-      alert(
-        "The real Supabase recording player will be connected in the next step."
+    const activities = [];
+
+    calls.forEach(call => {
+      const name = getCallLeadName(call);
+      const duration = formatDuration(call.call_duration);
+      const status = String(
+        call.call_status || call.lead_status || ""
+      ).toLowerCase();
+
+      activities.push({
+        icon: "◉",
+        title: status === "callback_requested"
+          ? "Callback requested"
+          : "Call completed",
+        text: status === "callback_requested"
+          ? `${name} requested a follow-up callback.`
+          : `Manoj spoke with ${name} for ${duration}.`,
+        time: relativeTime(call.created_at)
+      });
+
+      if (call.lead_id || call.id) {
+        activities.push({
+          icon: "♢",
+          title: "Lead captured",
+          text: `${name} · ${getCallCourse(call)}`,
+          time: relativeTime(call.created_at)
+        });
+      }
+    });
+
+    container.innerHTML = activities.slice(0, 4).map(item => `
+      <div class="activity">
+        <div class="activity-icon">${item.icon}</div>
+        <div>
+          <strong>${escapeHtml(item.title)}</strong>
+          <p>${escapeHtml(item.text)}</p>
+        </div>
+        <span class="activity-time">${escapeHtml(item.time)}</span>
+      </div>
+    `).join("");
+  }
+
+
+  // ============================================
+  // LEAD DISTRIBUTION
+  // ============================================
+
+  function renderLeadDistribution() {
+    const leads = Array.isArray(dashboardData.leads)
+      ? dashboardData.leads
+      : [];
+
+    const hot = leads.filter(
+      lead => String(lead.lead_score || "").toLowerCase() === "hot"
+    ).length;
+
+    const warm = leads.filter(
+      lead => String(lead.lead_score || "").toLowerCase() === "warm"
+    ).length;
+
+    const cold = leads.filter(
+      lead => String(lead.lead_score || "").toLowerCase() === "cold"
+    ).length;
+
+    const total = leads.length;
+    const donut = document.getElementById("leadDonut");
+
+    document.getElementById("leadDonutTotal").textContent = total;
+
+    if (!total) {
+      donut.style.background =
+        "conic-gradient(#424242 0deg 360deg)";
+    } else {
+      const hotDeg = (hot / total) * 360;
+      const warmDeg = ((hot + warm) / total) * 360;
+
+      donut.style.background = `
+        conic-gradient(
+          var(--gold-bright) 0deg ${hotDeg}deg,
+          #9c7b23 ${hotDeg}deg ${warmDeg}deg,
+          #424242 ${warmDeg}deg 360deg
+        )
+      `;
+    }
+
+    document.getElementById("leadLegend").innerHTML = `
+      <div class="legend-item">
+        <div class="legend-left">
+          <span class="legend-dot"></span>
+          Hot
+        </div>
+        <span class="legend-value">${hot}</span>
+      </div>
+
+      <div class="legend-item">
+        <div class="legend-left">
+          <span class="legend-dot warm"></span>
+          Warm
+        </div>
+        <span class="legend-value">${warm}</span>
+      </div>
+
+      <div class="legend-item">
+        <div class="legend-left">
+          <span class="legend-dot cold"></span>
+          Cold
+        </div>
+        <span class="legend-value">${cold}</span>
+      </div>
+    `;
+  }
+
+
+  // ============================================
+  // LATEST LEAD INSIGHT
+  // ============================================
+
+  function renderLatestInsight() {
+    const leads = Array.isArray(dashboardData.leads)
+      ? dashboardData.leads
+      : [];
+
+    if (!leads.length) {
+      document.getElementById("insightAvatar").textContent = "—";
+      document.getElementById("insightName").textContent = "No lead yet";
+      document.getElementById("insightMeta").textContent =
+        "Waiting for live lead data";
+      document.getElementById("insightSummary").textContent =
+        "No lead insight is available yet.";
+      document.getElementById("insightTags").innerHTML =
+        '<span class="tag">No data</span>';
+      return;
+    }
+
+    const lead = [...leads].sort(
+      (a, b) =>
+        new Date(b.created_at || 0) -
+        new Date(a.created_at || 0)
+    )[0];
+
+    const name = lead.lead_name || lead.name || "Unknown";
+    const score = String(lead.lead_score || "Not classified")
+      .toLowerCase();
+
+    const initials = name
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map(part => part[0])
+      .join("")
+      .toUpperCase() || "U";
+
+    document.getElementById("insightAvatar").textContent = initials;
+    document.getElementById("insightName").textContent = name;
+
+    document.getElementById("insightMeta").textContent =
+      `${lead.course || "Course not specified"} · ${score}`;
+
+    document.getElementById("insightSummary").textContent =
+      lead.summary ||
+      "No AI summary available yet.";
+
+    const tags = [];
+
+    if (lead.course) tags.push(lead.course);
+    if (lead.lead_score) tags.push(`${score} lead`);
+    if (lead.call_status === "callback_requested") {
+      tags.push("Callback Requested");
+    }
+
+    if (lead.phone) tags.push(lead.phone);
+
+    document.getElementById("insightTags").innerHTML =
+      (tags.length ? tags : ["Lead captured"])
+        .slice(0, 4)
+        .map(tag => `<span class="tag">${escapeHtml(tag)}</span>`)
+        .join("");
+  }
+
+
+  // ============================================
+  // LATEST RECORDING
+  // ============================================
+
+  let latestRecordingUrl = "";
+
+  async function prepareLatestRecording() {
+    const recordings = Array.isArray(dashboardData.recordings)
+      ? dashboardData.recordings
+      : [];
+
+    if (!recordings.length) {
+      document.getElementById("recordingLead").textContent =
+        "No recording available";
+      document.getElementById("recordingStatus").textContent =
+        "● No recording";
+      document.getElementById("recordingDuration").textContent = "00:00";
+      document.getElementById("recordingPlayerDuration").textContent = "00:00";
+      document.getElementById("recordingPlayBtn").disabled = true;
+      return;
+    }
+
+    const recording = [...recordings].sort(
+      (a, b) =>
+        new Date(b.created_at || 0) -
+        new Date(a.created_at || 0)
+    )[0];
+
+    const matchingCall = dashboardData.calls.find(
+      call => Number(call.id) === Number(recording.id)
+    );
+
+    const leadName =
+      matchingCall?.lead_name ||
+      matchingCall?.name ||
+      (recording.lead_id ? `Lead #${recording.lead_id}` : "Latest call");
+
+    const duration = recording.call_duration || 0;
+
+    document.getElementById("recordingLead").textContent = leadName;
+    document.getElementById("recordingDuration").textContent =
+      formatDuration(duration);
+    document.getElementById("recordingPlayerDuration").textContent =
+      formatDuration(duration);
+
+    try {
+      const response = await fetch(
+        `/api/call-recording/${Number(recording.id)}`
       );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success || !data.url) {
+        throw new Error(data.error || "Recording URL unavailable");
+      }
+
+      latestRecordingUrl = data.url;
+
+      const audio = document.getElementById("latestAudio");
+      audio.src = latestRecordingUrl;
+
+      document.getElementById("recordingStatus").textContent =
+        "● Ready";
+      document.getElementById("recordingStatus").style.color =
+        "#65d391";
+
+      document.getElementById("recordingPlayBtn").disabled = false;
+    } catch (error) {
+      console.error("❌ Latest recording load failed:", error);
+
+      document.getElementById("recordingStatus").textContent =
+        "● Unavailable";
+      document.getElementById("recordingStatus").style.color =
+        "#ff7373";
+    }
+  }
+
+  function playLatestRecording() {
+    const audio = document.getElementById("latestAudio");
+
+    if (!audio.src) return;
+
+    if (audio.paused) {
+      audio.play().catch(error => {
+        console.error("Audio playback failed:", error);
+      });
+
+      document.getElementById("recordingPlayBtn").textContent = "❚❚";
+    } else {
+      audio.pause();
+      document.getElementById("recordingPlayBtn").textContent = "▶";
     }
 
-    const dateElement =
-      document.getElementById("currentDate");
+    audio.onended = () => {
+      document.getElementById("recordingPlayBtn").textContent = "▶";
+    };
+  }
 
+
+  // ============================================
+  // CONVERSATION
+  // ============================================
+
+  function openConversation(id) {
+    if (!id) return;
+    window.location.href = `calls.html?call=${encodeURIComponent(id)}`;
+  }
+
+
+  // ============================================
+  // FORMAT DURATION
+  // ============================================
+
+  function formatDuration(seconds) {
+
+    seconds = Number(seconds) || 0;
+
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+
+    return (
+      String(minutes).padStart(2, "0") +
+      ":" +
+      String(remainingSeconds).padStart(2, "0")
+    );
+  }
+
+
+  // ============================================
+  // LOAD DASHBOARD DATA
+  // ============================================
+
+  async function loadDashboard() {
+
+    try {
+
+      console.log("📊 Loading dashboard data...");
+
+      const response = await fetch("/api/dashboard");
+
+      if (!response.ok) {
+        throw new Error(
+          "Dashboard API returned " +
+          response.status
+        );
+      }
+
+      const data = await response.json();
+
+      console.log(
+        "✅ Dashboard data received:",
+        data
+      );
+
+      if (!data.success) {
+        throw new Error(
+          data.error ||
+          "Dashboard API failed"
+        );
+      }
+
+      dashboardData = {
+        stats: data.stats || {},
+        leads: Array.isArray(data.leads) ? data.leads : [],
+        calls: Array.isArray(data.calls) ? data.calls : [],
+        recordings: Array.isArray(data.recordings) ? data.recordings : [],
+        conversations: Array.isArray(data.conversations)
+          ? data.conversations
+          : []
+      };
+
+      const stats = dashboardData.stats;
+      const leads = dashboardData.leads;
+
+      // ========================================
+      // STATS
+      // ========================================
+
+      document.getElementById("totalCalls").textContent =
+        stats.total_calls || 0;
+
+      document.getElementById("totalLeads").textContent =
+        stats.total_leads || 0;
+
+      const hotLeads = leads.filter(
+        lead =>
+          String(lead.lead_score || "").toLowerCase() === "hot"
+      ).length;
+
+      document.getElementById("hotLeads").textContent =
+        hotLeads;
+
+      document.getElementById("avgCallTime").textContent =
+        formatDuration(stats.average_call_duration);
+
+      // ========================================
+      // UPDATE SMALL LABELS
+      // ========================================
+
+      const statChanges =
+        document.querySelectorAll(".stat-change");
+
+      if (statChanges.length >= 4) {
+        statChanges[0].textContent = "Live data";
+        statChanges[1].textContent = "Live data";
+        statChanges[2].textContent =
+          hotLeads > 0
+            ? `${hotLeads} high-intent lead${hotLeads === 1 ? "" : "s"}`
+            : "No hot leads";
+        statChanges[3].textContent = "Across all calls";
+      }
+
+      // ========================================
+      // LIVE DASHBOARD SECTIONS
+      // ========================================
+
+      renderRecentCalls();
+      renderActivity();
+      renderLeadDistribution();
+      renderLatestInsight();
+      await prepareLatestRecording();
+
+      console.log("✅ Dashboard fully updated from Supabase");
+
+    } catch (error) {
+
+      console.error(
+        "❌ Dashboard loading failed:",
+        error
+      );
+
+      document.getElementById("recentCallsBody").innerHTML = `
+        <tr>
+          <td colspan="6" style="text-align:center;color:#ff7373;padding:28px;">
+            Failed to load dashboard data.
+          </td>
+        </tr>
+      `;
+    }
+  }
+
+
+  // ============================================
+  // CURRENT DATE
+  // ============================================
+
+  const dateElement =
+    document.getElementById(
+      "currentDate"
+    );
+
+  function updateCurrentDate() {
     const now = new Date();
 
     dateElement.textContent =
-      now.toLocaleDateString("en-IN", {
-        day: "numeric",
-        month: "short",
-        year: "numeric"
-      });
+      now.toLocaleDateString(
+        "en-IN",
+        {
+          day: "numeric",
+          month: "short",
+          year: "numeric"
+        }
+      );
+  }
 
-  </script>
+  updateCurrentDate();
+
+
+  // ============================================
+  // START DASHBOARD
+  // ============================================
+
+  loadDashboard();
+
+</script>
 
 </body>
 </html>
